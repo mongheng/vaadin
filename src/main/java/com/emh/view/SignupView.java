@@ -1,0 +1,196 @@
+package com.emh.view;
+
+import java.util.List;
+
+import org.springframework.context.ApplicationContext;
+
+import com.emh.model.Role;
+import com.emh.model.User;
+import com.emh.repository.business.ClassBusiness;
+import com.emh.util.Utility;
+import com.vaadin.event.FieldEvents.BlurEvent;
+import com.vaadin.event.FieldEvents.BlurListener;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Page;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.Notification.Type;
+
+public class SignupView extends Window {
+
+	private static final long serialVersionUID = 1L;
+
+	private ApplicationContext applicationContext;
+
+	private VerticalLayout vSignup;
+	private FormLayout formLayout;
+	private HorizontalLayout hSignup;
+
+	private TextField username;
+	private PasswordField password;
+	private PasswordField repeatPassword;
+	private TextField telephone;
+	private TextField email;
+	private Button btnCreate;
+	private Button btnCancel;
+	private ComboBox<Role> cbRole;
+
+	public SignupView(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+		Init();
+	}
+
+	private void Init() {
+		setCaption("Create User");
+		vSignup = new VerticalLayout();
+		formLayout = new FormLayout();
+		hSignup = new HorizontalLayout();
+
+		username = new TextField("UserName :");
+		username.setIcon(VaadinIcons.USER);
+		username.setRequiredIndicatorVisible(true);
+		username.focus();
+
+		password = new PasswordField("Password :");
+		password.setIcon(VaadinIcons.PASSWORD);
+		password.setRequiredIndicatorVisible(true);
+
+		repeatPassword = new PasswordField("Repeat Password :");
+		repeatPassword.setIcon(VaadinIcons.PASSWORD);
+		repeatPassword.setRequiredIndicatorVisible(true);
+		repeatPassword.addBlurListener(new PasswordExitFocus());
+
+		telephone = new TextField("Telephone :");
+		telephone.setIcon(VaadinIcons.PHONE);
+		// telephone.setRequiredIndicatorVisible(true);
+
+		email = new TextField("Email :");
+		email.setIcon(VaadinIcons.MAILBOX);
+		email.setRequiredIndicatorVisible(true);
+		email.addBlurListener(new EmailExitFocus());
+
+		cbRole = new ComboBox<>();
+		cbRole.setCaption("Access Role :");
+		cbRole.setIcon(VaadinIcons.GROUP);
+		cbRole.setRequiredIndicatorVisible(true);
+		cbRole.setItems(Utility.getRoles(applicationContext));
+		cbRole.setItemCaptionGenerator(Role::getRoleName);
+
+		btnCreate = new Button("Create");
+		btnCreate.addStyleName("friendly");
+		btnCreate.addClickListener(new CreateClickListener());
+
+		btnCancel = new Button("Cancel");
+		btnCancel.addStyleName("primary");
+		btnCancel.addClickListener(new ClickListener() {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				close();
+			}
+		});
+
+		hSignup.addComponents(btnCreate, btnCancel);
+		hSignup.setComponentAlignment(btnCreate, Alignment.MIDDLE_RIGHT);
+		hSignup.setWidth("400px");
+		hSignup.setSpacing(true);
+
+		formLayout.addComponents(username, password, repeatPassword, telephone, email, cbRole);
+		vSignup.addComponents(formLayout, hSignup);
+		// vSignup.setHeight("95%");
+
+		setContent(vSignup);
+		center();
+		setModal(true);
+		addStyleName("v-window");
+		setResizable(false);
+
+		setHeight("465px");
+		setWidth("400px");
+	}
+
+	private final class PasswordExitFocus implements BlurListener {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void blur(BlurEvent event) {
+
+			String tfPassword = password.getValue();
+			String tfRepeatPassword = repeatPassword.getValue();
+
+			if (!tfPassword.equals(tfRepeatPassword)) {
+				Notification.show("Please fill the password again becuase the password is not match.",
+						Type.HUMANIZED_MESSAGE);
+				password.clear();
+				repeatPassword.clear();
+				password.focus();
+			}
+		}
+	}
+
+	private final class EmailExitFocus implements BlurListener {
+
+		private static final long serialVersionUID = 1L;
+		private Notification notification;
+		
+		@Override
+		public void blur(BlurEvent event) {
+			
+			ClassBusiness classBusiness = (ClassBusiness) applicationContext
+					.getBean(ClassBusiness.class.getSimpleName());
+			notification = new Notification("Information","The email has already Exist. Please choose another one.", Type.WARNING_MESSAGE);
+			notification.setDelayMsec(500);
+			notification.setStyleName("mynotificationstyle");
+			
+			List<User> users = classBusiness.selectAllEntity(User.class);
+			
+			if (users.size() > 0) {
+				users.forEach(user -> {
+					if (user.getEmail().equals(email.getValue())) {
+						notification.show(Page.getCurrent());
+						email.focus();
+						setWidth("450px");
+					}
+				});
+			}
+		}
+	}
+	
+	private final class CreateClickListener implements ClickListener {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+
+			ClassBusiness classBusiness = (ClassBusiness) applicationContext
+					.getBean(ClassBusiness.class.getSimpleName());
+			User user = new User(null, username.getValue(), password.getValue(), telephone.getValue(),
+					email.getValue());
+			Role r = cbRole.getSelectedItem().get();
+			if (user.getUsername() != null && user.getPassword() != null && r != null) {
+				user.setRole(r);
+				classBusiness.createEntity(user);
+				Notification.show("The data save successfully in Data Source.",Type.HUMANIZED_MESSAGE);
+				close();
+				UI.getCurrent().getNavigator().navigateTo("mainpageview");
+			} else {
+				Notification.show("Please fill in the blank.", Type.HUMANIZED_MESSAGE);
+			}
+		}
+	}
+}

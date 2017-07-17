@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.emh" />
+	<context:spring-configured/>
+	<tx:annotation-driven transaction-manager="hibernateTransactionManager" />
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+	<bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/vaadin?useSSL=false" />
+		<property name="username" value="root" />
+		<property name="password" value="12345" />
+		<!-- <property name="url"
+			value="jdbc:mysql://localhost:3306/alertsystem?useSSL=false" />
+		<property name="username" value="root" />
+		<property name="password" value="12345" /> -->
+		<!-- <property name="initialSize" value="15"/>
+		<property name="maxTotal" value="15"/>
+		<property name="maxIdle" value="15" />
+		<property name="maxWaitMillis" value="5000" />
+		<property name="minIdle" value="0" /> -->
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.emh.model.User</value>
+				<value>com.emh.model.Role</value>
+			</list>
+		</property>
+		<!-- <property name="mappingResources"> <list> <value>User.hbm.xml</value> 
+			</list> </property> -->
+	</bean>
+
+	<bean id="hibernateTransactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<!-- <bean id="classDao" class="com.emh.repository.daoimpl.ClassDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="classBusiness" class="com.emh.repository.businessimpl.ClassBusinessImpl">
+		<property name="classDao" ref="classDao" />
+	</bean> -->
+</beans>

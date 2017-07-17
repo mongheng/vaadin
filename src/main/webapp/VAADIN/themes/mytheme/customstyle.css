@@ -1,0 +1,35 @@
+@CHARSET "ISO-8859-1";
+
+.v-label{
+	color: blue;
+	font-size: 30;
+	font-family: sans-serif;
+	font-style: italic;
+}
+.v-loginPanel{
+	border-style: solid;
+	text-shadow: black;
+	color: red;
+}
+.v-panel-caption{
+	color: green;
+	font-style: oblique;
+	font-size: 26px;
+}
+
+.v-window-header {
+	background-color: white;
+	font-style: oblique;
+	font-size: 20px;
+}
+.v-window-closebox {
+	background-color: white;
+}
+
+.v-grid {
+		color: blue;
+}
+
+.v-grid-header {
+	text-align: center;
+}

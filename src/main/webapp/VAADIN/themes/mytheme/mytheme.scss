@@ -1,0 +1,100 @@
+// If you edit this file you need to compile the theme. See README.md for details.
+
+// Global variable overrides. Must be declared before importing Valo.
+
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+//$v-font-size: 16px;
+//$v-font-weight: 300;
+//$v-font-family: "Open Sans", sans-serif;
+
+// Defines the border used by all components.
+//$v-border: 1px solid (v-shade 0.7);
+//$v-border-radius: 4px;
+
+// Affects the color of some component elements, e.g Button, Panel title, etc
+//$v-background-color: hsl(210, 0%, 98%);
+// Affects the color of content areas, e.g  Panel and Window content, TextField input etc
+//$v-app-background-color: $v-background-color;
+
+// Affects the visual appearance of all components
+//$v-gradient: v-linear 8%;
+//$v-bevel-depth: 30%;
+//$v-shadow-opacity: 5%;
+
+// Defines colors for indicating status (focus, success, failure)
+//$v-focus-color: valo-focus-color(); // Calculates a suitable color automatically
+//$v-friendly-color: #2c9720;
+//$v-error-indicator-color: #ed473b;
+
+// For more information, see: https://vaadin.com/book/-/page/themes.valo.html
+// Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
+
+@import "../valo/valo.scss";
+
+@mixin mytheme {
+  @include valo;
+
+  // Insert your own theme rules here
+  	.v-label{
+		color: blue;
+		font-size: 30;
+		font-family: sans-serif;
+		font-style: italic;
+	}
+	
+	.v-loginPanel{
+		border-style: solid;
+		text-shadow: black;
+		.v-panel-caption{
+			color: green;
+			font-style: oblique;
+			font-size: 26px;
+		}
+	}
+	
+	.v-window{
+	
+		.v-window-header {
+     		background-color: white;
+     		font-style: oblique;
+			font-size: 20px;
+     	}
+     	
+     	.v-window-outerheader {
+     		background-color: white;
+     	}
+     
+     	.v-window-closebox{
+     		background-color: white;
+     	}
+	}
+	
+	.v-Notification.mynotificationstyle {
+    	background: white;
+    	border: 10px solid #C00000;
+    	color: blue;
+	}
+	
+	.v-grid {
+		text-align: center;
+		.v-grid-tablewrapper {
+    		.v-grid-header {
+    			.v-grid-row {
+    				color: blue;
+    				.v-grid-cell {
+      					text-align: center;
+      				}
+      			}
+      		}
+      		text-align: center;
+    	}
+	}
+	
+	.mystyle {
+    	font-family: fantasy;
+    	font-style:  italic;
+    	font-size:   25px;
+    	font-weight: bolder;
+    	line-height: 30px;
+	}
+}
