@@ -4,7 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.emh.view.LoginView;
-import com.emh.view.ListView;
+import com.emh.view.UserListView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
@@ -31,7 +31,7 @@ public class MainUI extends UI {
 		Navigator navigator = new Navigator(this, this);
 		
         navigator.addView("loginview", new LoginView(applicationContext));
-        navigator.addView("mainpageview", new ListView(applicationContext));
+        navigator.addView("mainpageview", new UserListView(applicationContext));
         
         navigator.navigateTo("loginview");
     }

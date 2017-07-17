@@ -32,7 +32,7 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 
-public class ListView extends VerticalLayout implements View {
+public class UserListView extends VerticalLayout implements View {
 
 	private static final long serialVersionUID = 1L;
 	private ApplicationContext applicationContext;
@@ -41,7 +41,7 @@ public class ListView extends VerticalLayout implements View {
 	private ComboBox<Role> cbRole;
 	private ListDataProvider<User> userDataProvider;
 
-	public ListView(ApplicationContext applicationContext) {
+	public UserListView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
 
