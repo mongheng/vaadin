@@ -114,7 +114,7 @@ public class LoginView extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	private void login() {
@@ -126,7 +126,9 @@ public class LoginView extends VerticalLayout implements View {
 
 		if (isStatu) {
 			if (nUser != null) {
+				UI.getCurrent().getSession().setAttribute(User.class, user);
 				getUI().getNavigator().navigateTo("mainpageview");
+				//VaadinSession.getCurrent().setAttribute(User.class, user);
 			} else {
 				Notification.show("Incorrect password. Please type password again.", Type.HUMANIZED_MESSAGE);
 				password.clear();
