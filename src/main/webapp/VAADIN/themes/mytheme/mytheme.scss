@@ -42,6 +42,12 @@
 		font-style: italic;
 	}
 	
+	.v-label.name{
+		font-size: 20;
+		font-family: monospace;
+		font-style: italic;
+	}
+	
 	.v-loginPanel{
 		border-style: solid;
 		text-shadow: black;
@@ -96,5 +102,10 @@
     	font-size:   25px;
     	font-weight: bolder;
     	line-height: 30px;
+	}
+	
+	.v-verticallayout-borderBottom {
+		border-bottom: thin;
+		border-bottom-style: solid;
 	}
 }

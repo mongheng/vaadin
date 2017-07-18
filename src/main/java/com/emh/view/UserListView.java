@@ -19,9 +19,11 @@ import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.data.sort.SortDirection;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -31,6 +33,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class UserListView extends VerticalLayout implements View {
 
@@ -43,11 +46,15 @@ public class UserListView extends VerticalLayout implements View {
 
 	public UserListView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
+		init();
 	}
 
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(ViewChangeEvent event) {		
 
+	}
+	
+	private void init() {
 		List<User> users = getUsers();
 		userDataProvider = new ListDataProvider<>(users);
 		grid = new Grid<>();
@@ -58,15 +65,18 @@ public class UserListView extends VerticalLayout implements View {
 		Column<User, String> columnUserName = grid.addColumn(User::getUsername);
 		columnUserName.setCaption("UserName");
 		columnUserName.setId("0");
+		columnUserName.setWidth(170);
 		columnUserName.setEditorComponent(tfUserName, User::setUsername).setExpandRatio(1);
 
 		Column<User, String> columnTelephon = grid.addColumn(User::getTelephone);
 		columnTelephon.setCaption("Telephone");
 		columnTelephon.setId("1");
+		columnTelephon.setWidth(170);
 
 		Column<User, String> columnEmail = grid.addColumn(User::getEmail);
 		columnEmail.setCaption("Email");
 		columnEmail.setId("2");
+		columnEmail.setWidth(170);
 
 		cbRole = new ComboBox<>();
 		cbRole.setItems(Utility.getRoles(applicationContext));
@@ -76,6 +86,7 @@ public class UserListView extends VerticalLayout implements View {
 		Column<User, String> columnRole = grid.addColumn(user->user.getRole().getRoleName());
 		columnRole.setCaption("Role");
 		columnRole.setId("3");
+		columnRole.setWidth(170);
 		columnRole.setEditorBinding(userBinding);
 		//columnRole.setEditorComponent(cbRole, User::setRole::setRoleName).setExpandRatio(2);
 
@@ -110,7 +121,7 @@ public class UserListView extends VerticalLayout implements View {
 				getUI();
 
 				classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
-				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you suer you want to update.", "Yes", "No",
+				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure you want to update.", "Yes", "No",
 						new ConfirmDialog.Listener() {
 
 							private static final long serialVersionUID = 1L;
@@ -150,12 +161,16 @@ public class UserListView extends VerticalLayout implements View {
 		 * groupingHeader.join(groupingHeader.getCell("Role"));
 		 * accessRoleCell.setText("Access Role");
 		 */
+		
+		Label title = new Label("User Information.");
+		title.addStyleName(ValoTheme.LABEL_H1);
 
-		addComponent(grid);
-		grid.setWidth("1200px");
-
-		setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
-
+		addComponents(title,grid);
+		grid.setWidth("950px");
+		grid.setHeight("300px");
+		setMargin(new MarginInfo(true, false, false, false));
+		setComponentAlignment(grid, Alignment.TOP_CENTER);
+		setComponentAlignment(title, Alignment.TOP_CENTER);
 	}
 
 	private List<User> getUsers() {
@@ -207,6 +222,7 @@ public class UserListView extends VerticalLayout implements View {
 	private TextField createTextFieldFilter(ListDataProvider<User> users, Column<User, ?> column) {
 		TextField filterField = new TextField();
 		filterField.setHeight("26px");
+		filterField.setWidth("100%");
 
 		filterField.addValueChangeListener(change -> {
 			String filterText = change.getValue();
