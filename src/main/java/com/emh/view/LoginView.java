@@ -84,6 +84,7 @@ public class LoginView extends VerticalLayout implements View {
 		});
 
 		btnLogin = new Button("Login");
+		btnLogin.setIcon(VaadinIcons.SIGN_IN);
 		btnLogin.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnLogin.addClickListener(e -> {
 			login();
@@ -91,7 +92,6 @@ public class LoginView extends VerticalLayout implements View {
 
 		btnSignup = new Button("Signup");
 		btnSignup.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		// btnSignup.setVisible(false);
 		btnSignup.addClickListener(e -> {
 			// getUI().getNavigator().navigateTo("signupview/params=10");
 			UI.getCurrent().addWindow(new SignupView(applicationContext));
@@ -126,9 +126,10 @@ public class LoginView extends VerticalLayout implements View {
 
 		if (isStatu) {
 			if (nUser != null) {
-				UI.getCurrent().getSession().setAttribute(User.class, user);
-				getUI().getNavigator().navigateTo("mainpageview");
-				//VaadinSession.getCurrent().setAttribute(User.class, user);
+				UI.getCurrent().getSession().setAttribute(User.class, nUser);
+				getUI().getNavigator().navigateTo(MainPageView.class.getSimpleName());
+				name.clear();
+				password.clear();
 			} else {
 				Notification.show("Incorrect password. Please type password again.", Type.HUMANIZED_MESSAGE);
 				password.clear();

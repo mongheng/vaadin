@@ -30,10 +30,10 @@ public class MainUI extends UI {
 		
 		Navigator navigator = new Navigator(this, this);
 		
-        navigator.addView("loginview", new LoginView(applicationContext));
-        navigator.addView("mainpageview", new MainPageView(applicationContext));
+        navigator.addView(LoginView.class.getSimpleName(), new LoginView(applicationContext));
+        navigator.addView(MainPageView.class.getSimpleName(), new MainPageView(applicationContext));
         
-        navigator.navigateTo("loginview");
+        navigator.navigateTo(LoginView.class.getSimpleName());
     }
 
 /*    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
