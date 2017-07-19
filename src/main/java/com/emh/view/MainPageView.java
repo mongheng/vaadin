@@ -15,6 +15,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -28,9 +30,11 @@ public class MainPageView extends VerticalLayout implements View {
 
 	private HorizontalLayout headerLayout;
 	private HorizontalLayout innerHeaderLayout;
+	private HorizontalLayout menuHeaderLayout;
 	private VerticalLayout menuLayout;
 	private HorizontalSplitPanel bodyLayout;
 	private VerticalLayout contentLayout;
+	private MenuBar menuBar;
 
 	public MainPageView(ApplicationContext applicationContext) {
 
@@ -47,17 +51,24 @@ public class MainPageView extends VerticalLayout implements View {
 	private void init() {
 		headerLayout = new HorizontalLayout();
 		innerHeaderLayout = new HorizontalLayout();
+		menuHeaderLayout = new HorizontalLayout();
 		menuLayout = new VerticalLayout();
 		bodyLayout = new HorizontalSplitPanel();
 		contentLayout = new VerticalLayout();
+		
+		menuBar = new MenuBar();
 
 		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
+		
+		addMenuBarToHeader("Dashboard",new String[]{});
+		addMenuBarToHeader("User", "UserListView");
 		addHeaderComponent();
-		addMenuAndContentComponent("User List View", UserListView.class.getSimpleName());
+		addMenuAndContentComponent("UserListView", UserListView.class.getSimpleName());
 		
 		bodyLayout.setFirstComponent(menuLayout);
 		bodyLayout.setSecondComponent(contentLayout);
 		bodyLayout.setSizeFull();
+		bodyLayout.addStyleName("v-verticallayout-borderBottom");
 		bodyLayout.setSplitPosition(15);
 		
 		addComponent(headerLayout);
@@ -65,7 +76,7 @@ public class MainPageView extends VerticalLayout implements View {
 		setComponentAlignment(headerLayout, Alignment.TOP_RIGHT);
 		addStyleName("v-verticallayout-borderBottom");
 		setSizeFull();
-		setExpandRatio(bodyLayout, 1);
+		setExpandRatio(bodyLayout, 0.2f);
 
 	}
 
@@ -103,13 +114,14 @@ public class MainPageView extends VerticalLayout implements View {
 		// innerHeaderLayout.setExpandRatio(btnSignout, 1);
 		innerHeaderLayout.setSpacing(true);
 		innerHeaderLayout.setSizeUndefined();
+		innerHeaderLayout.addStyleName("v-verticallayout-borderBottom");
 		innerHeaderLayout.setComponentAlignment(btnSignout, Alignment.TOP_RIGHT);
 		headerLayout.setSizeFull();
 		headerLayout.addComponent(innerHeaderLayout);
 		headerLayout.setMargin(new MarginInfo(false, true, false, false));
-		headerLayout.setComponentAlignment(innerHeaderLayout, Alignment.TOP_RIGHT);
+		headerLayout.setComponentAlignment(innerHeaderLayout, Alignment.BOTTOM_RIGHT);
 
-		//headerLayout.addStyleName("v-verticallayout-borderBottom");
+		headerLayout.addStyleName("v-verticallayout-borderBottom");
 		headerLayout.setHeight(2, Unit.CM);
 	}
 
@@ -132,7 +144,43 @@ public class MainPageView extends VerticalLayout implements View {
 			contentLayout.removeAllComponents();
 			contentLayout.addComponent(getViewComponent(viewComponent));
 			contentLayout.setSizeFull();
-			contentLayout.setStyleName("padding-bottom: 80px;");
+			contentLayout.addStyleName("v-verticallayout-borderBottom");
 		});
+	}
+	
+	private void addMenuBarToHeader(String topLevelMenuCatpion, String... subMenuCaptions) {
+		MenuItem menuItem;
+		if (subMenuCaptions.length == 0) {
+			menuItem = menuBar.addItem(topLevelMenuCatpion, new MenuCommand());
+			menuItem.setStyleName(ValoTheme.MENU_ROOT);
+		} else {
+			menuItem = menuBar.addItem(topLevelMenuCatpion, null);
+			menuItem.setStyleName(ValoTheme.MENU_ROOT);
+			for (String menuItemCaption : subMenuCaptions) {
+				MenuItem subMenuItem = menuItem.addItem(menuItemCaption, new MenuCommand());
+				subMenuItem.setIcon(VaadinIcons.GROUP);;
+			}
+		}
+		menuBar.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
+		menuHeaderLayout.addComponent(menuBar);
+		menuHeaderLayout.setSizeUndefined();
+		menuHeaderLayout.setComponentAlignment(menuBar, Alignment.TOP_CENTER);
+		
+		headerLayout.addComponent(menuBar);
+		headerLayout.setComponentAlignment(menuBar, Alignment.TOP_CENTER);
+	}
+	
+	private class MenuCommand implements MenuBar.Command {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void menuSelected(MenuItem selectedItem) {
+			
+			String command = selectedItem.getText();
+			contentLayout.removeAllComponents();
+			contentLayout.addComponent(getViewComponent(command));
+			contentLayout.setSizeFull();
+		}
 	}
 }

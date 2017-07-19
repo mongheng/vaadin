@@ -5,6 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.emh.view.LoginView;
 import com.emh.view.MainPageView;
+import com.emh.view.UserListView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
@@ -32,6 +33,7 @@ public class MainUI extends UI {
 		
         navigator.addView(LoginView.class.getSimpleName(), new LoginView(applicationContext));
         navigator.addView(MainPageView.class.getSimpleName(), new MainPageView(applicationContext));
+        navigator.addView(UserListView.class.getSimpleName(), new UserListView(applicationContext));
         
         navigator.navigateTo(LoginView.class.getSimpleName());
     }

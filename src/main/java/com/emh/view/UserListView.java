@@ -19,12 +19,11 @@ import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
+import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
@@ -39,6 +38,7 @@ public class UserListView extends VerticalLayout implements View {
 
 	private static final long serialVersionUID = 1L;
 	private ApplicationContext applicationContext;
+	private AbsoluteLayout absoluteLayout;
 	private Grid<User> grid;
 	private TextField tfUserName;
 	private ComboBox<Role> cbRole;
@@ -55,6 +55,9 @@ public class UserListView extends VerticalLayout implements View {
 	}
 	
 	private void init() {
+		absoluteLayout = new AbsoluteLayout();
+		absoluteLayout.setWidth("100%");
+		
 		List<User> users = getUsers();
 		userDataProvider = new ListDataProvider<>(users);
 		grid = new Grid<>();
@@ -65,18 +68,20 @@ public class UserListView extends VerticalLayout implements View {
 		Column<User, String> columnUserName = grid.addColumn(User::getUsername);
 		columnUserName.setCaption("UserName");
 		columnUserName.setId("0");
-		columnUserName.setWidth(170);
+		columnUserName.setWidth(165);
 		columnUserName.setEditorComponent(tfUserName, User::setUsername).setExpandRatio(1);
 
 		Column<User, String> columnTelephon = grid.addColumn(User::getTelephone);
 		columnTelephon.setCaption("Telephone");
 		columnTelephon.setId("1");
-		columnTelephon.setWidth(170);
+		columnTelephon.setWidth(165);
+		columnTelephon.setEditorComponent(new TextField(), User::setTelephone);
 
 		Column<User, String> columnEmail = grid.addColumn(User::getEmail);
 		columnEmail.setCaption("Email");
 		columnEmail.setId("2");
-		columnEmail.setWidth(170);
+		columnEmail.setWidth(165);
+		columnEmail.setEditorComponent(new TextField(), User::setEmail);
 
 		cbRole = new ComboBox<>();
 		cbRole.setItems(Utility.getRoles(applicationContext));
@@ -86,7 +91,7 @@ public class UserListView extends VerticalLayout implements View {
 		Column<User, String> columnRole = grid.addColumn(user->user.getRole().getRoleName());
 		columnRole.setCaption("Role");
 		columnRole.setId("3");
-		columnRole.setWidth(170);
+		columnRole.setWidth(165);
 		columnRole.setEditorBinding(userBinding);
 		//columnRole.setEditorComponent(cbRole, User::setRole::setRoleName).setExpandRatio(2);
 
@@ -149,28 +154,22 @@ public class UserListView extends VerticalLayout implements View {
 		grid.sort(columnUserName, SortDirection.ASCENDING);
 		grid.getEditor().setEnabled(true);
 		grid.addSelectionListener(new GridSelectionListener());
-
-		// HeaderRow groupingHeader = grid.prependHeaderRow();
-
-		/*
-		 * HeaderCell personInformationCell =
-		 * groupingHeader.join(groupingHeader.getCell("UserName"),
-		 * groupingHeader.getCell("Telephone"),
-		 * groupingHeader.getCell("Email")); personInformationCell.setText(
-		 * "Person Information"); HeaderCell accessRoleCell =
-		 * groupingHeader.join(groupingHeader.getCell("Role"));
-		 * accessRoleCell.setText("Access Role");
-		 */
 		
-		Label title = new Label("User Information.");
-		title.addStyleName(ValoTheme.LABEL_H1);
-
-		addComponents(title,grid);
-		grid.setWidth("950px");
-		grid.setHeight("300px");
-		setMargin(new MarginInfo(true, false, false, false));
-		setComponentAlignment(grid, Alignment.TOP_CENTER);
-		setComponentAlignment(title, Alignment.TOP_CENTER);
+		Label title = new Label("User Information");
+		title.addStyleName(ValoTheme.LABEL_H3);
+		//title.addStyleName("v-verticallayout-border");
+		
+		grid.setWidth("923px");
+		grid.setHeight("288px");
+		
+		absoluteLayout.addComponent(grid,"top:40px;");
+		absoluteLayout.addComponent(title,"left:400px");
+		//addComponents(title,grid);
+		addComponents(absoluteLayout);
+		setSizeFull();
+		addStyleName("v-verticallayout-borderBottom");
+		//setComponentAlignment(grid, Alignment.TOP_CENTER);
+		//setComponentAlignment(title, Alignment.TOP_CENTER);
 	}
 
 	private List<User> getUsers() {

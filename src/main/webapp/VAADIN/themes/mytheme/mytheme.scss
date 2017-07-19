@@ -105,7 +105,11 @@
 	}
 	
 	.v-verticallayout-borderBottom {
-		border-bottom: thin;
-		border-bottom-style: solid;
+		border: solid;
+	}
+	
+	.v-verticallayout-border{
+		border: solid;
+		margin-bottom: 50px;
 	}
 }
