@@ -28,7 +28,7 @@ public class MainPageView extends VerticalLayout implements View {
 	private ClassBusiness classBusiness;
 	private User user;
 
-	private HorizontalLayout headerLayout;
+	private VerticalLayout headerLayout;
 	private HorizontalLayout innerHeaderLayout;
 	private HorizontalLayout menuHeaderLayout;
 	private VerticalLayout menuLayout;
@@ -49,7 +49,7 @@ public class MainPageView extends VerticalLayout implements View {
 	}
 
 	private void init() {
-		headerLayout = new HorizontalLayout();
+		headerLayout = new VerticalLayout();
 		innerHeaderLayout = new HorizontalLayout();
 		menuHeaderLayout = new HorizontalLayout();
 		menuLayout = new VerticalLayout();
@@ -61,6 +61,8 @@ public class MainPageView extends VerticalLayout implements View {
 		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
 		
 		addMenuBarToHeader("Dashboard",new String[]{});
+		addMenuBarToHeader("Customer",new String[]{});
+		addMenuBarToHeader("Product",new String[]{});
 		addMenuBarToHeader("User", "UserListView");
 		addHeaderComponent();
 		addMenuAndContentComponent("UserListView", UserListView.class.getSimpleName());
@@ -69,7 +71,7 @@ public class MainPageView extends VerticalLayout implements View {
 		bodyLayout.setSecondComponent(contentLayout);
 		bodyLayout.setSizeFull();
 		bodyLayout.addStyleName("v-verticallayout-borderBottom");
-		bodyLayout.setSplitPosition(15);
+		bodyLayout.setSplitPosition(13);
 		
 		addComponent(headerLayout);
 		addComponent(bodyLayout);
@@ -119,7 +121,7 @@ public class MainPageView extends VerticalLayout implements View {
 		headerLayout.setSizeFull();
 		headerLayout.addComponent(innerHeaderLayout);
 		headerLayout.setMargin(new MarginInfo(false, true, false, false));
-		headerLayout.setComponentAlignment(innerHeaderLayout, Alignment.BOTTOM_RIGHT);
+		headerLayout.setComponentAlignment(innerHeaderLayout, Alignment.TOP_RIGHT);
 
 		headerLayout.addStyleName("v-verticallayout-borderBottom");
 		headerLayout.setHeight(2, Unit.CM);
@@ -139,6 +141,7 @@ public class MainPageView extends VerticalLayout implements View {
 		menuTitle.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
 		menuTitle.setWidth("100%");
 		menuLayout.addComponent(menuTitle);
+		menuLayout.setComponentAlignment(menuTitle, Alignment.TOP_CENTER);
 		
 		menuTitle.addClickListener(event -> {
 			contentLayout.removeAllComponents();
@@ -168,7 +171,7 @@ public class MainPageView extends VerticalLayout implements View {
 		menuHeaderLayout.setComponentAlignment(menuBar, Alignment.TOP_CENTER);
 		
 		headerLayout.addComponent(menuBar);
-		headerLayout.setComponentAlignment(menuBar, Alignment.TOP_RIGHT);
+		headerLayout.setComponentAlignment(menuBar, Alignment.TOP_CENTER);
 	}
 	
 	private class MenuCommand implements MenuBar.Command {

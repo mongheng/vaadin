@@ -159,7 +159,7 @@ public class UserListView extends VerticalLayout implements View {
 		title.addStyleName(ValoTheme.LABEL_H3);
 		//title.addStyleName("v-verticallayout-border");
 		
-		grid.setWidth("923px");
+		grid.setWidth("925px");
 		grid.setHeight("288px");
 		
 		absoluteLayout.addComponent(grid,"top:40px;");

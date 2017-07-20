@@ -8,6 +8,9 @@ import com.emh.model.Role;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.emh.util.Utility;
+import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
+import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.event.FieldEvents.BlurEvent;
 import com.vaadin.event.FieldEvents.BlurListener;
 import com.vaadin.icons.VaadinIcons;
@@ -20,12 +23,12 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Notification.Type;
 
 public class SignupView extends Window {
 
@@ -36,6 +39,7 @@ public class SignupView extends Window {
 	private VerticalLayout vSignup;
 	private FormLayout formLayout;
 	private HorizontalLayout hSignup;
+	private Binder<User> binder;
 
 	private TextField username;
 	private PasswordField password;
@@ -56,15 +60,20 @@ public class SignupView extends Window {
 		vSignup = new VerticalLayout();
 		formLayout = new FormLayout();
 		hSignup = new HorizontalLayout();
+		binder = new Binder<>();
 
 		username = new TextField("UserName :");
 		username.setIcon(VaadinIcons.USER);
 		username.setRequiredIndicatorVisible(true);
 		username.focus();
+		binder.forField(username)
+				.withValidator(username -> username.length() >= 2, "Full name must contain at least two characters")
+				.bind(User::getUsername, User::setUsername);
 
 		password = new PasswordField("Password :");
 		password.setIcon(VaadinIcons.PASSWORD);
 		password.setRequiredIndicatorVisible(true);
+		binder.bind(password, User::getPassword, User::setPassword);
 
 		repeatPassword = new PasswordField("Repeat Password :");
 		repeatPassword.setIcon(VaadinIcons.PASSWORD);
@@ -74,11 +83,14 @@ public class SignupView extends Window {
 		telephone = new TextField("Telephone :");
 		telephone.setIcon(VaadinIcons.PHONE);
 		// telephone.setRequiredIndicatorVisible(true);
+		binder.bind(telephone, User::getTelephone, User::setTelephone);
 
 		email = new TextField("Email :");
 		email.setIcon(VaadinIcons.MAILBOX);
 		email.setRequiredIndicatorVisible(true);
 		email.addBlurListener(new EmailExitFocus());
+		binder.forField(email).withValidator(new EmailValidator("This doesn't look like a valid email address"))
+				.bind(User::getEmail, User::setEmail);
 
 		cbRole = new ComboBox<>();
 		cbRole.setCaption("Access Role :");
@@ -86,6 +98,7 @@ public class SignupView extends Window {
 		cbRole.setRequiredIndicatorVisible(true);
 		cbRole.setItems(Utility.getRoles(applicationContext));
 		cbRole.setItemCaptionGenerator(Role::getRoleName);
+		binder.bind(cbRole, User::getRole, User::setRole);
 
 		btnCreate = new Button("Create");
 		btnCreate.addStyleName("friendly");
@@ -94,7 +107,7 @@ public class SignupView extends Window {
 		btnCancel = new Button("Cancel");
 		btnCancel.addStyleName("primary");
 		btnCancel.addClickListener(new ClickListener() {
-			
+
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -146,18 +159,19 @@ public class SignupView extends Window {
 
 		private static final long serialVersionUID = 1L;
 		private Notification notification;
-		
+
 		@Override
 		public void blur(BlurEvent event) {
-			
+
 			ClassBusiness classBusiness = (ClassBusiness) applicationContext
 					.getBean(ClassBusiness.class.getSimpleName());
-			notification = new Notification("Information","The email has already Exist. Please choose another one.", Type.WARNING_MESSAGE);
+			notification = new Notification("Information", "The email has already Exist. Please choose another one.",
+					Type.WARNING_MESSAGE);
 			notification.setDelayMsec(500);
 			notification.setStyleName("mynotificationstyle");
-			
+
 			List<User> users = classBusiness.selectAllEntity(User.class);
-			
+
 			if (users.size() > 0) {
 				users.forEach(user -> {
 					if (user.getEmail().equals(email.getValue())) {
@@ -169,7 +183,7 @@ public class SignupView extends Window {
 			}
 		}
 	}
-	
+
 	private final class CreateClickListener implements ClickListener {
 
 		private static final long serialVersionUID = 1L;
@@ -179,13 +193,22 @@ public class SignupView extends Window {
 
 			ClassBusiness classBusiness = (ClassBusiness) applicationContext
 					.getBean(ClassBusiness.class.getSimpleName());
+
+			User userbind = new User();
+			try {
+				binder.writeBean(userbind);
+			} catch (ValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			User user = new User(null, username.getValue(), password.getValue(), telephone.getValue(),
 					email.getValue());
 			Role r = cbRole.getSelectedItem().get();
 			if (user.getUsername() != null && user.getPassword() != null && r != null) {
 				user.setRole(r);
 				classBusiness.createEntity(user);
-				Notification.show("The data save successfully in Data Source.",Type.HUMANIZED_MESSAGE);
+				Notification.show("The data save successfully in Data Source.", Type.HUMANIZED_MESSAGE);
 				close();
 				UI.getCurrent().getNavigator().navigateTo("mainpageview");
 			} else {

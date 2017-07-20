@@ -94,8 +94,7 @@ public class LoginView extends VerticalLayout implements View {
 		btnSignup.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnSignup.addClickListener(e -> {
 			// getUI().getNavigator().navigateTo("signupview/params=10");
-			//UI.getCurrent().addWindow(new SignupView(applicationContext));
-			UI.getCurrent().getNavigator().navigateTo(UserListView.class.getSimpleName());
+			UI.getCurrent().addWindow(new SignupView(applicationContext));
 		});
 
 		hLayout.addComponents(btnLogin, btnSignup);
