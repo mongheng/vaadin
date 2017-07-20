@@ -164,10 +164,11 @@ public class MainPageView extends VerticalLayout implements View {
 		menuBar.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
 		menuHeaderLayout.addComponent(menuBar);
 		menuHeaderLayout.setSizeUndefined();
+		menuHeaderLayout.addStyleName("v-verticallayout-borderBottom");
 		menuHeaderLayout.setComponentAlignment(menuBar, Alignment.TOP_CENTER);
 		
 		headerLayout.addComponent(menuBar);
-		headerLayout.setComponentAlignment(menuBar, Alignment.TOP_CENTER);
+		headerLayout.setComponentAlignment(menuBar, Alignment.TOP_RIGHT);
 	}
 	
 	private class MenuCommand implements MenuBar.Command {
