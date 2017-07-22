@@ -53,6 +53,9 @@
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
 
+	<!-- <bean id="mainUI" class="com.emh.MainUI"/> -->
+	<!-- <bean id="defineSpringUIProvider" class="com.emh.UIProvider.DefineSpringUIProvider"/> -->
+	
 	<!-- <bean id="classDao" class="com.emh.repository.daoimpl.ClassDaoImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>

@@ -1,32 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
-  <context-param>
-    <param-name>contextClass</param-name>
-    <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-  </context-param>
-  <servlet>
-    <description></description>
-    <display-name>VaadinServlet</display-name>
-    <servlet-name>VaadinServlet</servlet-name>
-    <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
-    <init-param>
-      <param-name>UIProvider</param-name>
-      <param-value>com.emh.UIProvider.DefineUIProvider</param-value>
-    </init-param>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>/WEB-INF/spring/applicationContext.xml</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-    <async-supported>true</async-supported>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>VaadinServlet</servlet-name>
-    <url-pattern>/*</url-pattern>
-  </servlet-mapping>
-  <context-param>
-    <description>Vaadin production mode</description>
-    <param-name>productionMode</param-name>
-    <param-value>false</param-value>
-  </context-param>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	<!-- <context-param> <param-name>contextClass</param-name> <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext 
+		</param-value> </context-param> -->
+	<servlet>
+		<description></description>
+		<display-name>VaadinServlet</display-name>
+		<servlet-name>VaadinServlet</servlet-name>
+		<!-- <servlet-class>com.vaadin.server.VaadinServlet</servlet-class> -->
+		<!-- <init-param> <param-name>UIProvider</param-name> <param-value>com.emh.UIProvider.DefineUIProvider</param-value> 
+			</init-param> -->
+		<servlet-class>com.vaadin.spring.server.SpringVaadinServlet
+		</servlet-class>
+		<!-- <init-param> <param-name>UIProvider</param-name> <param-value>com.emh.UIProvider.DefineUIProvider</param-value> 
+			</init-param> -->
+		<init-param>
+			<param-name>SpringUIProvider</param-name>
+			<param-value>com.vaadin.spring.server.SpringUIProvider</param-value>
+		</init-param>
+		<!-- <init-param> <param-name>contextConfigLocation</param-name> <param-value>/WEB-INF/spring/applicationContext.xml</param-value> 
+			</init-param> -->
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>VaadinServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>VaadinServlet</servlet-name>
+		<url-pattern>/app/*</url-pattern>
+	</servlet-mapping>
+	<context-param>
+		<description>Vaadin production mode</description>
+		<param-name>productionMode</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<!-- <context-param> <param-name>contextConfigLocation</param-name> <param-value>/WEB-INF/spring/applicationContext.xml</param-value> 
+		</context-param> -->
+
+	<servlet>
+		<description>
+		</description>
+		<display-name>DispatcherServlet</display-name>
+		<servlet-name>DispatcherServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DispatcherServlet</servlet-name>
+		<url-pattern>/spring/*</url-pattern>
+		<url-pattern>/m/*</url-pattern>
+		<url-pattern>/t/*</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>s
 </web-app>

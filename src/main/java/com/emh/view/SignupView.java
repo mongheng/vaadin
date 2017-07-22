@@ -2,6 +2,7 @@ package com.emh.view;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import com.emh.model.Role;
@@ -35,6 +36,9 @@ public class SignupView extends Window {
 	private static final long serialVersionUID = 1L;
 
 	private ApplicationContext applicationContext;
+	
+	@Autowired
+	private ClassBusiness classBusinessAuto;
 
 	private VerticalLayout vSignup;
 	private FormLayout formLayout;
@@ -52,7 +56,9 @@ public class SignupView extends Window {
 
 	public SignupView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
+		if(classBusinessAuto != null) {
 		Init();
+		}
 	}
 
 	private void Init() {
@@ -106,6 +112,7 @@ public class SignupView extends Window {
 
 		btnCancel = new Button("Cancel");
 		btnCancel.addStyleName("primary");
+		
 		btnCancel.addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = 1L;
@@ -115,7 +122,7 @@ public class SignupView extends Window {
 				close();
 			}
 		});
-
+		
 		hSignup.addComponents(btnCreate, btnCancel);
 		hSignup.setComponentAlignment(btnCreate, Alignment.MIDDLE_RIGHT);
 		hSignup.setWidth("400px");
@@ -169,7 +176,7 @@ public class SignupView extends Window {
 					Type.WARNING_MESSAGE);
 			notification.setDelayMsec(500);
 			notification.setStyleName("mynotificationstyle");
-
+			
 			List<User> users = classBusiness.selectAllEntity(User.class);
 
 			if (users.size() > 0) {

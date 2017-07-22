@@ -25,6 +25,7 @@ public class MainPageView extends VerticalLayout implements View {
 
 	private static final long serialVersionUID = 1L;
 	private ApplicationContext applicationContext;
+	
 	private ClassBusiness classBusiness;
 	private User user;
 
@@ -39,7 +40,7 @@ public class MainPageView extends VerticalLayout implements View {
 	public MainPageView(ApplicationContext applicationContext) {
 
 		this.applicationContext = applicationContext;
-		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		//this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
 	}
 
 	@Override

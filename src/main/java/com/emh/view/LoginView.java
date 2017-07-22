@@ -7,6 +7,7 @@ import com.emh.repository.business.ClassBusiness;
 import com.vaadin.event.FieldEvents.BlurEvent;
 import com.vaadin.event.FieldEvents.BlurListener;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -85,6 +86,7 @@ public class LoginView extends VerticalLayout implements View {
 
 		btnLogin = new Button("Login");
 		btnLogin.setIcon(VaadinIcons.SIGN_IN);
+		btnLogin.setClickShortcut(KeyCode.ENTER);
 		btnLogin.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnLogin.addClickListener(e -> {
 			login();

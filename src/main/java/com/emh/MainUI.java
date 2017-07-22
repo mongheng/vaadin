@@ -1,6 +1,7 @@
 package com.emh;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.emh.view.LoginView;
@@ -9,6 +10,7 @@ import com.emh.view.UserListView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.UI;
 
 /**
@@ -19,6 +21,8 @@ import com.vaadin.ui.UI;
  * overridden to add component to the user interface and initialize non-component functionality.
  */
 @Theme("mytheme")
+@Scope("prototype")
+@SpringUI
 public class MainUI extends UI {
 
 	private static final long serialVersionUID = 1L;

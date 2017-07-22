@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+
+	
+	
+	<!-- We UrlBasedViewResolver better than InternalResourceViewResolver -->
+	<!-- Detected for App mobile and tablet -->
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		
+		<!-- <property name="viewResolvers">
+			<list>
+				<bean id="viewResolver"
+					class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+					<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+					<property name="prefix" value="/WEB-INF/view/"></property>
+					<property name="suffix" value=".jsp"></property>
+				</bean>
+			</list>
+		</property> -->
+		<property name="defaultViews">
+			<list>
+				<bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Detected for normal, mobile and tablet browser -->
+	<bean id="liteDeviceDelegatingViewResolver"
+		class="org.springframework.mobile.device.view.LiteDeviceDelegatingViewResolver">
+		<constructor-arg>
+			<bean id="viewResolver"
+				class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				<property name="prefix" value="/WEB-INF/view/"></property>
+				<property name="suffix" value=".jsp"></property>
+			</bean>
+		</constructor-arg>
+		<property name="mobilePrefix" value="m/"></property>
+		<property name="tabletPrefix" value="t/"></property>
+		<property name="enableFallback" value="true"></property>
+	</bean>
+	
+	<import resource="classpath*:applicationContext.xml" />
+	
+	
+</beans>
