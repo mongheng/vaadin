@@ -11,6 +11,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.annotation.SpringViewDisplay;
 import com.vaadin.ui.UI;
 
 /**
@@ -23,6 +24,7 @@ import com.vaadin.ui.UI;
 @Theme("mytheme")
 @Scope("prototype")
 @SpringUI
+@SpringViewDisplay
 public class MainUI extends UI {
 
 	private static final long serialVersionUID = 1L;
@@ -32,9 +34,9 @@ public class MainUI extends UI {
     protected void init(VaadinRequest vaadinRequest) {
 		applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 		getPage().setTitle("Vaadin Project");
-		
+	
 		Navigator navigator = new Navigator(this, this);
-		
+
         navigator.addView(LoginView.class.getSimpleName(), new LoginView(applicationContext));
         navigator.addView(MainPageView.class.getSimpleName(), new MainPageView(applicationContext));
         navigator.addView(UserListView.class.getSimpleName(), new UserListView(applicationContext));

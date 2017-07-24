@@ -1,6 +1,8 @@
 package com.emh.view;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
@@ -12,6 +14,7 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
@@ -25,6 +28,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@SpringView(name = "LoginView")
 public class LoginView extends VerticalLayout implements View {
 
 	private static final long serialVersionUID = 1L;
@@ -40,7 +45,7 @@ public class LoginView extends VerticalLayout implements View {
 	private Button btnSignup;
 
 	private boolean isStatu;
-
+	
 	public LoginView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 

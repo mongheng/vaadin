@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.emh.repository.dao.ClassDao;
+import com.vaadin.spring.annotation.SpringComponent;
 
+@SpringComponent
 @Service("ClassBusiness")
 public class ClassBusinessImpl implements ClassBusiness {
 

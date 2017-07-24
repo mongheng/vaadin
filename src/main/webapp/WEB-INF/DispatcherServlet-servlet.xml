@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
 
-	
+	<import resource="classpath*:applicationContext.xml" />
 	
 	<!-- We UrlBasedViewResolver better than InternalResourceViewResolver -->
 	<!-- Detected for App mobile and tablet -->
@@ -45,8 +45,5 @@
 		<property name="tabletPrefix" value="t/"></property>
 		<property name="enableFallback" value="true"></property>
 	</bean>
-	
-	<import resource="classpath*:applicationContext.xml" />
-	
 	
 </beans>
