@@ -165,7 +165,7 @@ public class UserListView extends VerticalLayout implements View {
 		// title.addStyleName("v-verticallayout-border");
 
 		grid.setWidth("925px");
-		grid.setHeight("288px");
+		grid.setHeight("330px");
 
 		absoluteLayout.addComponent(grid, "top:40px;");
 		absoluteLayout.addComponent(title, "left:400px");
@@ -190,7 +190,7 @@ public class UserListView extends VerticalLayout implements View {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	private final class GridSelectionListener implements SelectionListener<User> {
