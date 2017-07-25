@@ -78,6 +78,7 @@ public class MainPageView extends VerticalLayout implements View {
 		setComponentAlignment(headerLayout, Alignment.TOP_RIGHT);
 		addStyleName("v-verticallayout-borderBottom");
 		setSizeFull();
+		setSpacing(false);
 		setExpandRatio(bodyLayout, 0.2f);
 
 	}
