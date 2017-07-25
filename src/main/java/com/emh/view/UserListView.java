@@ -50,16 +50,20 @@ public class UserListView extends VerticalLayout implements View {
 	}
 
 	@Override
-	public void enter(ViewChangeEvent event) {		
+	public void enter(ViewChangeEvent event) {
 
 	}
-	
+
 	private void init() {
 		absoluteLayout = new AbsoluteLayout();
 		absoluteLayout.setWidth("100%");
-		
+
 		List<User> users = getUsers();
-		userDataProvider = new ListDataProvider<>(users);
+		if (users != null) {
+			userDataProvider = new ListDataProvider<>(users);
+		} else {
+			userDataProvider = new ListDataProvider<>(new ArrayList<>());
+		}
 		grid = new Grid<>();
 
 		grid.setDataProvider(userDataProvider);
@@ -88,12 +92,13 @@ public class UserListView extends VerticalLayout implements View {
 		cbRole.setItemCaptionGenerator(Role::getRoleName);
 		Binder<User> userBinder = grid.getEditor().getBinder();
 		Binding<User, Role> userBinding = userBinder.bind(cbRole, User::getRole, User::setRole);
-		Column<User, String> columnRole = grid.addColumn(user->user.getRole().getRoleName());
+		Column<User, String> columnRole = grid.addColumn(user -> user.getRole().getRoleName());
 		columnRole.setCaption("Role");
 		columnRole.setId("3");
 		columnRole.setWidth(165);
 		columnRole.setEditorBinding(userBinding);
-		//columnRole.setEditorComponent(cbRole, User::setRole::setRoleName).setExpandRatio(2);
+		// columnRole.setEditorComponent(cbRole,
+		// User::setRole::setRoleName).setExpandRatio(2);
 
 		Column<User, String> columnButton = grid.addColumn(user -> "Delete", new ButtonRenderer<>(clickEvent -> {
 
@@ -154,22 +159,22 @@ public class UserListView extends VerticalLayout implements View {
 		grid.sort(columnUserName, SortDirection.ASCENDING);
 		grid.getEditor().setEnabled(true);
 		grid.addSelectionListener(new GridSelectionListener());
-		
+
 		Label title = new Label("User Information");
 		title.addStyleName(ValoTheme.LABEL_H3);
-		//title.addStyleName("v-verticallayout-border");
-		
+		// title.addStyleName("v-verticallayout-border");
+
 		grid.setWidth("925px");
-		grid.setHeight("288px");
-		
-		absoluteLayout.addComponent(grid,"top:40px;");
-		absoluteLayout.addComponent(title,"left:400px");
-		//addComponents(title,grid);
+		grid.setHeight("330px");
+
+		absoluteLayout.addComponent(grid, "top:40px;");
+		absoluteLayout.addComponent(title, "left:400px");
+		// addComponents(title,grid);
 		addComponents(absoluteLayout);
 		setSizeFull();
 		addStyleName("v-verticallayout-borderBottom");
-		//setComponentAlignment(grid, Alignment.TOP_CENTER);
-		//setComponentAlignment(title, Alignment.TOP_CENTER);
+		// setComponentAlignment(grid, Alignment.TOP_CENTER);
+		// setComponentAlignment(title, Alignment.TOP_CENTER);
 	}
 
 	private List<User> getUsers() {
@@ -185,7 +190,7 @@ public class UserListView extends VerticalLayout implements View {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	private final class GridSelectionListener implements SelectionListener<User> {

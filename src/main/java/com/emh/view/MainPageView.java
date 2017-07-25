@@ -9,6 +9,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -21,11 +22,10 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class MainPageView extends VerticalLayout implements View {
+public class MainPageView extends AbsoluteLayout implements View {
 
 	private static final long serialVersionUID = 1L;
 	private ApplicationContext applicationContext;
-	
 	private ClassBusiness classBusiness;
 	private User user;
 
@@ -40,7 +40,7 @@ public class MainPageView extends VerticalLayout implements View {
 	public MainPageView(ApplicationContext applicationContext) {
 
 		this.applicationContext = applicationContext;
-		//this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
 	}
 
 	@Override
@@ -75,11 +75,9 @@ public class MainPageView extends VerticalLayout implements View {
 		bodyLayout.setSplitPosition(13);
 		
 		addComponent(headerLayout);
-		addComponent(bodyLayout);
-		setComponentAlignment(headerLayout, Alignment.TOP_RIGHT);
+		addComponent(bodyLayout,"top:70px;bottom:10px");
 		addStyleName("v-verticallayout-borderBottom");
 		setSizeFull();
-		setExpandRatio(bodyLayout, 0.2f);
 
 	}
 

@@ -1,5 +1,6 @@
 package com.emh.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -57,6 +58,6 @@ public class Utility {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return new ArrayList<>();
 	}
 }
