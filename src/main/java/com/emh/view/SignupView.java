@@ -2,7 +2,6 @@ package com.emh.view;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import com.emh.model.Role;
@@ -37,9 +36,6 @@ public class SignupView extends Window {
 
 	private ApplicationContext applicationContext;
 	
-	@Autowired
-	private ClassBusiness classBusinessAuto;
-
 	private VerticalLayout vSignup;
 	private FormLayout formLayout;
 	private HorizontalLayout hSignup;
@@ -56,9 +52,7 @@ public class SignupView extends Window {
 
 	public SignupView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
-		if(classBusinessAuto != null) {
 		Init();
-		}
 	}
 
 	private void Init() {
@@ -176,7 +170,7 @@ public class SignupView extends Window {
 					Type.WARNING_MESSAGE);
 			notification.setDelayMsec(500);
 			notification.setStyleName("mynotificationstyle");
-			
+
 			List<User> users = classBusiness.selectAllEntity(User.class);
 
 			if (users.size() > 0) {
