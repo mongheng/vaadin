@@ -56,6 +56,8 @@
 			<list>
 				<value>com.emh.model.User</value>
 				<value>com.emh.model.Role</value>
+				<value>com.emh.model.Floor</value>
+				<value>com.emh.model.Unit</value>
 			</list>
 		</property>
 		<!-- <property name="mappingResources"> <list> <value>User.hbm.xml</value> 
