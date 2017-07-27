@@ -20,8 +20,8 @@ public class Role implements Serializable {
 	private String roleName;
 
 	@Id
-	@GeneratedValue(generator = "system-uuid")
-	@GenericGenerator(name = "system-uuid", strategy = "uuid")
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Column(name = "ROLE_ID", unique = true)
 	public String getRoleID() {
 		return roleID;

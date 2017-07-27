@@ -49,7 +49,7 @@ public class LoginView extends VerticalLayout implements View {
 		hLayout = new HorizontalLayout();
 
 		classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
-
+		
 		name = new TextField();
 		name.setCaption("Username :");
 		name.setIcon(VaadinIcons.USER);
