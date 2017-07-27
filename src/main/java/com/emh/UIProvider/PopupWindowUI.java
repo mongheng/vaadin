@@ -14,7 +14,7 @@ public final class PopupWindowUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest request) {
-		// TODO Auto-generated method stub
+		
 		getPage().setTitle("Popup Window");
 
         // Have some content for it

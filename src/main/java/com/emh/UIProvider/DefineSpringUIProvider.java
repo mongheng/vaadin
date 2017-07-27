@@ -13,7 +13,7 @@ public class DefineSpringUIProvider extends SpringUIProvider {
 	
 	public DefineSpringUIProvider(VaadinSession vaadinSession) {
 		super(vaadinSession);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

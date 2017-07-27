@@ -199,7 +199,6 @@ public class SignupView extends Window {
 			try {
 				binder.writeBean(userbind);
 			} catch (ValidationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

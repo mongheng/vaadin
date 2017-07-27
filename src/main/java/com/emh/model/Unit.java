@@ -19,8 +19,8 @@ public class Unit {
 	private Floor floor;
 
 	@Id
-	@GeneratedValue(generator = "system-uuid")
-	@GenericGenerator(name = "system-uuid", strategy = "uuid")
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Column(name = "UNIT_ID", unique = true)
 	public String getUnitID() {
 		return unitID;

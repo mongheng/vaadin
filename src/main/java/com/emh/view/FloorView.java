@@ -12,13 +12,17 @@ import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class FloorView extends Window {
@@ -30,11 +34,14 @@ public class FloorView extends Window {
 	private VerticalLayout vLayout;
 	private FormLayout formLayout;
 	private HorizontalLayout hLayout;
-	
+
+	TextField fNumberField;
+	TextField totalNumberField;
 	private Grid<Floor> grid;
 	private Binder<Floor> binder;
-	
+
 	private ListDataProvider<Floor> floorDataProvider;
+	private Floor updateFloor;
 
 	public FloorView(ApplicationContext applicationContext) {
 		super();
@@ -42,78 +49,161 @@ public class FloorView extends Window {
 		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		init();
 	}
-	
+
 	private void init() {
 		vLayout = new VerticalLayout();
 		formLayout = new FormLayout();
 		hLayout = new HorizontalLayout();
-		
+
 		grid = new Grid<>();
 		binder = new Binder<>();
-		
-		TextField fNumberField = new TextField();
+
+		fNumberField = new TextField();
 		fNumberField.setCaption("Floor Number :");
 		fNumberField.setRequiredIndicatorVisible(true);
 		binder.forField(fNumberField)
-			.withConverter(new StringToIntegerConverter("This field is not a Number. Please input Number."))
-			.withValidator(floorNumber -> floorNumber > 0, "Number must be greater than zaro (0)")
-			.bind(Floor::getFloorNumber, Floor::setFloorNumber);
-		
-		TextField totalNumberField = new TextField();
+				.withConverter(new StringToIntegerConverter("This field is not a Number. Please input Number."))
+				.withValidator(floorNumber -> floorNumber > 0, "Number must be greater than zaro (0)")
+				.bind(Floor::getFloorNumber, Floor::setFloorNumber);
+
+		totalNumberField = new TextField();
 		totalNumberField.setCaption("Total Unit/Room :");
 		binder.forField(totalNumberField)
-			.withConverter(new StringToIntegerConverter("This field is not a Number. Please input Number."))
-			.bind(Floor::getTotalFloor, Floor::setTotalFloor);
-		
+				.withConverter(new StringToIntegerConverter("This field is not a Number. Please input Number."))
+				.bind(Floor::getTotalFloor, Floor::setTotalFloor);
+
 		Button btnSave = new Button();
 		btnSave.setCaption("Save");
 		btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		
+		btnSave.addClickListener(new SaveClickAction());
+
 		Button btnCancel = new Button();
 		btnCancel.setCaption("Cancel");
 		btnCancel.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnCancel.addClickListener(event -> {
 			this.close();
 		});
-		
+
 		hLayout.addComponents(btnSave, btnCancel);
 		hLayout.setComponentAlignment(btnSave, Alignment.MIDDLE_CENTER);
 		hLayout.setSpacing(true);
-		
-		formLayout.addComponents(fNumberField, totalNumberField,hLayout);
+
+		formLayout.addComponents(fNumberField, totalNumberField, hLayout);
 		formLayout.setComponentAlignment(fNumberField, Alignment.TOP_CENTER);
 		formLayout.setComponentAlignment(totalNumberField, Alignment.TOP_CENTER);
-		
-		vLayout.addComponents(formLayout);
+
+		initGrid();
+
+		vLayout.addComponents(formLayout, grid);
 		vLayout.setComponentAlignment(formLayout, Alignment.MIDDLE_CENTER);
-		
+		vLayout.setSpacing(true);
+
 		setCaption("Add New Floor");
 		setContent(vLayout);
 		center();
 		setModal(true);
-		//setResizable(false);
-		
-		setWidth("450px");
+		// setResizable(false);
+
+		setWidth("555px");
 		setHeight("450px");
+
 	}
-	
+
 	private void initGrid() {
 		List<Floor> floors = classBusiness.selectAllEntity(Floor.class);
-	
+
 		if (floors.size() > 0) {
 			floorDataProvider = new ListDataProvider<>(floors);
 		} else {
 			floorDataProvider = new ListDataProvider<>(new ArrayList<>());
 		}
-		
+
 		grid.setDataProvider(floorDataProvider);
-		
+
 		Column<Floor, Integer> columnFloorNumber = grid.addColumn(Floor::getFloorNumber);
 		columnFloorNumber.setCaption("Floor Number");
 		columnFloorNumber.setId("0");
 		columnFloorNumber.setWidth(130);
-		//columnFloorNumber.setEditorComponent(new TextField(), Floor::setFloorNumber);
-		
-		
+		// columnFloorNumber.setEditorComponent(new
+		// TextField(),Floor::setFloorNumber);
+
+		Column<Floor, Integer> columnTotalUnit = grid.addColumn(Floor::getTotalFloor);
+		columnTotalUnit.setCaption("Total Unit");
+		columnTotalUnit.setId("1");
+		columnTotalUnit.setWidth(130);
+
+		Column<Floor, String> columnDelete = grid.addColumn(floor -> "Delete", new ButtonRenderer<>(event -> {
+			Floor floor = event.getItem();
+			if (floor != null) {
+				classBusiness.deleteEntity(floor);
+			
+				Notification.show("The Floor is deleted Succussfully.", Type.HUMANIZED_MESSAGE);
+				floorDataProvider.getItems().remove(floor);
+				grid.setDataProvider(floorDataProvider);
+			}
+		}));
+		columnDelete.setCaption("Delete Action");
+		columnDelete.setWidth(130);
+
+		Column<Floor, String> columnUpdate = grid.addColumn(floor -> "Update", new ButtonRenderer<>(event -> {
+			try {
+				binder.writeBean(updateFloor);
+				classBusiness.updateEntity(updateFloor);
+
+				Notification.show("The data update successfully.", Type.HUMANIZED_MESSAGE);
+
+				List<Floor> listFloor = classBusiness.selectAllEntity(Floor.class);
+				floorDataProvider.getItems().clear();
+				floorDataProvider = new ListDataProvider<>(listFloor);
+				grid.setDataProvider(floorDataProvider);
+
+				fNumberField.clear();
+				totalNumberField.clear();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}));
+		columnUpdate.setCaption("Update Action");
+		columnUpdate.setWidth(130);
+
+		grid.setSizeFull();
+
+		grid.addSelectionListener(selectionEvent -> {
+			grid.getSelectedItems().forEach(floor -> {
+				if (floor != null) {
+					updateFloor = floor;
+					binder.readBean(updateFloor);
+				}
+			});
+
+		});
+
+	}
+
+	private final class SaveClickAction implements ClickListener {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
+
+			try {
+				Floor floor = new Floor();
+				binder.writeBean(floor);
+				floorDataProvider.getItems().add(floor);
+				grid.setDataProvider(floorDataProvider);
+				classBusiness.createEntity(floor);
+				Notification.show("The Floor save successfully.", Type.HUMANIZED_MESSAGE);
+
+				fNumberField.clear();
+				totalNumberField.clear();
+				fNumberField.focus();
+			} catch (Exception e) {
+				Notification.show(e.getMessage());
+				e.printStackTrace();
+			}
+		}
 	}
 }

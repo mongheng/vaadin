@@ -22,8 +22,8 @@ public class Floor {
 	private Set<Unit> units;
 
 	@Id
-	@GeneratedValue(generator = "system-uuid")
-	@GenericGenerator(name = "system-uuid", strategy = "uuid")
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Column(name = "FLOOR_ID", unique = true)
 	public String getFloorID() {
 		return floorID;
