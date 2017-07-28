@@ -5,8 +5,11 @@ import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
+import com.emh.model.Floor;
 import com.emh.model.Role;
 import com.emh.repository.business.ClassBusiness;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 
 public class Utility {
 
@@ -16,11 +19,11 @@ public class Utility {
 				char[] cPassword = password.toCharArray();
 				StringBuilder s = new StringBuilder();
 				for (char c : cPassword) {
-					int value = ((int)c + 2) *3;
+					int value = ((int) c + 2) * 3;
 					s.append(String.valueOf(value));
 					s.append("-");
 				}
-				
+
 				return s.toString();
 			}
 		} catch (Exception e) {
@@ -29,22 +32,22 @@ public class Utility {
 
 		return null;
 	}
-	
+
 	public static String decryptionPassword(String password) {
 		try {
 			String[] splitPassword = password.split("-");
 			StringBuilder decryption = new StringBuilder();
 			for (String values : splitPassword) {
 				int value = (Integer.valueOf(values) / 3) - 2;
-				decryption.append((char)value);
+				decryption.append((char) value);
 			}
 			return decryption.toString();
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	public static List<Role> getRoles(ApplicationContext applicationContext) {
 		try {
 			ClassBusiness classBusiness = (ClassBusiness) applicationContext
@@ -56,6 +59,23 @@ public class Utility {
 				}
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return new ArrayList<>();
+	}
+
+	public static List<Floor> getFloor(ApplicationContext applicationContext) {
+		try {
+			ClassBusiness classBusiness = (ClassBusiness) applicationContext
+					.getBean(ClassBusiness.class.getSimpleName());
+			if (classBusiness != null) {
+				List<Floor> floors = (List<Floor>) classBusiness.selectAllEntity(Floor.class);
+				if (floors.size() > 0) {
+					return floors;
+				}
+			}
+		} catch (Exception ex) {
+			Notification.show(ex.getMessage(), Type.HUMANIZED_MESSAGE);
 			ex.printStackTrace();
 		}
 		return new ArrayList<>();

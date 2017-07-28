@@ -35,8 +35,8 @@ public class FloorView extends Window {
 	private FormLayout formLayout;
 	private HorizontalLayout hLayout;
 
-	TextField fNumberField;
-	TextField totalNumberField;
+	private TextField fNumberField;
+	private TextField totalNumberField;
 	private Grid<Floor> grid;
 	private Binder<Floor> binder;
 
@@ -177,7 +177,6 @@ public class FloorView extends Window {
 					binder.readBean(updateFloor);
 				}
 			});
-
 		});
 
 	}
