@@ -8,13 +8,13 @@ import com.emh.util.Utility;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -26,16 +26,17 @@ public class UnitView extends Window {
 	private ClassBusiness classBusiness;
 	private Binder<com.emh.model.Unit> binder;
 	
-	private VerticalLayout vLayout;
-	private FormLayout formLayout;
-	private HorizontalLayout hFloorLayout;
-	private HorizontalLayout hButtonLayout;
+	private AbsoluteLayout absoluteLayout;
 	
+	private Label unitNumberLabel;
 	private TextField unitNumberField;
+	private Label floorLabel;
 	private ComboBox<Floor> cbFloor;
 	private Button btnComboFloor;
 	private Button btnSave;
 	private Button btnCancel;
+	
+	private Grid<com.emh.model.Unit> grid;
 	
 	public UnitView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -48,10 +49,12 @@ public class UnitView extends Window {
 		
 		binder = new Binder<>();
 		
-		vLayout = new VerticalLayout();
-		formLayout = new FormLayout();
-		hFloorLayout = new HorizontalLayout();
-		hButtonLayout = new HorizontalLayout();
+		grid = new Grid<>();
+		
+		absoluteLayout = new AbsoluteLayout();
+		
+		unitNumberLabel = new Label();
+		unitNumberLabel.setValue("Unit/Room Number :");
 		
 		unitNumberField = new TextField();
 		cbFloor = new ComboBox<>();
@@ -59,28 +62,27 @@ public class UnitView extends Window {
 		btnSave = new Button();
 		btnCancel = new Button();
 		
-		unitNumberField.setCaption("Unit/Room Number :");
 		unitNumberField.setRequiredIndicatorVisible(true);
 		binder.forField(unitNumberField)
 			.withConverter(new StringToIntegerConverter("This field is not a Number. Please input Number."))
 			.withValidator(unitNumber -> unitNumber > 0, "Number must be greater than zaro (0)")
 			.bind(com.emh.model.Unit::getUnitNumber, com.emh.model.Unit::setUnitNumber);
 		
-		cbFloor.setCaption("Select Floor");
+		floorLabel = new Label();
+		floorLabel.setValue("Select Floor :");
+		
 		cbFloor.setRequiredIndicatorVisible(true);
 		cbFloor.setItems(Utility.getFloor(applicationContext));
 		cbFloor.setItemCaptionGenerator(floor -> floor.getFloorNumber().toString());
 		binder.bind(cbFloor, com.emh.model.Unit::getFloor, com.emh.model.Unit::setFloor);
 		
 		btnComboFloor.setIcon(VaadinIcons.PLUS);
+		btnComboFloor.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		btnComboFloor.setWidth("35px");
+		btnComboFloor.setHeight("37px");
 		btnComboFloor.addClickListener(clickEvent -> {
-			UI.getCurrent().getNavigator().navigateTo(FloorView.class.getSimpleName());
+			UI.getCurrent().addWindow(new FloorView(applicationContext));
 		});
-		
-		FormLayout formLayoutFloor = new FormLayout();
-		formLayoutFloor.addComponent(cbFloor);
-		hFloorLayout.addComponents(formLayoutFloor, btnComboFloor);
-		hFloorLayout.setSpacing(false);
 		
 		btnSave.setCaption("Save");
 		btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -88,16 +90,20 @@ public class UnitView extends Window {
 		btnCancel.setCaption("Cancel");
 		btnCancel.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		
-		hButtonLayout.addComponents(btnSave, btnCancel);
+		grid.setHeight("190px");;
 		
-		formLayout.addComponents(unitNumberField, hFloorLayout, hButtonLayout);
+		absoluteLayout.addComponent(unitNumberLabel, "top:20.0px;left:30.0px;");
+		absoluteLayout.addComponent(unitNumberField, "top:15.0px;left:183.0px;");
+		absoluteLayout.addComponent(floorLabel, "top:75.0px;left:82.0px;");
+		absoluteLayout.addComponent(cbFloor, "top:66.0px;left:183.0px;");
+		absoluteLayout.addComponent(btnComboFloor, "top:66.0px;left:369.0px;");
+		absoluteLayout.addComponent(btnSave, "top:121.0px;left:183.0px;");
+		absoluteLayout.addComponent(btnCancel, "top:121.0px;left:287.0px;");
+		absoluteLayout.addComponent(grid, "top:169.0px;left:30.0px;");
 		
-		vLayout.addComponent(formLayout);
-		vLayout.setSizeFull();
-		
-		setContent(vLayout);
+		setContent(absoluteLayout);
 		center();
-		setWidth("400px");
+		setWidth("560px");
 		setHeight("400px");
 	}
 }

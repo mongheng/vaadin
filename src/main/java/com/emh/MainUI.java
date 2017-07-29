@@ -7,6 +7,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.emh.view.LoginView;
 import com.emh.view.MainPageView;
 import com.emh.view.UserListView;
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
@@ -25,6 +26,7 @@ import com.vaadin.ui.UI;
 @Scope("prototype")
 @SpringUI
 @SpringViewDisplay
+@PreserveOnRefresh
 public class MainUI extends UI {
 
 	private static final long serialVersionUID = 1L;
