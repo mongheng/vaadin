@@ -6,21 +6,23 @@ import java.util.List;
 import org.springframework.context.ApplicationContext;
 
 import com.emh.model.Floor;
-import com.emh.model.Unit;
 import com.emh.repository.business.ClassBusiness;
 import com.emh.util.Utility;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.data.provider.Query;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.renderers.NumberRenderer;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
@@ -45,6 +47,8 @@ public class UnitView extends Window {
 	private Button btnComboFloor;
 	private Button btnSave;
 	private Button btnCancel;
+	private Label unitNumberLabelFilter;
+	private TextField unitNumberFieldFilter;
 
 	private Grid<com.emh.model.Unit> grid;
 
@@ -62,7 +66,25 @@ public class UnitView extends Window {
 		grid = new Grid<>();
 
 		absoluteLayout = new AbsoluteLayout();
-
+		unitNumberLabelFilter = new Label();
+		unitNumberLabelFilter.setValue("FilterUnit :");
+		
+		unitNumberFieldFilter = new TextField();
+		unitNumberFieldFilter.setWidth("90px");
+		unitNumberFieldFilter.setHeight("30px");
+		unitNumberFieldFilter.addValueChangeListener(valueChangeEvent -> {
+			String filterText = valueChangeEvent.getValue();
+			List<com.emh.model.Unit> newUnit = new ArrayList<>();
+			List<com.emh.model.Unit> units = (List<com.emh.model.Unit>) unitDataProvider.getItems();
+			
+			units.forEach(unit -> {
+				if (unit.getUnitNumber().toString().contains(filterText)) {
+					newUnit.add(unit);
+				}
+			});
+			grid.setDataProvider(new ListDataProvider<>(newUnit));
+		});
+		
 		unitNumberLabel = new Label();
 		unitNumberLabel.setValue("Unit/Room Number :");
 
@@ -96,12 +118,16 @@ public class UnitView extends Window {
 
 		btnSave.setCaption("Save");
 		btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		btnSave.addClickListener(new SaveClickListener());
 
 		btnCancel.setCaption("Cancel");
 		btnCancel.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		btnCancel.addClickListener(eventClick -> {
+			this.close();
+		});
 
 		grid.setHeight("190px");
-		;
+		
 		initGrid();
 
 		absoluteLayout.addComponent(unitNumberLabel, "top:20.0px;left:30.0px;");
@@ -111,12 +137,14 @@ public class UnitView extends Window {
 		absoluteLayout.addComponent(btnComboFloor, "top:66.0px;left:369.0px;");
 		absoluteLayout.addComponent(btnSave, "top:121.0px;left:183.0px;");
 		absoluteLayout.addComponent(btnCancel, "top:121.0px;left:287.0px;");
-		absoluteLayout.addComponent(grid, "top:169.0px;left:30.0px;");
+		absoluteLayout.addComponent(unitNumberLabelFilter, "top:194.0px;left:355.0px;");
+		absoluteLayout.addComponent(unitNumberFieldFilter,"top:189.0px;left:439.5px;");
+		absoluteLayout.addComponent(grid, "top:220.0px;left:30.0px;");
 
 		setContent(absoluteLayout);
 		center();
 		setWidth("560px");
-		setHeight("400px");
+		setHeight("455px");
 	}
 
 	private void initGrid() {
@@ -130,15 +158,35 @@ public class UnitView extends Window {
 
 		grid.setDataProvider(unitDataProvider);
 
-		/*Column<com.emh.model.Unit, String> noColumn = grid.addColumn(number -> {
-			boolean checkSize = unitDataProvider.size(new Query<>()) > 0 ? true : false ;
-			if (checkSize) {
-				for (int i=0; i < unitDataProvider.size(new Query<>()); i++) {
-				return "";
-				}
-			} else {
-				return "";
+		Column<com.emh.model.Unit, Integer> columnUnitNumber = grid.addColumn(com.emh.model.Unit::getUnitNumber);
+		columnUnitNumber.setCaption("Unit/Room Number");
+		
+		Column<com.emh.model.Unit, Integer> columnFloorNumber = grid.addColumn(unit -> unit.getFloor().getFloorNumber());
+		columnFloorNumber.setCaption("Floor Number");
+	}
+	
+	private final class SaveClickListener implements ClickListener {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+			
+			com.emh.model.Unit unit = new com.emh.model.Unit();
+			try {
+				binder.writeBean(unit);
+				unitDataProvider.getItems().add(unit);
+				grid.setDataProvider(unitDataProvider);				
+				classBusiness.createEntity(unit);
+				
+				Notification.show("The Unit save successfully.", Type.HUMANIZED_MESSAGE);
+				
+				unitNumberField.clear();
+				cbFloor.clear();
+				unitNumberField.focus();
+			} catch (ValidationException e) {
+				e.printStackTrace();
 			}
-		});*/
+		}
 	}
 }

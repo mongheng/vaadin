@@ -5,6 +5,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
+import com.emh.view.tab.TabCustomer;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -67,6 +68,7 @@ public class MainPageView extends AbsoluteLayout implements View {
 		addMenuBarToHeader("User", "UserListView");
 		addHeaderComponent();
 		addMenuAndContentComponent("UserListView", UserListView.class.getSimpleName());
+		addMenuAndContentComponent("Customer", TabCustomer.class.getSimpleName());
 		
 		bodyLayout.setFirstComponent(menuLayout);
 		bodyLayout.setSecondComponent(contentLayout);
@@ -129,7 +131,12 @@ public class MainPageView extends AbsoluteLayout implements View {
 	private Component getViewComponent(String viewCaption) {
 		if (viewCaption.equals(UserListView.class.getSimpleName())) {
 			return new UserListView(applicationContext);
-		}else {
+		} else if (viewCaption.equals(TabCustomer.class.getSimpleName())) {
+			TabCustomer tabCustomer = new TabCustomer();
+			tabCustomer.setSelectedTab(1);
+			return tabCustomer;
+		}
+		else {
 			return null;
 		}
 	}
@@ -146,6 +153,7 @@ public class MainPageView extends AbsoluteLayout implements View {
 			contentLayout.removeAllComponents();
 			contentLayout.addComponent(getViewComponent(viewComponent));
 			contentLayout.setSizeFull();
+			contentLayout.setMargin(false);
 			contentLayout.addStyleName("v-verticallayout-borderBottom");
 		});
 	}
@@ -183,6 +191,7 @@ public class MainPageView extends AbsoluteLayout implements View {
 			String command = selectedItem.getText();
 			contentLayout.removeAllComponents();
 			contentLayout.addComponent(getViewComponent(command));
+			contentLayout.setMargin(false);
 			contentLayout.setSizeFull();
 		}
 	}

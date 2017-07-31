@@ -16,6 +16,7 @@ public class Unit {
 
 	private String unitID;
 	private Integer unitNumber;
+	private boolean statu;
 	private Floor floor;
 
 	@Id
@@ -37,6 +38,15 @@ public class Unit {
 
 	public void setUnitNumber(Integer unitNumber) {
 		this.unitNumber = unitNumber;
+	}
+
+	@Column(name = "STATU", columnDefinition = "BOOLEAN DEFAULT false")
+	public boolean isStatu() {
+		return statu;
+	}
+
+	public void setStatu(boolean statu) {
+		this.statu = statu;
 	}
 
 	@ManyToOne
