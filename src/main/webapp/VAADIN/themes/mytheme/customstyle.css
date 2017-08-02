@@ -45,3 +45,8 @@
 	border: solid;
 	margin-bottom: 50px;
 }
+.v-tabsheet{
+	font-size: 20px;
+	font-family: fantasy;
+	font-style: italic;
+}
