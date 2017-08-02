@@ -37,13 +37,14 @@
   // Insert your own theme rules here
   	.v-label{
 		color: blue;
-		font-size: 30;
+		font-size: 18px;
 		font-family: sans-serif;
 		font-style: italic;
 	}
 	
 	.v-label.name{
-		font-size: 20;
+		color: black;
+		font-size: 26px;
 		font-family: monospace;
 		font-style: italic;
 	}
@@ -111,5 +112,11 @@
 	.v-verticallayout-border{
 		border: solid;
 		margin-bottom: 50px;
+	}
+	
+	.v-tabsheet{
+		font-size: 18px;
+		font-family: fantasy;
+		font-style: italic;
 	}
 }
