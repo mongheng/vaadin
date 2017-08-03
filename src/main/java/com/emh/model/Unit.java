@@ -18,7 +18,7 @@ public class Unit {
 	private Integer unitNumber;
 	private boolean statu;
 	private Floor floor;
-
+	
 	@Id
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
