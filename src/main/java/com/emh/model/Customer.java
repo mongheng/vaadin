@@ -1,6 +1,6 @@
 package com.emh.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,7 +19,7 @@ public class Customer {
 	private String customerID;
 	private String customerName;
 	private String gender;
-	private Date dob;
+	private LocalDate dob;
 	private String job;
 	private String address;
 	private String phoneNumber;
@@ -58,12 +56,12 @@ public class Customer {
 	}
 
 	@Column(name = "DOB")
-	@Temporal(TemporalType.DATE)
-	public Date getDob() {
+	//@Temporal(TemporalType.TIMESTAMP)
+	public LocalDate getDob() {
 		return dob;
 	}
 
-	public void setDob(Date dob) {
+	public void setDob(LocalDate dob) {
 		this.dob = dob;
 	}
 

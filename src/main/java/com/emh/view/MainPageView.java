@@ -133,7 +133,7 @@ public class MainPageView extends AbsoluteLayout implements View {
 			return new UserListView(applicationContext);
 		} else if (viewCaption.equals(TabCustomer.class.getSimpleName())) {
 			TabCustomer tabCustomer = new TabCustomer(applicationContext);
-			tabCustomer.setSelectedTab(1);
+			//tabCustomer.setSelectedTab(1);
 			return tabCustomer;
 		}
 		else {

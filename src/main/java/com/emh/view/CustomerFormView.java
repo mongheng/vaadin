@@ -1,5 +1,6 @@
 package com.emh.view;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,15 +10,24 @@ import org.springframework.context.ApplicationContext;
 import com.emh.model.Customer;
 import com.emh.model.Floor;
 import com.emh.repository.business.ClassBusiness;
+import com.vaadin.data.Binder;
+import com.vaadin.data.HasValue.ValueChangeEvent;
+import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -29,6 +39,11 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
+
+	private Customer customer;
+	private Customer tempCustomer;
+
+	private ListDataProvider<Customer> customerDataProvider;
 
 	private Label lblCustomerTitle;
 	private Label lblUnitPaymentTitle;
@@ -68,8 +83,17 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 	private Grid<Customer> grid;
 
+	private Binder<Customer> binderCustomer;
+	private Binder<com.emh.model.Unit> binderUnit;
+
 	public CustomerFormView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
+		init();
+	}
+
+	public CustomerFormView(ApplicationContext applicationContext, Customer customer) {
+		this.applicationContext = applicationContext;
+		this.customer = customer;
 		init();
 	}
 
@@ -82,6 +106,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		initComponents();
+		initGrid();
 		addComponent(lblCustomerTitle, "top:14.0px;left:0.0px;");
 		addComponent(lblUnitPaymentTitle, "top:175.0px;left:0.0px;");
 		addComponent(lblCustomerName, "top:69.0px;left:16.0px;");
@@ -119,9 +144,23 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		addComponent(grid, "top:360.0px;left:16.0px;");
 		setSizeFull();
 
+		if (customer != null) {
+			binderCustomer.readBean(customer);
+			binderUnit.readBean(customer.getUnit());
+			cboUnit.setItemCaptionGenerator(unit -> unit.getUnitNumber().toString());
+			cboFloor.setItemCaptionGenerator(floor -> floor.getFloorNumber().toString());
+
+			customerDataProvider.getItems().clear();
+			customerDataProvider.getItems().add(tempCustomer);
+			grid.setDataProvider(customerDataProvider);
+		}
 	}
 
 	private void initComponents() {
+
+		customerDataProvider = new ListDataProvider<>(new ArrayList<>());
+		binderCustomer = new Binder<>();
+		binderUnit = new Binder<>();
 
 		lblCustomerTitle = new Label("Customer Details");
 		lblCustomerTitle.addStyleName("name");
@@ -142,24 +181,46 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		lblEndDate = new Label("End Date :");
 
 		customerNameField = new TextField();
+		binderCustomer.forField(customerNameField)
+				.withValidator(name -> name.length() > 0, "Customer Name can not empty. Please fill it.")
+				.bind(Customer::getCustomerName, Customer::setCustomerName);
+
 		jobField = new TextField();
+		binderCustomer.bind(jobField, Customer::getJob, Customer::setJob);
+
 		phoneField = new TextField();
+		binderCustomer.bind(phoneField, Customer::getPhoneNumber, Customer::setPhoneNumber);
+
 		paymentField = new TextField();
 		termField = new TextField();
+		termField.addValueChangeListener(new TermFieldValueChangeListener());
 
 		addressTextArea = new TextArea();
 		addressTextArea.setWidth("-1px");
 		addressTextArea.setHeight("73px");
+		binderCustomer.bind(addressTextArea, Customer::getAddress, Customer::setAddress);
 
 		cboGender = new ComboBox<>();
-		
+		binderCustomer.forField(cboGender).withValidator(gender -> gender.length() > 0, "Please select marital status.")
+				.bind(Customer::getGender, Customer::setGender);
+
 		cboFloor = new ComboBox<>();
 		cboFloor.setWidth("151px");
-		
+		// binderCustomer.forField(cboFloor).bind(customer ->
+		// customer.getUnit().getFloor(), (customer, formValue )->
+		// customer.getUnit().setFloor(formValue));
+		binderUnit.bind(cboFloor, com.emh.model.Unit::getFloor, com.emh.model.Unit::setFloor);
+
 		cboUnit = new ComboBox<>();
 		cboUnit.setWidth("151px");
+		binderCustomer.bind(cboUnit, Customer::getUnit, Customer::setUnit);
+
 		dobDateField = new DateField();
+		binderCustomer.bind(dobDateField, Customer::getDob, Customer::setDob);
+
 		startDateField = new DateField();
+		startDateField.setValue(LocalDate.now());
+
 		endDateField = new DateField();
 
 		btnAddFloor = new Button();
@@ -169,7 +230,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		btnAddFloor.addClickListener(clickEvent -> {
 			UI.getCurrent().addWindow(new FloorView(applicationContext));
 		});
-		
+
 		btnAddUnit = new Button();
 		btnAddUnit.setWidth("33px");
 		btnAddUnit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -177,9 +238,11 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		btnAddUnit.addClickListener(clickEvent -> {
 			UI.getCurrent().addWindow(new UnitView(applicationContext));
 		});
-		
+
 		btnSave = new Button("Save");
 		btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		btnSave.addClickListener(new SaveClickEvent());
+
 		btnCancel = new Button("Cancel");
 		btnCancel.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 
@@ -194,23 +257,117 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		cboFloor.setItemCaptionGenerator(floor -> floor.getFloorNumber().toString());
 		cboFloor.addValueChangeListener(valueChangeEvent -> {
 			Floor floor = valueChangeEvent.getValue();
-			cboUnit.clear();
-			if (floor != null) {
-				List<com.emh.model.Unit> newUnits = new ArrayList<>();
-				List<com.emh.model.Unit> units = (List<com.emh.model.Unit>) classBusiness
-						.selectAllEntity(com.emh.model.Unit.class);
-				if (units.size() > 0) {
-					units.forEach(unit -> {
-						if (unit.getFloor().getFloorID().equals(floor.getFloorID())) {
-							newUnits.add(unit);
-						}
-					});
+			if (customer == null) {
+				cboUnit.clear();
+				if (floor != null) {
+					List<com.emh.model.Unit> newUnits = new ArrayList<>();
+					List<com.emh.model.Unit> units = (List<com.emh.model.Unit>) classBusiness
+							.selectAllEntity(com.emh.model.Unit.class);
+					if (units.size() > 0) {
+						units.forEach(unit -> {
+							if (unit.getFloor().getFloorID().equals(floor.getFloorID())) {
+								if (!unit.isStatu()) {
+									newUnits.add(unit);
+								}
+							}
+						});
+					}
+					cboUnit.setItems(newUnits);
+					cboUnit.setItemCaptionGenerator(unit -> unit.getUnitNumber().toString());
+				} else {
+					cboUnit.setItems(new ArrayList<>());
 				}
-				cboUnit.setItems(newUnits);
-				cboUnit.setItemCaptionGenerator(unit -> unit.getUnitNumber().toString());
-			} else {
-				cboUnit.setItems(new ArrayList<>());
+				customer = tempCustomer;
 			}
 		});
+
+		cboFloor.addSelectionListener(selectionEvent -> {
+			tempCustomer = customer;
+			customer = null;
+		});
+	}
+
+	private final class SaveClickEvent implements ClickListener {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+
+			try {
+				if (tempCustomer == null) {
+					Customer customer = new Customer();
+					binderCustomer.writeBean(customer);
+					
+					customer.getUnit().setStatu(true);
+					classBusiness.createEntity(customer);
+					classBusiness.updateEntity(customer.getUnit());
+					customerDataProvider.getItems().add(customer);
+					grid.setDataProvider(customerDataProvider);
+					customerDataProvider = new ListDataProvider<>(new ArrayList<>());
+					Notification.show("The Unit save successfully.", Type.HUMANIZED_MESSAGE);
+				} else {
+					Customer newCustomer = new Customer();
+					binderCustomer.writeBean(newCustomer);
+					
+					com.emh.model.Unit unit = newCustomer.getUnit();
+					com.emh.model.Unit tempUnit = tempCustomer.getUnit();
+					if (!unit.equals(tempUnit)) {
+						unit.setStatu(true);
+						classBusiness.updateEntity(newCustomer.getUnit());
+						tempUnit.setStatu(false);
+						classBusiness.updateEntity(tempCustomer.getUnit());
+					}
+					classBusiness.updateEntity(newCustomer);
+					customerDataProvider.getItems().clear();
+					customerDataProvider.getItems().add(newCustomer);
+					grid.setDataProvider(customerDataProvider);
+					customer = newCustomer;
+					Notification.show("The Customer update successfully.", Type.HUMANIZED_MESSAGE);
+				}
+			} catch (Exception e) {
+				Notification.show(e.getMessage(), Type.HUMANIZED_MESSAGE);
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private final class TermFieldValueChangeListener implements ValueChangeListener<String> {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void valueChange(ValueChangeEvent<String> event) {
+			String term = event.getValue();
+			if (!term.isEmpty()) {
+				int month = Integer.parseInt(event.getValue());
+				LocalDate start = startDateField.getValue().plusMonths(month);
+				endDateField.setValue(start);
+			} else {
+				endDateField.setValue(LocalDate.now());
+			}
+		}
+	}
+
+	private void initGrid() {
+
+		Column<Customer, String> columnCustomername = grid.addColumn(Customer::getCustomerName);
+		columnCustomername.setCaption("Customer Name");
+
+		Column<Customer, String> columnGender = grid.addColumn(Customer::getGender);
+		columnGender.setCaption("Marital Status");
+
+		Column<Customer, LocalDate> columnDOB = grid.addColumn(Customer::getDob);
+		columnDOB.setCaption("Date Of Birth");
+
+		Column<Customer, String> columnPhone = grid.addColumn(Customer::getPhoneNumber);
+		columnPhone.setCaption("Phone");
+
+		Column<Customer, Integer> columnFloorNumber = grid
+				.addColumn(customer -> customer.getUnit().getFloor().getFloorNumber());
+		columnFloorNumber.setCaption("Floor Number");
+
+		Column<Customer, Integer> columnUnitNumber = grid.addColumn(customer -> customer.getUnit().getUnitNumber());
+		columnUnitNumber.setCaption("Unit Number");
 	}
 }

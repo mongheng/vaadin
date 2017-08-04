@@ -59,4 +59,18 @@ public class Unit {
 		this.floor = floor;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+
+		Unit unit = (Unit) obj;
+		return ((unitNumber == unit.getUnitNumber() || (unitNumber != null && unitNumber.equals(unit.getUnitNumber())))
+				&& (floor == unit.getFloor() || (floor != null && floor.equals(unit.getFloor()))));
+	}
+
 }
