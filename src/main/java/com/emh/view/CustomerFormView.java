@@ -39,7 +39,10 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
-	
+
+	private Customer customer;
+	private Customer tempCustomer;
+
 	private ListDataProvider<Customer> customerDataProvider;
 
 	private Label lblCustomerTitle;
@@ -81,9 +84,16 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 	private Grid<Customer> grid;
 
 	private Binder<Customer> binderCustomer;
+	private Binder<com.emh.model.Unit> binderUnit;
 
 	public CustomerFormView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
+		init();
+	}
+
+	public CustomerFormView(ApplicationContext applicationContext, Customer customer) {
+		this.applicationContext = applicationContext;
+		this.customer = customer;
 		init();
 	}
 
@@ -134,13 +144,24 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		addComponent(grid, "top:360.0px;left:16.0px;");
 		setSizeFull();
 
+		if (customer != null) {
+			binderCustomer.readBean(customer);
+			binderUnit.readBean(customer.getUnit());
+			cboUnit.setItemCaptionGenerator(unit -> unit.getUnitNumber().toString());
+			cboFloor.setItemCaptionGenerator(floor -> floor.getFloorNumber().toString());
+
+			customerDataProvider.getItems().clear();
+			customerDataProvider.getItems().add(tempCustomer);
+			grid.setDataProvider(customerDataProvider);
+		}
 	}
 
 	private void initComponents() {
 
 		customerDataProvider = new ListDataProvider<>(new ArrayList<>());
 		binderCustomer = new Binder<>();
-		
+		binderUnit = new Binder<>();
+
 		lblCustomerTitle = new Label("Customer Details");
 		lblCustomerTitle.addStyleName("name");
 		lblUnitPaymentTitle = new Label("Unit/Room and Payment Details");
@@ -185,7 +206,10 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		cboFloor = new ComboBox<>();
 		cboFloor.setWidth("151px");
-		binderCustomer.forField(cboFloor).bind(customer -> customer.getUnit().getFloor(), (customer, formValue )-> customer.getUnit().setFloor(formValue));
+		// binderCustomer.forField(cboFloor).bind(customer ->
+		// customer.getUnit().getFloor(), (customer, formValue )->
+		// customer.getUnit().setFloor(formValue));
+		binderUnit.bind(cboFloor, com.emh.model.Unit::getFloor, com.emh.model.Unit::setFloor);
 
 		cboUnit = new ComboBox<>();
 		cboUnit.setWidth("151px");
@@ -233,25 +257,33 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		cboFloor.setItemCaptionGenerator(floor -> floor.getFloorNumber().toString());
 		cboFloor.addValueChangeListener(valueChangeEvent -> {
 			Floor floor = valueChangeEvent.getValue();
-			cboUnit.clear();
-			if (floor != null) {
-				List<com.emh.model.Unit> newUnits = new ArrayList<>();
-				List<com.emh.model.Unit> units = (List<com.emh.model.Unit>) classBusiness
-						.selectAllEntity(com.emh.model.Unit.class);
-				if (units.size() > 0) {
-					units.forEach(unit -> {
-						if (unit.getFloor().getFloorID().equals(floor.getFloorID())) {
-							if (!unit.isStatu()) {
-								newUnits.add(unit);
+			if (customer == null) {
+				cboUnit.clear();
+				if (floor != null) {
+					List<com.emh.model.Unit> newUnits = new ArrayList<>();
+					List<com.emh.model.Unit> units = (List<com.emh.model.Unit>) classBusiness
+							.selectAllEntity(com.emh.model.Unit.class);
+					if (units.size() > 0) {
+						units.forEach(unit -> {
+							if (unit.getFloor().getFloorID().equals(floor.getFloorID())) {
+								if (!unit.isStatu()) {
+									newUnits.add(unit);
+								}
 							}
-						}
-					});
+						});
+					}
+					cboUnit.setItems(newUnits);
+					cboUnit.setItemCaptionGenerator(unit -> unit.getUnitNumber().toString());
+				} else {
+					cboUnit.setItems(new ArrayList<>());
 				}
-				cboUnit.setItems(newUnits);
-				cboUnit.setItemCaptionGenerator(unit -> unit.getUnitNumber().toString());
-			} else {
-				cboUnit.setItems(new ArrayList<>());
+				customer = tempCustomer;
 			}
+		});
+
+		cboFloor.addSelectionListener(selectionEvent -> {
+			tempCustomer = customer;
+			customer = null;
 		});
 	}
 
@@ -263,16 +295,36 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		public void buttonClick(ClickEvent event) {
 
 			try {
-				Customer customer = new Customer();
-				binderCustomer.writeBean(customer);
-
-				customer.getUnit().setStatu(true);
-				classBusiness.createEntity(customer);
-				classBusiness.updateEntity(customer.getUnit());
-				customerDataProvider.getItems().add(customer);
-				grid.setDataProvider(customerDataProvider);
-				customerDataProvider = new ListDataProvider<>(new ArrayList<>());
-				Notification.show("The Unit save successfully.", Type.HUMANIZED_MESSAGE);
+				if (tempCustomer == null) {
+					Customer customer = new Customer();
+					binderCustomer.writeBean(customer);
+					
+					customer.getUnit().setStatu(true);
+					classBusiness.createEntity(customer);
+					classBusiness.updateEntity(customer.getUnit());
+					customerDataProvider.getItems().add(customer);
+					grid.setDataProvider(customerDataProvider);
+					customerDataProvider = new ListDataProvider<>(new ArrayList<>());
+					Notification.show("The Unit save successfully.", Type.HUMANIZED_MESSAGE);
+				} else {
+					Customer newCustomer = new Customer();
+					binderCustomer.writeBean(newCustomer);
+					
+					com.emh.model.Unit unit = newCustomer.getUnit();
+					com.emh.model.Unit tempUnit = tempCustomer.getUnit();
+					if (!unit.equals(tempUnit)) {
+						unit.setStatu(true);
+						classBusiness.updateEntity(newCustomer.getUnit());
+						tempUnit.setStatu(false);
+						classBusiness.updateEntity(tempCustomer.getUnit());
+					}
+					classBusiness.updateEntity(newCustomer);
+					customerDataProvider.getItems().clear();
+					customerDataProvider.getItems().add(newCustomer);
+					grid.setDataProvider(customerDataProvider);
+					customer = newCustomer;
+					Notification.show("The Customer update successfully.", Type.HUMANIZED_MESSAGE);
+				}
 			} catch (Exception e) {
 				Notification.show(e.getMessage(), Type.HUMANIZED_MESSAGE);
 				e.printStackTrace();
@@ -291,14 +343,14 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 				int month = Integer.parseInt(event.getValue());
 				LocalDate start = startDateField.getValue().plusMonths(month);
 				endDateField.setValue(start);
-			}else {
+			} else {
 				endDateField.setValue(LocalDate.now());
 			}
 		}
 	}
 
 	private void initGrid() {
-		
+
 		Column<Customer, String> columnCustomername = grid.addColumn(Customer::getCustomerName);
 		columnCustomername.setCaption("Customer Name");
 
@@ -307,13 +359,14 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		Column<Customer, LocalDate> columnDOB = grid.addColumn(Customer::getDob);
 		columnDOB.setCaption("Date Of Birth");
-		
+
 		Column<Customer, String> columnPhone = grid.addColumn(Customer::getPhoneNumber);
 		columnPhone.setCaption("Phone");
-		
-		Column<Customer, Integer> columnFloorNumber = grid.addColumn(customer -> customer.getUnit().getFloor().getFloorNumber());
+
+		Column<Customer, Integer> columnFloorNumber = grid
+				.addColumn(customer -> customer.getUnit().getFloor().getFloorNumber());
 		columnFloorNumber.setCaption("Floor Number");
-		
+
 		Column<Customer, Integer> columnUnitNumber = grid.addColumn(customer -> customer.getUnit().getUnitNumber());
 		columnUnitNumber.setCaption("Unit Number");
 	}

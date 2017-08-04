@@ -18,7 +18,7 @@ public class Unit {
 	private Integer unitNumber;
 	private boolean statu;
 	private Floor floor;
-	
+
 	@Id
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -57,6 +57,20 @@ public class Unit {
 
 	public void setFloor(Floor floor) {
 		this.floor = floor;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+
+		Unit unit = (Unit) obj;
+		return ((unitNumber == unit.getUnitNumber() || (unitNumber != null && unitNumber.equals(unit.getUnitNumber())))
+				&& (floor == unit.getFloor() || (floor != null && floor.equals(unit.getFloor()))));
 	}
 
 }

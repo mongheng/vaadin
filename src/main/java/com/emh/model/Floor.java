@@ -60,4 +60,18 @@ public class Floor {
 		this.units = units;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+
+		Floor floor = (Floor) obj;
+		return ((floorNumber == floor.getFloorNumber()
+				|| (floorNumber != null && floorNumber.equals(floor.getFloorNumber()))));
+	}
+
 }
