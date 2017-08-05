@@ -79,7 +79,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 	private Button btnAddFloor;
 	private Button btnAddUnit;
 	private Button btnSave;
-	private Button btnCancel;
+	private Button btnClear;
 
 	private Grid<Customer> grid;
 
@@ -139,7 +139,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		addComponent(lblEndDate, "top:269.0px;left:765.0px;");
 		addComponent(endDateField, "top:269.0px;left:940.0px;");
 		addComponent(btnSave, "top:320.0px;left:485.0px;");
-		addComponent(btnCancel, "top:320.0px;left:585.0px;");
+		addComponent(btnClear, "top:320.0px;left:585.0px;");
 
 		addComponent(grid, "top:360.0px;left:16.0px;");
 		setSizeFull();
@@ -153,6 +153,8 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 			customerDataProvider.getItems().clear();
 			customerDataProvider.getItems().add(tempCustomer);
 			grid.setDataProvider(customerDataProvider);
+		} else {
+			clearValueComponent();
 		}
 	}
 
@@ -243,8 +245,11 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnSave.addClickListener(new SaveClickEvent());
 
-		btnCancel = new Button("Cancel");
-		btnCancel.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		btnClear = new Button("Clear");
+		btnClear.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		btnClear.addClickListener(clickEvent -> {
+			clearValueComponent();
+		});
 
 		grid = new Grid<>();
 		grid.setWidth("1110px");
@@ -307,23 +312,23 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 					customerDataProvider = new ListDataProvider<>(new ArrayList<>());
 					Notification.show("The Unit save successfully.", Type.HUMANIZED_MESSAGE);
 				} else {
-					Customer newCustomer = new Customer();
-					binderCustomer.writeBean(newCustomer);
+					customer = tempCustomer;
+					binderCustomer.writeBean(customer);
+					classBusiness.updateEntity(customer);
 					
-					com.emh.model.Unit unit = newCustomer.getUnit();
+					com.emh.model.Unit unit = customer.getUnit();
 					com.emh.model.Unit tempUnit = tempCustomer.getUnit();
-					if (!unit.equals(tempUnit)) {
+					if (!unit.getUnitNumber().equals(tempUnit.getUnitNumber())) {
 						unit.setStatu(true);
-						classBusiness.updateEntity(newCustomer.getUnit());
+						classBusiness.updateEntity(customer.getUnit());
 						tempUnit.setStatu(false);
 						classBusiness.updateEntity(tempCustomer.getUnit());
 					}
-					classBusiness.updateEntity(newCustomer);
 					customerDataProvider.getItems().clear();
-					customerDataProvider.getItems().add(newCustomer);
+					customerDataProvider.getItems().add(customer);
 					grid.setDataProvider(customerDataProvider);
-					customer = newCustomer;
 					Notification.show("The Customer update successfully.", Type.HUMANIZED_MESSAGE);
+					tempCustomer = customer;
 				}
 			} catch (Exception e) {
 				Notification.show(e.getMessage(), Type.HUMANIZED_MESSAGE);
@@ -369,5 +374,26 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		Column<Customer, Integer> columnUnitNumber = grid.addColumn(customer -> customer.getUnit().getUnitNumber());
 		columnUnitNumber.setCaption("Unit Number");
+	}
+	
+	private void clearValueComponent() {
+		customerNameField.clear();
+		jobField.clear();
+		addressTextArea.clear();
+		phoneField.clear();
+		cboGender.clear();
+		dobDateField.clear();
+		cboFloor.clear();
+		cboUnit.clear();
+		paymentField.clear();
+		termField.clear();
+		startDateField.clear();
+		endDateField.clear();
+		
+		customerDataProvider = new ListDataProvider<>(new ArrayList<>());
+		grid.setDataProvider(customerDataProvider);
+		customer = null;
+		tempCustomer = null;
+		startDateField.setValue(LocalDate.now());
 	}
 }
