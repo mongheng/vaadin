@@ -40,6 +40,37 @@ INSERT INTO `access_roles` VALUES ('5fe942e6-7d77-48a0-bbf4-b7094cb1cf80','Manag
 UNLOCK TABLES;
 
 --
+-- Table structure for table `customer`
+--
+
+DROP TABLE IF EXISTS `customer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `customer` (
+  `CUSTOMER_ID` varchar(255) NOT NULL,
+  `ADDRESS` varchar(255) DEFAULT NULL,
+  `CUSTOMER_NAME` varchar(255) DEFAULT NULL,
+  `DOB` date DEFAULT NULL,
+  `GENDER` varchar(255) DEFAULT NULL,
+  `JOB` varchar(255) DEFAULT NULL,
+  `PHONE_NUMBER` varchar(255) DEFAULT NULL,
+  `UNIT_ID` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`CUSTOMER_ID`),
+  KEY `FKae8b81k75mycryjm3hopdayvw` (`UNIT_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customer`
+--
+
+LOCK TABLES `customer` WRITE;
+/*!40000 ALTER TABLE `customer` DISABLE KEYS */;
+INSERT INTO `customer` VALUES ('110cd2ac-1dd5-4b25-b392-636c6882a37b','Phnom Penh, Cambodia','Lida','1993-01-31','Female','Developer','016556955','dd756f47-99bb-4e3d-ba98-0f99eab295c7'),('b06442f8-866d-447d-b50e-10abd2a369a4','Phnom Penh, Cambodia.','Mark','1990-08-01','Male','Network','016345678','021f0f41-0724-4e5a-8acf-a08c8f9d6d49'),('66f162fa-9459-4c78-9179-e2a1bcd484fc','J32, Jade, Phnom Penh, Cambodian.','Fong','1989-10-10','Male','Sale','097345678','d76d7fa6-3d1f-4c25-b1d9-9e2f4ccdfdd5'),('d29c8808-5d29-490d-9ec1-fb8cdf75e11d','Phnom Penh, Cambodia;','Song','1997-12-12','Male','HR','096345678','a783edad-a421-445d-a422-d4c55d3dd5fe');
+/*!40000 ALTER TABLE `customer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `floor`
 --
 
@@ -75,6 +106,7 @@ CREATE TABLE `unit` (
   `UNIT_ID` varchar(255) NOT NULL,
   `UNIT_NUMBER` int(11) DEFAULT NULL,
   `FLOOR_ID` varchar(255) DEFAULT NULL,
+  `STATU` bit(1) DEFAULT NULL,
   PRIMARY KEY (`UNIT_ID`),
   KEY `FKrtwgbkspi9hbyjoq8nskhmnbl` (`FLOOR_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -86,6 +118,7 @@ CREATE TABLE `unit` (
 
 LOCK TABLES `unit` WRITE;
 /*!40000 ALTER TABLE `unit` DISABLE KEYS */;
+INSERT INTO `unit` VALUES ('8313832a-1c29-420e-8554-1f2c607f4449',101,'31254ce7-6a63-4524-bb09-f07d6e08aa87','\0'),('d76d7fa6-3d1f-4c25-b1d9-9e2f4ccdfdd5',102,'31254ce7-6a63-4524-bb09-f07d6e08aa87',''),('a783edad-a421-445d-a422-d4c55d3dd5fe',103,'31254ce7-6a63-4524-bb09-f07d6e08aa87',''),('8967c3bf-1a53-4ffa-a81a-4bdcab5df36e',104,'31254ce7-6a63-4524-bb09-f07d6e08aa87','\0'),('dd756f47-99bb-4e3d-ba98-0f99eab295c7',201,'1e6a3606-48ad-419b-98ad-fb3e1ab4c587','\0'),('021f0f41-0724-4e5a-8acf-a08c8f9d6d49',202,'1e6a3606-48ad-419b-98ad-fb3e1ab4c587',''),('2765bc1d-6c51-4f35-8b7f-2f4806957a93',203,'1e6a3606-48ad-419b-98ad-fb3e1ab4c587','\0'),('38883a27-acaa-4da6-b876-2948aa96118c',204,'1e6a3606-48ad-419b-98ad-fb3e1ab4c587',''),('e250ce1b-8538-46e7-960a-0d44284dddc4',401,'58446169-b1b4-408d-b110-b4be38a8bcae','\0'),('4b6fdf9c-8254-48fd-b453-1239ac2d23b6',402,'58446169-b1b4-408d-b110-b4be38a8bcae','\0');
 /*!40000 ALTER TABLE `unit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -127,4 +160,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-07-27 18:07:31
+-- Dump completed on 2017-08-05 12:05:45
