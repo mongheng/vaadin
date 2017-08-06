@@ -245,7 +245,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnSave.addClickListener(new SaveClickEvent());
 
-		btnClear = new Button("Clear");
+		btnClear = new Button("New");
 		btnClear.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnClear.addClickListener(clickEvent -> {
 			clearValueComponent();
@@ -310,20 +310,22 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 					customerDataProvider.getItems().add(customer);
 					grid.setDataProvider(customerDataProvider);
 					customerDataProvider = new ListDataProvider<>(new ArrayList<>());
-					Notification.show("The Unit save successfully.", Type.HUMANIZED_MESSAGE);
+					Notification.show("The Customer save successfully.", Type.HUMANIZED_MESSAGE);
 				} else {
 					customer = tempCustomer;
+					
+					com.emh.model.Unit tempUnit = tempCustomer.getUnit();
 					binderCustomer.writeBean(customer);
-					classBusiness.updateEntity(customer);
 					
 					com.emh.model.Unit unit = customer.getUnit();
-					com.emh.model.Unit tempUnit = tempCustomer.getUnit();
+	
 					if (!unit.getUnitNumber().equals(tempUnit.getUnitNumber())) {
 						unit.setStatu(true);
 						classBusiness.updateEntity(customer.getUnit());
 						tempUnit.setStatu(false);
-						classBusiness.updateEntity(tempCustomer.getUnit());
+						classBusiness.updateEntity(tempUnit);
 					}
+					classBusiness.updateEntity(customer);
 					customerDataProvider.getItems().clear();
 					customerDataProvider.getItems().add(customer);
 					grid.setDataProvider(customerDataProvider);

@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import com.emh.view.CustomerFormView;
 import com.emh.view.CustomersGirdView;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
@@ -35,9 +36,14 @@ public class TabCustomer extends TabSheet {
 		
 		this.addSelectedTabChangeListener(selectedTab -> {
 			TabSheet tabsheet = selectedTab.getTabSheet();
-			Tab tab = tabsheet.getTab(0);
-			if (tab.getCaption().equals("Customers")) {
-				replaceComponent(customersGirdView, new CustomersGirdView(applicationContext, this));
+			Layout layout = (Layout) tabsheet.getSelectedTab();
+			
+			if (layout instanceof CustomerFormView) {
+				System.out.println("CustomerFormView caption is : " + tabsheet.getTab((CustomerFormView) layout).getCaption());
+			} else if (layout instanceof VerticalLayout) {
+				layout.removeAllComponents();
+				layout.addComponent(new CustomersGirdView(applicationContext, this));
+				System.out.println("CustomerGridView caption is : " + tabsheet.getTab((VerticalLayout) layout).getCaption());
 			}
 		});
 	}

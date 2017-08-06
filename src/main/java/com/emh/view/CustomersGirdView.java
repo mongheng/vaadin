@@ -65,6 +65,7 @@ public class CustomersGirdView extends VerticalLayout implements View {
 		Column<Customer, Integer> columnUnitNumber = grid.addColumn(customer -> customer.getUnit().getUnitNumber());
 		columnUnitNumber.setCaption("Unit Number");
 		
+		grid.setSizeFull();
 		addComponent(grid);
 		
 		grid.addSelectionListener(listener -> {
