@@ -13,7 +13,10 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 public class CustomersGirdView extends VerticalLayout implements View {
 
@@ -52,19 +55,25 @@ public class CustomersGirdView extends VerticalLayout implements View {
 		
 		Column<Customer, String> columnName = grid.addColumn(customer -> customer.getCustomerName());
 		columnName.setCaption("Customer Name");
+		columnName.setId("0");
 		
 		Column<Customer, String> columnGender = grid.addColumn(customer -> customer.getGender());
 		columnGender.setCaption("Marital Status");
+		columnGender.setId("1");
 		
 		Column<Customer, String> columnPhone = grid.addColumn(customer -> customer.getPhoneNumber());
 		columnPhone.setCaption("Phone Number");
+		columnPhone.setId("2");
 		
 		Column<Customer, Integer> columnFloor = grid.addColumn(customer -> customer.getUnit().getFloor().getFloorNumber());
 		columnFloor.setCaption("Floor Number");
-
+		columnFloor.setId("3");
+		
 		Column<Customer, Integer> columnUnitNumber = grid.addColumn(customer -> customer.getUnit().getUnitNumber());
 		columnUnitNumber.setCaption("Unit Number");
+		columnUnitNumber.setId("4");
 		
+		setFilterGrid(customerDataProvider);
 		grid.setSizeFull();
 		addComponent(grid);
 		
@@ -76,5 +85,61 @@ public class CustomersGirdView extends VerticalLayout implements View {
 			tabCustomer.addTab(new CustomerFormView(applicationContext, source), "Customer", null, 1);
 			tabCustomer.setSelectedTab(1);
 		});
+	}
+	
+	private void setFilterGrid(ListDataProvider<Customer> customerDataProvider) {
+		HeaderRow headerRow = grid.prependHeaderRow();
+		
+		for (Column<Customer, ?> column : grid.getColumns()) {
+			HeaderCell headerCell = headerRow.getCell(column);
+			headerCell.setComponent(createTextFieldFilter(customerDataProvider, column));
+		}
+	}
+	
+	private TextField createTextFieldFilter(ListDataProvider<Customer> customerDataProvider, Column<Customer, ?> column) {
+		TextField filterField = new TextField();
+		filterField.setHeight("26px");
+		filterField.setWidth("100%");
+
+		filterField.addValueChangeListener(change -> {
+			String filterText = change.getValue();
+			List<Customer> newFilterCustomer = new ArrayList<>();
+			List<Customer> filterCustomer = (List<Customer>) customerDataProvider.getItems();
+			filterCustomer.forEach(customerfilter -> {
+
+				switch (column.getId()) {
+				case "0":
+					if (customerfilter.getCustomerName().contains(filterText)) {
+						newFilterCustomer.add(customerfilter);
+					}
+					break;
+				case "1":
+					if (customerfilter.getGender().contains(filterText)) {
+						newFilterCustomer.add(customerfilter);
+					}
+					break;
+				case "2":
+					if (customerfilter.getPhoneNumber().contains(filterText)) {
+						newFilterCustomer.add(customerfilter);
+					}
+					break;
+				case "3":
+					if (customerfilter.getUnit().getFloor().getFloorNumber().toString().contains(filterText)) {
+						newFilterCustomer.add(customerfilter);
+					}
+					break;
+				case "4":
+					if (customerfilter.getUnit().getUnitNumber().toString().contains(filterText)) {
+						newFilterCustomer.add(customerfilter);
+					}
+					break;
+				default:
+					break;
+				}
+
+			});
+			grid.setDataProvider(new ListDataProvider<>(newFilterCustomer));
+		});
+		return filterField;
 	}
 }

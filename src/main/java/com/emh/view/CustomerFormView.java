@@ -7,12 +7,15 @@ import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
+import com.emh.model.Contract;
 import com.emh.model.Customer;
 import com.emh.model.Floor;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.data.converter.StringToFloatConverter;
+import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -42,6 +45,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 	private Customer customer;
 	private Customer tempCustomer;
+	private Contract contract;
 
 	private ListDataProvider<Customer> customerDataProvider;
 
@@ -85,6 +89,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 	private Binder<Customer> binderCustomer;
 	private Binder<com.emh.model.Unit> binderUnit;
+	private Binder<Contract> binderContract;
 
 	public CustomerFormView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -146,6 +151,10 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		if (customer != null) {
 			binderCustomer.readBean(customer);
+			contract = (Contract) classBusiness.selectLastEntityByHQL("from Contract where CUSTOMER_ID = '" + customer.getCustomerID() + "'");
+			if (contract != null) {
+				binderContract.readBean(contract);
+			}
 			binderUnit.readBean(customer.getUnit());
 			cboUnit.setItemCaptionGenerator(unit -> unit.getUnitNumber().toString());
 			cboFloor.setItemCaptionGenerator(floor -> floor.getFloorNumber().toString());
@@ -163,6 +172,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		customerDataProvider = new ListDataProvider<>(new ArrayList<>());
 		binderCustomer = new Binder<>();
 		binderUnit = new Binder<>();
+		binderContract = new Binder<>();
 
 		lblCustomerTitle = new Label("Customer Details");
 		lblCustomerTitle.addStyleName("name");
@@ -194,7 +204,14 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		binderCustomer.bind(phoneField, Customer::getPhoneNumber, Customer::setPhoneNumber);
 
 		paymentField = new TextField();
+		binderContract.forField(paymentField)
+				.withConverter(new StringToFloatConverter("Please input the Float number."))
+				.bind(Contract::getAmount, Contract::setAmount);
+
 		termField = new TextField();
+		binderContract.forField(termField)
+				.withConverter(new StringToIntegerConverter("Please input the Integer number."))
+				.bind(Contract::getTerm, Contract::setTerm);
 		termField.addValueChangeListener(new TermFieldValueChangeListener());
 
 		addressTextArea = new TextArea();
@@ -222,8 +239,10 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		startDateField = new DateField();
 		startDateField.setValue(LocalDate.now());
+		binderContract.bind(startDateField, Contract::getStartDate, Contract::setStartDate);
 
 		endDateField = new DateField();
+		binderContract.bind(endDateField, Contract::getEndDate, Contract::setEndDate);
 
 		btnAddFloor = new Button();
 		btnAddFloor.setWidth("33px");
@@ -302,10 +321,13 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 			try {
 				if (tempCustomer == null) {
 					Customer customer = new Customer();
+					Contract contract = new Contract();
 					binderCustomer.writeBean(customer);
-					
+					binderContract.writeBean(contract);
+					contract.setCustomer(customer);
 					customer.getUnit().setStatu(true);
 					classBusiness.createEntity(customer);
+					classBusiness.createEntity(contract);
 					classBusiness.updateEntity(customer.getUnit());
 					customerDataProvider.getItems().add(customer);
 					grid.setDataProvider(customerDataProvider);
@@ -313,17 +335,26 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 					Notification.show("The Customer save successfully.", Type.HUMANIZED_MESSAGE);
 				} else {
 					customer = tempCustomer;
-					
+					Contract newContract = new Contract();
 					com.emh.model.Unit tempUnit = tempCustomer.getUnit();
+
 					binderCustomer.writeBean(customer);
-					
+
 					com.emh.model.Unit unit = customer.getUnit();
-	
+
 					if (!unit.getUnitNumber().equals(tempUnit.getUnitNumber())) {
 						unit.setStatu(true);
 						classBusiness.updateEntity(customer.getUnit());
 						tempUnit.setStatu(false);
 						classBusiness.updateEntity(tempUnit);
+					}
+					if (contract == null) {
+						binderContract.writeBean(newContract);
+						newContract.setCustomer(customer);
+						classBusiness.createEntity(newContract);
+					} else {
+						binderContract.writeBean(contract);
+						classBusiness.updateEntity(contract);
 					}
 					classBusiness.updateEntity(customer);
 					customerDataProvider.getItems().clear();
@@ -377,7 +408,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		Column<Customer, Integer> columnUnitNumber = grid.addColumn(customer -> customer.getUnit().getUnitNumber());
 		columnUnitNumber.setCaption("Unit Number");
 	}
-	
+
 	private void clearValueComponent() {
 		customerNameField.clear();
 		jobField.clear();
@@ -391,7 +422,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		termField.clear();
 		startDateField.clear();
 		endDateField.clear();
-		
+
 		customerDataProvider = new ListDataProvider<>(new ArrayList<>());
 		grid.setDataProvider(customerDataProvider);
 		customer = null;

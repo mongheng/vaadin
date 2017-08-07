@@ -45,6 +45,7 @@
 				<value>com.emh.model.Floor</value>
 				<value>com.emh.model.Unit</value>
 				<value>com.emh.model.Customer</value>
+				<value>com.emh.model.Contract</value>
 			</list>
 		</property>
 		<!-- <property name="mappingResources"> <list> <value>User.hbm.xml</value> 
