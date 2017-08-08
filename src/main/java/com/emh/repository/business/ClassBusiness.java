@@ -18,5 +18,7 @@ public interface ClassBusiness {
 	
 	public Object selectLastEntityByHQL(String HQL);
 	
+	public <T> List<T> selectListEntityByHQL(Class<T> entityClass, String HQL);
+	
 	public User selectUserByUsernameAndPassword(User user);
 }

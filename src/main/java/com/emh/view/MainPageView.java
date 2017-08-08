@@ -70,6 +70,8 @@ public class MainPageView extends AbsoluteLayout implements View {
 		addMenuAndContentComponent("UserListView", UserListView.class.getSimpleName());
 		addMenuAndContentComponent("Customer", TabCustomer.class.getSimpleName());
 		
+		contentLayout.addComponent(new DashboardView(applicationContext));
+		
 		bodyLayout.setFirstComponent(menuLayout);
 		bodyLayout.setSecondComponent(contentLayout);
 		bodyLayout.setSizeFull();
@@ -135,6 +137,8 @@ public class MainPageView extends AbsoluteLayout implements View {
 			TabCustomer tabCustomer = new TabCustomer(applicationContext);
 			//tabCustomer.setSelectedTab(1);
 			return tabCustomer;
+		} else if (viewCaption.equalsIgnoreCase("Dashboard")) {
+			return new DashboardView(applicationContext);
 		}
 		else {
 			return null;

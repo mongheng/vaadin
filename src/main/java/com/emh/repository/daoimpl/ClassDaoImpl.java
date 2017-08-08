@@ -6,9 +6,9 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +28,7 @@ public class ClassDaoImpl implements ClassDao {
 		return sessionFactory.getCurrentSession().save(entityClass);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
 	@Transactional
 	public <T> List<T> getListEntity(Class<T> entityClass) {
@@ -66,7 +66,17 @@ public class ClassDaoImpl implements ClassDao {
 
 		return query.uniqueResult();
 	}
+	
+	@Override
+	@Transactional
+	public <T> List<T> getListEntityByHQL(Class<T> entityClass, String HQL) {
+		@SuppressWarnings("unchecked")
+		Query<T> query = sessionFactory.getCurrentSession().createQuery(HQL);
+		List<T> t = query.list();
+		return t;
+	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	@Transactional
 	public User getUserByUsernameAndPassword(User user) {

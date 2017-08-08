@@ -54,6 +54,12 @@ public class ClassBusinessImpl implements ClassBusiness {
 	}
 
 	@Override
+	public <T> List<T> selectListEntityByHQL(Class<T> entityClass, String HQL) {
+		
+		return classDao.getListEntityByHQL(entityClass, HQL);
+	}
+
+	@Override
 	public User selectUserByUsernameAndPassword(User user) {
 		
 		return classDao.getUserByUsernameAndPassword(user);

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
+import com.emh.model.CashFlow;
 import com.emh.model.Contract;
 import com.emh.model.Customer;
 import com.emh.model.Floor;
@@ -46,6 +47,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 	private Customer customer;
 	private Customer tempCustomer;
 	private Contract contract;
+	private CashFlow cashFlow;
 
 	private ListDataProvider<Customer> customerDataProvider;
 
@@ -84,6 +86,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 	private Button btnAddUnit;
 	private Button btnSave;
 	private Button btnClear;
+	private Button btnStart;
 
 	private Grid<Customer> grid;
 
@@ -143,17 +146,26 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		addComponent(startDateField, "top:269.0px;left:540.0px;");
 		addComponent(lblEndDate, "top:269.0px;left:765.0px;");
 		addComponent(endDateField, "top:269.0px;left:940.0px;");
-		addComponent(btnSave, "top:320.0px;left:485.0px;");
-		addComponent(btnClear, "top:320.0px;left:585.0px;");
+		addComponent(btnSave, "top:320.0px;left:455.0px;");
+		addComponent(btnClear, "top:320.0px;left:555.0px;");
+		addComponent(btnStart, "top:320.0px;left:635.0px;");
 
 		addComponent(grid, "top:360.0px;left:16.0px;");
 		setSizeFull();
 
 		if (customer != null) {
 			binderCustomer.readBean(customer);
-			contract = (Contract) classBusiness.selectLastEntityByHQL("from Contract where CUSTOMER_ID = '" + customer.getCustomerID() + "'");
+			contract = (Contract) classBusiness
+					.selectLastEntityByHQL("from Contract where CUSTOMER_ID = '" + customer.getCustomerID() + "'");
+
 			if (contract != null) {
 				binderContract.readBean(contract);
+				cashFlow = (CashFlow) classBusiness
+						.selectLastEntityByHQL("from CashFlow where CONTRACT_ID = '" + contract.getContractID() + "'");
+
+				if (cashFlow != null) {
+					btnStart.setVisible(false);
+				}
 			}
 			binderUnit.readBean(customer.getUnit());
 			cboUnit.setItemCaptionGenerator(unit -> unit.getUnitNumber().toString());
@@ -240,6 +252,18 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		startDateField = new DateField();
 		startDateField.setValue(LocalDate.now());
 		binderContract.bind(startDateField, Contract::getStartDate, Contract::setStartDate);
+		startDateField.addValueChangeListener(valueChange -> {
+			String term = termField.getValue();
+			if (!term.isEmpty()) {
+				int month = Integer.parseInt(term);
+				if (month > 0) {
+					LocalDate end = startDateField.getValue().plusMonths(month);
+					endDateField.setValue(end);
+				}
+			} else {
+				endDateField.setValue(LocalDate.now());
+			}
+		});
 
 		endDateField = new DateField();
 		binderContract.bind(endDateField, Contract::getEndDate, Contract::setEndDate);
@@ -262,13 +286,17 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		btnSave = new Button("Save");
 		btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		btnSave.addClickListener(new SaveClickEvent());
+		btnSave.addClickListener(new SaveUpdateClickEvent());
 
 		btnClear = new Button("New");
 		btnClear.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnClear.addClickListener(clickEvent -> {
 			clearValueComponent();
 		});
+
+		btnStart = new Button("Start");
+		btnStart.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		btnStart.addClickListener(new StartContractClickEvent());
 
 		grid = new Grid<>();
 		grid.setWidth("1110px");
@@ -311,7 +339,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		});
 	}
 
-	private final class SaveClickEvent implements ClickListener {
+	private final class SaveUpdateClickEvent implements ClickListener {
 
 		private static final long serialVersionUID = 1L;
 
@@ -378,9 +406,11 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		public void valueChange(ValueChangeEvent<String> event) {
 			String term = event.getValue();
 			if (!term.isEmpty()) {
-				int month = Integer.parseInt(event.getValue());
-				LocalDate start = startDateField.getValue().plusMonths(month);
-				endDateField.setValue(start);
+				int month = Integer.parseInt(term);
+				if (month > 0) {
+					LocalDate start = startDateField.getValue().plusMonths(month);
+					endDateField.setValue(start);
+				}
 			} else {
 				endDateField.setValue(LocalDate.now());
 			}
@@ -428,5 +458,42 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		customer = null;
 		tempCustomer = null;
 		startDateField.setValue(LocalDate.now());
+		btnStart.setVisible(true);
+	}
+
+	private final class StartContractClickEvent implements ClickListener {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+
+			LocalDate tempEndDate = null;
+			if (contract != null) {
+				for (int i = 1; i <= contract.getTerm(); i++) {
+					CashFlow cashFlow = new CashFlow();
+					if (i == 1) {
+						cashFlow.setStartDate(contract.getStartDate());
+						tempEndDate = contract.getStartDate().plusMonths(i);
+						cashFlow.setEndDate(tempEndDate);
+						cashFlow.setInstallmentNumber(i);
+						cashFlow.setAmount(contract.getAmount());
+						cashFlow.setContract(contract);
+						classBusiness.createEntity(cashFlow);
+						System.out.println(cashFlow.getStartDate() + " : " + cashFlow.getEndDate());
+					} else {
+						cashFlow.setStartDate(tempEndDate);
+						tempEndDate = tempEndDate.plusMonths(1);
+						cashFlow.setEndDate(tempEndDate);
+						cashFlow.setInstallmentNumber(i);
+						cashFlow.setAmount(contract.getAmount());
+						cashFlow.setContract(contract);
+						classBusiness.createEntity(cashFlow);
+						System.out.println(cashFlow.getStartDate() + " : " + cashFlow.getEndDate());
+					}
+				}
+				Notification.show("The Customer contracts start successfully.", Type.HUMANIZED_MESSAGE);
+			}
+		}
 	}
 }

@@ -18,5 +18,7 @@ public interface ClassDao {
 	
 	public Object getLastEntityByHQL(String HQL);
 	
+	public <T> List<T> getListEntityByHQL(Class<T> entityClass, String HQL);
+	
 	public User getUserByUsernameAndPassword(User user);
 }
