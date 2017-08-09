@@ -157,11 +157,13 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 			binderCustomer.readBean(customer);
 			contract = (Contract) classBusiness
 					.selectLastEntityByHQL("from Contract where CUSTOMER_ID = '" + customer.getCustomerID() + "'");
+			//contract = classBusiness.selectEntity(Contract.class, customer.getCustomerID());
 
 			if (contract != null) {
 				binderContract.readBean(contract);
 				cashFlow = (CashFlow) classBusiness
 						.selectLastEntityByHQL("from CashFlow where CONTRACT_ID = '" + contract.getContractID() + "'");
+				//cashFlow = classBusiness.selectEntity(CashFlow.class, contract.getContractID());
 
 				if (cashFlow != null) {
 					btnStart.setVisible(false);

@@ -1,5 +1,7 @@
 package com.emh.model;
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,6 +17,7 @@ public class Payment {
 	private Integer floorNumber;
 	private Integer unitNumber;
 	private Float amount;
+	private LocalDate paymentDate;
 
 	@Id
 	@Column(name = "PAYMENT_ID")
@@ -69,6 +72,15 @@ public class Payment {
 
 	public void setAmount(Float amount) {
 		this.amount = amount;
+	}
+
+	@Column(name = "PAYMENT_DATE")
+	public LocalDate getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(LocalDate paymentDate) {
+		this.paymentDate = paymentDate;
 	}
 
 }

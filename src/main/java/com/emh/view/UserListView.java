@@ -29,6 +29,8 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.FooterCell;
+import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -68,7 +70,7 @@ public class UserListView extends VerticalLayout implements View {
 
 		grid.setDataProvider(userDataProvider);
 		tfUserName = new TextField();
-
+		
 		Column<User, String> columnUserName = grid.addColumn(User::getUsername);
 		columnUserName.setCaption("UserName");
 		columnUserName.setId("0");
@@ -212,12 +214,21 @@ public class UserListView extends VerticalLayout implements View {
 
 	private void setFilterGrid(ListDataProvider<User> users) {
 
-		HeaderRow filterRow = grid.prependHeaderRow();
+		//HeaderRow filterRow = grid.prependHeaderRow(); //Adds a new row at the top of the header section.
+		HeaderRow filterRow = grid.appendHeaderRow(); //Adds a new row at the bottom of the header section.
+		FooterRow footerRow = grid.prependFooterRow();
 
 		for (Column<User, ?> column : grid.getColumns()) {
 			if (!column.getCaption().equals("Delete Action") && !column.getCaption().equals("Update Action")) {
+				/*HeaderCell topCell = filterRowTop.getCell(column);
+				topCell.setText(column.getCaption());*/
 				HeaderCell filterCell = filterRow.getCell(column);
 				filterCell.setComponent(createTextFieldFilter(users, column));
+				
+				FooterCell footerCell = footerRow.getCell(column);
+				if (column.getId().equals("2")) {
+					footerCell.setText("Email");
+				}
 			}
 
 		}
