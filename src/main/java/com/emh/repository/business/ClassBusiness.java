@@ -16,7 +16,7 @@ public interface ClassBusiness {
 	
 	public void deleteEntity(Object entity);
 	
-	public Object selectLastEntityByHQL(String HQL);
+	public Object selectEntityByHQL(String HQL);
 	
 	public <T> List<T> selectListEntityByHQL(Class<T> entityClass, String HQL);
 	

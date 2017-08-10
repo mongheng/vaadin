@@ -21,6 +21,7 @@ public class Contract {
 	private float amount;
 	private LocalDate startDate;
 	private LocalDate endDate;
+	private boolean active;
 	private Customer customer;
 
 	@Id
@@ -69,6 +70,15 @@ public class Contract {
 
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
+	}
+
+	@Column(name = "ACTIVE", columnDefinition = "BOOLEAN DEFAULT false")
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@OneToOne

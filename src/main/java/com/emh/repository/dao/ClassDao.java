@@ -16,9 +16,9 @@ public interface ClassDao {
 	
 	public void delete(Object entity);
 	
-	public Object getLastEntityByHQL(String HQL);
+	public Object getEntityByHQL(String HQL);
 	
-	public <T> List<T> getListEntityByHQL(Class<T> entityClass, String HQL);
+	public <T> List<T> getEntitysByHQL(Class<T> entityClass, String HQL);
 	
 	public User getUserByUsernameAndPassword(User user);
 }

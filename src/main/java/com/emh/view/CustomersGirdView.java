@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import com.emh.model.Customer;
 import com.emh.repository.business.ClassBusiness;
 import com.emh.view.tab.TabCustomer;
+import com.vaadin.data.provider.GridSortOrder;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -75,6 +76,7 @@ public class CustomersGirdView extends VerticalLayout implements View {
 		
 		setFilterGrid(customerDataProvider);
 		grid.setSizeFull();
+		grid.setSortOrder(GridSortOrder.asc(columnName));
 		addComponent(grid);
 		
 		grid.addSelectionListener(listener -> {

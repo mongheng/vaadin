@@ -48,15 +48,15 @@ public class ClassBusinessImpl implements ClassBusiness {
 	}
 
 	@Override
-	public Object selectLastEntityByHQL(String HQL) {
+	public Object selectEntityByHQL(String HQL) {
 		
-		return classDao.getLastEntityByHQL(HQL);
+		return classDao.getEntityByHQL(HQL);
 	}
 
 	@Override
 	public <T> List<T> selectListEntityByHQL(Class<T> entityClass, String HQL) {
 		
-		return classDao.getListEntityByHQL(entityClass, HQL);
+		return classDao.getEntitysByHQL(entityClass, HQL);
 	}
 
 	@Override

@@ -28,8 +28,6 @@ public class PaymentForm extends Window {
 	private HorizontalLayout hLayout;
 	private FormLayout formLayout;
 	
-	private boolean pay;
-	
 	private Binder<Payment> binder;
 
 	public PaymentForm(ApplicationContext applicationContext, CashFlow cashFlow) {
@@ -88,7 +86,6 @@ public class PaymentForm extends Window {
 			Payment payment = new Payment();
 			try {
 				binder.writeBean(payment);
-				pay = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -116,13 +113,5 @@ public class PaymentForm extends Window {
 		setWidth("450px");
 		setHeight("455px");
 
-	}
-
-	public boolean isPay() {
-		return pay;
-	}
-
-	public void setPay(boolean pay) {
-		pay = pay;
 	}
 }

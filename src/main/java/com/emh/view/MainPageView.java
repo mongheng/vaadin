@@ -4,7 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.User;
-import com.emh.repository.business.ClassBusiness;
+import com.emh.view.tab.TabContract;
 import com.emh.view.tab.TabCustomer;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -27,7 +27,6 @@ public class MainPageView extends AbsoluteLayout implements View {
 
 	private static final long serialVersionUID = 1L;
 	private ApplicationContext applicationContext;
-	private ClassBusiness classBusiness;
 	private User user;
 
 	private VerticalLayout headerLayout;
@@ -39,9 +38,7 @@ public class MainPageView extends AbsoluteLayout implements View {
 	private MenuBar menuBar;
 
 	public MainPageView(ApplicationContext applicationContext) {
-
 		this.applicationContext = applicationContext;
-		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
 	}
 
 	@Override
@@ -63,7 +60,7 @@ public class MainPageView extends AbsoluteLayout implements View {
 		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
 		
 		addMenuBarToHeader("Dashboard",new String[]{});
-		addMenuBarToHeader("Customer",new String[]{});
+		addMenuBarToHeader("Contract",new String[]{});
 		addMenuBarToHeader("Product",new String[]{});
 		addMenuBarToHeader("User", "UserListView");
 		addHeaderComponent();
@@ -139,8 +136,9 @@ public class MainPageView extends AbsoluteLayout implements View {
 			return tabCustomer;
 		} else if (viewCaption.equalsIgnoreCase("Dashboard")) {
 			return new DashboardView(applicationContext);
-		}
-		else {
+		} else if (viewCaption.equalsIgnoreCase("Contract")) {
+			return new TabContract(applicationContext);
+		}else {
 			return null;
 		}
 	}

@@ -13,6 +13,7 @@ import com.emh.repository.business.ClassBusiness;
 import com.emh.util.Utility;
 import com.vaadin.data.Binder;
 import com.vaadin.data.Binder.Binding;
+import com.vaadin.data.provider.GridSortOrder;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
@@ -168,7 +169,7 @@ public class UserListView extends VerticalLayout implements View {
 
 		grid.setWidth("925px");
 		grid.setHeight("330px");
-
+		grid.setSortOrder(GridSortOrder.asc(columnUserName));
 		absoluteLayout.addComponent(grid, "top:40px;");
 		absoluteLayout.addComponent(title, "left:400px");
 		// addComponents(title,grid);

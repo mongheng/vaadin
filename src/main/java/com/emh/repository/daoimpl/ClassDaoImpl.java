@@ -59,7 +59,7 @@ public class ClassDaoImpl implements ClassDao {
 
 	@Override
 	@Transactional
-	public Object getLastEntityByHQL(String HQL) {
+	public Object getEntityByHQL(String HQL) {
 
 		Query<?> query = sessionFactory.getCurrentSession().createQuery(HQL);
 		query.setMaxResults(1);
@@ -69,7 +69,7 @@ public class ClassDaoImpl implements ClassDao {
 	
 	@Override
 	@Transactional
-	public <T> List<T> getListEntityByHQL(Class<T> entityClass, String HQL) {
+	public <T> List<T> getEntitysByHQL(Class<T> entityClass, String HQL) {
 		@SuppressWarnings("unchecked")
 		Query<T> query = sessionFactory.getCurrentSession().createQuery(HQL);
 		List<T> t = query.list();

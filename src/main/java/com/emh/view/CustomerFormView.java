@@ -48,6 +48,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 	private Customer tempCustomer;
 	private Contract contract;
 	private CashFlow cashFlow;
+	private boolean valueChange;
 
 	private ListDataProvider<Customer> customerDataProvider;
 
@@ -156,14 +157,12 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		if (customer != null) {
 			binderCustomer.readBean(customer);
 			contract = (Contract) classBusiness
-					.selectLastEntityByHQL("from Contract where CUSTOMER_ID = '" + customer.getCustomerID() + "'");
-			//contract = classBusiness.selectEntity(Contract.class, customer.getCustomerID());
+					.selectEntityByHQL("from Contract where CUSTOMER_ID = '" + customer.getCustomerID() + "'");
 
 			if (contract != null) {
 				binderContract.readBean(contract);
 				cashFlow = (CashFlow) classBusiness
-						.selectLastEntityByHQL("from CashFlow where CONTRACT_ID = '" + contract.getContractID() + "'");
-				//cashFlow = classBusiness.selectEntity(CashFlow.class, contract.getContractID());
+						.selectEntityByHQL("from CashFlow where CONTRACT_ID = '" + contract.getContractID() + "'");
 
 				if (cashFlow != null) {
 					btnStart.setVisible(false);
@@ -176,6 +175,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 			customerDataProvider.getItems().clear();
 			customerDataProvider.getItems().add(tempCustomer);
 			grid.setDataProvider(customerDataProvider);
+			valueChange = false;
 		} else {
 			clearValueComponent();
 		}
@@ -210,17 +210,29 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		binderCustomer.forField(customerNameField)
 				.withValidator(name -> name.length() > 0, "Customer Name can not empty. Please fill it.")
 				.bind(Customer::getCustomerName, Customer::setCustomerName);
+		customerNameField.addValueChangeListener(listener -> {
+			valueChange = true;
+		});
 
 		jobField = new TextField();
 		binderCustomer.bind(jobField, Customer::getJob, Customer::setJob);
+		jobField.addValueChangeListener(listener -> {
+			valueChange = true;
+		});
 
 		phoneField = new TextField();
 		binderCustomer.bind(phoneField, Customer::getPhoneNumber, Customer::setPhoneNumber);
+		phoneField.addValueChangeListener(listener -> {
+			valueChange = true;
+		});
 
 		paymentField = new TextField();
 		binderContract.forField(paymentField)
 				.withConverter(new StringToFloatConverter("Please input the Float number."))
 				.bind(Contract::getAmount, Contract::setAmount);
+		paymentField.addValueChangeListener(listener -> {
+			valueChange = true;
+		});
 
 		termField = new TextField();
 		binderContract.forField(termField)
@@ -232,10 +244,16 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		addressTextArea.setWidth("-1px");
 		addressTextArea.setHeight("73px");
 		binderCustomer.bind(addressTextArea, Customer::getAddress, Customer::setAddress);
+		addressTextArea.addValueChangeListener(listener -> {
+			valueChange = true;
+		});
 
 		cboGender = new ComboBox<>();
 		binderCustomer.forField(cboGender).withValidator(gender -> gender.length() > 0, "Please select marital status.")
 				.bind(Customer::getGender, Customer::setGender);
+		cboGender.addValueChangeListener(listener -> {
+			valueChange = true;
+		});
 
 		cboFloor = new ComboBox<>();
 		cboFloor.setWidth("151px");
@@ -247,20 +265,27 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		cboUnit = new ComboBox<>();
 		cboUnit.setWidth("151px");
 		binderCustomer.bind(cboUnit, Customer::getUnit, Customer::setUnit);
+		cboUnit.addValueChangeListener(listener -> {
+			valueChange = true;
+		});
 
 		dobDateField = new DateField();
 		binderCustomer.bind(dobDateField, Customer::getDob, Customer::setDob);
+		dobDateField.addValueChangeListener(listener -> {
+			valueChange = true;
+		});
 
 		startDateField = new DateField();
 		startDateField.setValue(LocalDate.now());
 		binderContract.bind(startDateField, Contract::getStartDate, Contract::setStartDate);
-		startDateField.addValueChangeListener(valueChange -> {
+		startDateField.addValueChangeListener(valueChanges -> {
 			String term = termField.getValue();
 			if (!term.isEmpty()) {
 				int month = Integer.parseInt(term);
 				if (month > 0) {
 					LocalDate end = startDateField.getValue().plusMonths(month);
 					endDateField.setValue(end);
+					valueChange = true;
 				}
 			} else {
 				endDateField.setValue(LocalDate.now());
@@ -331,6 +356,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 				} else {
 					cboUnit.setItems(new ArrayList<>());
 				}
+				valueChange = true;
 				customer = tempCustomer;
 			}
 		});
@@ -393,6 +419,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 					Notification.show("The Customer update successfully.", Type.HUMANIZED_MESSAGE);
 					tempCustomer = customer;
 				}
+				valueChange = false;
 			} catch (Exception e) {
 				Notification.show(e.getMessage(), Type.HUMANIZED_MESSAGE);
 				e.printStackTrace();
@@ -412,6 +439,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 				if (month > 0) {
 					LocalDate start = startDateField.getValue().plusMonths(month);
 					endDateField.setValue(start);
+					valueChange = true;
 				}
 			} else {
 				endDateField.setValue(LocalDate.now());
@@ -459,6 +487,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		grid.setDataProvider(customerDataProvider);
 		customer = null;
 		tempCustomer = null;
+		contract = null;
 		startDateField.setValue(LocalDate.now());
 		btnStart.setVisible(true);
 	}
@@ -472,29 +501,38 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 			LocalDate tempEndDate = null;
 			if (contract != null) {
-				for (int i = 1; i <= contract.getTerm(); i++) {
-					CashFlow cashFlow = new CashFlow();
-					if (i == 1) {
-						cashFlow.setStartDate(contract.getStartDate());
-						tempEndDate = contract.getStartDate().plusMonths(i);
-						cashFlow.setEndDate(tempEndDate);
-						cashFlow.setInstallmentNumber(i);
-						cashFlow.setAmount(contract.getAmount());
-						cashFlow.setContract(contract);
-						classBusiness.createEntity(cashFlow);
-						System.out.println(cashFlow.getStartDate() + " : " + cashFlow.getEndDate());
-					} else {
-						cashFlow.setStartDate(tempEndDate);
-						tempEndDate = tempEndDate.plusMonths(1);
-						cashFlow.setEndDate(tempEndDate);
-						cashFlow.setInstallmentNumber(i);
-						cashFlow.setAmount(contract.getAmount());
-						cashFlow.setContract(contract);
-						classBusiness.createEntity(cashFlow);
-						System.out.println(cashFlow.getStartDate() + " : " + cashFlow.getEndDate());
+				if (!valueChange) {
+					for (int i = 1; i <= contract.getTerm(); i++) {
+						CashFlow cashFlow = new CashFlow();
+						if (i == 1) {
+							cashFlow.setStartDate(contract.getStartDate());
+							tempEndDate = contract.getStartDate().plusMonths(i);
+							cashFlow.setEndDate(tempEndDate);
+							cashFlow.setInstallmentNumber(i);
+							cashFlow.setAmount(contract.getAmount());
+							cashFlow.setContract(contract);
+							classBusiness.createEntity(cashFlow);
+							System.out.println(cashFlow.getStartDate() + " : " + cashFlow.getEndDate());
+						} else {
+							cashFlow.setStartDate(tempEndDate);
+							tempEndDate = tempEndDate.plusMonths(1);
+							cashFlow.setEndDate(tempEndDate);
+							cashFlow.setInstallmentNumber(i);
+							cashFlow.setAmount(contract.getAmount());
+							cashFlow.setContract(contract);
+							classBusiness.createEntity(cashFlow);
+							System.out.println(cashFlow.getStartDate() + " : " + cashFlow.getEndDate());
+						}
 					}
+					contract.setActive(true);
+					classBusiness.updateEntity(contract);
+					Notification.show("The Customer contracts start successfully.", Type.HUMANIZED_MESSAGE);
+					btnStart.setVisible(false);
+				} else {
+					Notification.show("Please save data before starting the contract because you modify something.", Type.WARNING_MESSAGE);
 				}
-				Notification.show("The Customer contracts start successfully.", Type.HUMANIZED_MESSAGE);
+			} else {
+				Notification.show("Please save Customer before starting the contract.", Type.WARNING_MESSAGE);
 			}
 		}
 	}

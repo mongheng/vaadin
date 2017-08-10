@@ -10,6 +10,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 import com.emh.model.CashFlow;
 import com.emh.model.Payment;
 import com.emh.repository.business.ClassBusiness;
+import com.vaadin.data.provider.GridSortOrder;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Notification;
@@ -122,5 +123,6 @@ public class DashboardView extends VerticalLayout {
 			});
 		}));
 		columnButtonPay.setCaption("Action Pay");
+		grid.setSortOrder(GridSortOrder.asc(columnCustomerName));
 	}
 }
