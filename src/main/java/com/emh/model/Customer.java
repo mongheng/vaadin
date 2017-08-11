@@ -23,6 +23,7 @@ public class Customer {
 	private String job;
 	private String address;
 	private String phoneNumber;
+	private boolean close;
 	private Unit unit;
 
 	@Id
@@ -90,6 +91,15 @@ public class Customer {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	@Column(name = "CLOSE", columnDefinition = "BOOLEAN DEFAULT false")
+	public boolean isClose() {
+		return close;
+	}
+
+	public void setClose(boolean close) {
+		this.close = close;
 	}
 
 	@OneToOne

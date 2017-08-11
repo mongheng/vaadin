@@ -1,8 +1,12 @@
 package com.emh.view;
 
+import java.time.LocalDate;
+
 import org.springframework.context.ApplicationContext;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CashFlow;
+import com.emh.model.Customer;
 import com.emh.model.Payment;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.data.Binder;
@@ -12,7 +16,9 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -27,9 +33,13 @@ public class PaymentForm extends Window {
 	private VerticalLayout vLayout;
 	private HorizontalLayout hLayout;
 	private FormLayout formLayout;
-	
+
 	private Binder<Payment> binder;
 
+	public PaymentForm() {
+		
+	}
+	
 	public PaymentForm(ApplicationContext applicationContext, CashFlow cashFlow) {
 		super();
 		this.applicationContext = applicationContext;
@@ -42,68 +52,100 @@ public class PaymentForm extends Window {
 		vLayout = new VerticalLayout();
 		hLayout = new HorizontalLayout();
 		formLayout = new FormLayout();
-		
+
 		binder = new Binder<>();
-		
+
 		TextField customerNameField = new TextField();
 		customerNameField.setCaption("Customer Name : ");
 		customerNameField.setValue(cashFlow.getContract().getCustomer().getCustomerName());
 		customerNameField.setEnabled(false);
-		
+		binder.bind(customerNameField, Payment::getCustomerName, Payment::setCustomerName);
+
 		TextField installmentField = new TextField();
 		installmentField.setCaption("Installment Number : ");
 		installmentField.setValue(cashFlow.getInstallmentNumber().toString());
 		installmentField.setEnabled(false);
 		binder.forField(installmentField).withConverter(new StringToIntegerConverter("Please input Number."))
-			.bind(Payment::getInstallmentNumber, Payment::setInstallmentNumber);
-		
+				.bind(Payment::getInstallmentNumber, Payment::setInstallmentNumber);
+
 		TextField floorNumberField = new TextField();
 		floorNumberField.setCaption("Floor Number : ");
-		floorNumberField.setValue(cashFlow.getContract().getCustomer().getUnit().getFloor().getFloorNumber().toString());
+		floorNumberField
+				.setValue(cashFlow.getContract().getCustomer().getUnit().getFloor().getFloorNumber().toString());
 		floorNumberField.setEnabled(false);
 		binder.forField(floorNumberField).withConverter(new StringToIntegerConverter("Please input Number."))
-			.bind(Payment::getFloorNumber, Payment::setFloorNumber);
-		
+				.bind(Payment::getFloorNumber, Payment::setFloorNumber);
+
 		TextField unitNumberField = new TextField();
 		unitNumberField.setCaption("Unit Number : ");
 		unitNumberField.setValue(cashFlow.getContract().getCustomer().getUnit().getUnitNumber().toString());
 		unitNumberField.setEnabled(false);
 		binder.forField(unitNumberField).withConverter(new StringToIntegerConverter("Please input number"))
-			.bind(Payment::getUnitNumber, Payment::setUnitNumber);
-		
+				.bind(Payment::getUnitNumber, Payment::setUnitNumber);
+
 		TextField amountField = new TextField();
 		amountField.setCaption("Amount : ");
 		amountField.setValue(cashFlow.getAmount().toString());
 		amountField.setEnabled(false);
 		binder.forField(amountField).withConverter(new StringToFloatConverter("Please input number"))
-			.bind(Payment::getAmount, Payment::setAmount);
-		
+				.bind(Payment::getAmount, Payment::setAmount);
+
 		Button btnPay = new Button();
 		btnPay.setCaption("Paied");
 		btnPay.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnPay.addClickListener(clickEvent -> {
-			classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
-			Payment payment = new Payment();
-			try {
-				binder.writeBean(payment);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			ConfirmDialog.show(UI.getCurrent(), "Confrimation",
+					"Are you sure you want to pay " + cashFlow.getContract().getCustomer().getCustomerName(), "Yes",
+					"No", new ConfirmDialog.Listener() {
+				
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public void onClose(ConfirmDialog dialog) {
+							if (dialog.isConfirmed()) {
+								classBusiness = (ClassBusiness) applicationContext
+										.getBean(ClassBusiness.class.getSimpleName());
+								Payment payment = new Payment();
+								try {
+									binder.writeBean(payment);
+									payment.setPaymentID(cashFlow.getCashflowID());
+									payment.setPaymentDate(LocalDate.now());
+									cashFlow.setStatu(true);
+									classBusiness.updateEntity(cashFlow);
+									classBusiness.createEntity(payment);
+									if (cashFlow.getInstallmentNumber().equals(cashFlow.getContract().getTerm())) {
+										Customer closeCustomer = cashFlow.getContract().getCustomer();
+										com.emh.model.Unit openUnit = closeCustomer.getUnit();
+										openUnit.setStatu(false);
+										classBusiness.updateEntity(openUnit);
+										closeCustomer.setClose(true);
+										classBusiness.updateEntity(closeCustomer);
+									}
+									close();
+									Notification.show(cashFlow.getContract().getCustomer().getCustomerName() + " have been paid.");
+							
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					});
 		});
-		
+
 		Button btnCancel = new Button();
 		btnCancel.setCaption("Cancel");
 		btnCancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnCancel.addClickListener(clickEvent -> {
 			this.close();
 		});
-		
+
 		hLayout.addComponents(btnPay, btnCancel);
 		hLayout.setComponentAlignment(btnCancel, Alignment.TOP_CENTER);
 		hLayout.setComponentAlignment(btnPay, Alignment.TOP_CENTER);
-		
-		formLayout.addComponents(customerNameField, installmentField, floorNumberField, unitNumberField, amountField, hLayout);
-		
+
+		formLayout.addComponents(customerNameField, installmentField, floorNumberField, unitNumberField, amountField,
+				hLayout);
+
 		vLayout.addComponent(formLayout);
 		vLayout.setComponentAlignment(formLayout, Alignment.TOP_CENTER);
 		setContent(vLayout);

@@ -44,14 +44,18 @@ public class CustomersGirdView extends VerticalLayout implements View {
 	}
 
 	private void initGrid() {
+		customerDataProvider = new ListDataProvider<>(new ArrayList<>());
 		List<Customer> customers = (List<Customer>) classBusiness.selectAllEntity(Customer.class);
 		grid = new Grid<>();
 		
 		if (customers.size() > 0) {
-			customerDataProvider = new ListDataProvider<>(customers);
-		} else {
-			customerDataProvider = new ListDataProvider<>(new ArrayList<>());
+			customers.forEach(customer -> {
+				if (!customer.isClose()) {
+					customerDataProvider.getItems().add(customer);
+				}
+			});
 		}
+		
 		grid.setDataProvider(customerDataProvider);
 		
 		Column<Customer, String> columnName = grid.addColumn(customer -> customer.getCustomerName());

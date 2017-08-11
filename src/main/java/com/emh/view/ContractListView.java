@@ -56,7 +56,8 @@ public class ContractListView extends VerticalLayout {
 			Contract contract = listener.getItem();
 			
 			if (contract != null) {
-				tabSheet.addTab(new ContractDetailView(contract), 1);
+				tabSheet.addTab(new ContractDetailView(applicationContext, contract), 1).setId("1");
+				
 				tabSheet.setSelectedTab(1);
 			}
 		});
