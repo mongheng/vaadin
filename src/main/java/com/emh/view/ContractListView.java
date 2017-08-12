@@ -20,7 +20,7 @@ public class ContractListView extends VerticalLayout {
 
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
-	
+
 	private TabSheet tabSheet;
 	private Grid<Contract> grid;
 	private ListDataProvider<Contract> contractDataProvider;
@@ -30,7 +30,7 @@ public class ContractListView extends VerticalLayout {
 		this.tabSheet = tabSheet;
 		init();
 	}
-	
+
 	private void init() {
 		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		grid = new Grid<>();
@@ -39,45 +39,49 @@ public class ContractListView extends VerticalLayout {
 		if (contracts.size() > 0) {
 			contracts.forEach(contract -> {
 				if (contract.isActive()) {
-					contractDataProvider.getItems().add(contract);
+					if (!contract.getCustomer().isClose()) {
+						contractDataProvider.getItems().add(contract);
+					}
 				}
 			});
 		}
-		
+
 		grid.setDataProvider(contractDataProvider);
 		grid.setSizeFull();
 		initGridColumn();
-		
+
 		setSizeFull();
 		addComponent(grid);
 		setCaption("Contracts");
-		
+
 		grid.addItemClickListener(listener -> {
 			Contract contract = listener.getItem();
-			
+
 			if (contract != null) {
 				tabSheet.addTab(new ContractDetailView(applicationContext, contract), 1).setId("1");
-				
+
 				tabSheet.setSelectedTab(1);
 			}
 		});
 	}
-	
+
 	private void initGridColumn() {
-		
-		Column<Contract, String> columnCustomerName = grid.addColumn(contract -> contract.getCustomer().getCustomerName());
+
+		Column<Contract, String> columnCustomerName = grid
+				.addColumn(contract -> contract.getCustomer().getCustomerName());
 		columnCustomerName.setCaption("Customer Name");
 		columnCustomerName.setId("0");
-		
+
 		Column<Contract, String> columnPhone = grid.addColumn(contract -> contract.getCustomer().getPhoneNumber());
 		columnPhone.setCaption("Phone");
 		columnPhone.setId("1");
-		
+
 		Column<Contract, LocalDate> columnDate = grid.addColumn(contract -> contract.getCustomer().getDob());
 		columnDate.setCaption("Date of Birth");
 		columnDate.setId("2");
-		
-		Column<Contract, Integer> columnFloor = grid.addColumn(contract -> contract.getCustomer().getUnit().getFloor().getFloorNumber());
+
+		Column<Contract, Integer> columnFloor = grid
+				.addColumn(contract -> contract.getCustomer().getUnit().getFloor().getFloorNumber());
 		columnFloor.setCaption("Floor Number");
 		columnFloor.setId("3");
 	}

@@ -61,7 +61,7 @@ public class MainPageView extends AbsoluteLayout implements View {
 		
 		addMenuBarToHeader("Dashboard",new String[]{});
 		addMenuBarToHeader("Contract",new String[]{});
-		addMenuBarToHeader("Product",new String[]{});
+		addMenuBarToHeader("Extends Contract",new String[]{});
 		addMenuBarToHeader("User", "UserListView");
 		addHeaderComponent();
 		addMenuAndContentComponent("UserListView", UserListView.class.getSimpleName());
@@ -138,7 +138,9 @@ public class MainPageView extends AbsoluteLayout implements View {
 			return new DashboardView(applicationContext);
 		} else if (viewCaption.equalsIgnoreCase("Contract")) {
 			return new TabContract(applicationContext);
-		}else {
+		} else if (viewCaption.equalsIgnoreCase("Extends Contract")) {
+			return new ExtendContractView(applicationContext);
+		} else {
 			return null;
 		}
 	}

@@ -1,0 +1,100 @@
+package com.emh.view;
+
+import java.time.LocalDate;
+
+import org.springframework.context.ApplicationContext;
+
+import com.emh.model.Contract;
+import com.emh.model.Customer;
+import com.emh.repository.business.ClassBusiness;
+import com.vaadin.data.Binder;
+import com.vaadin.data.converter.StringToIntegerConverter;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
+
+public class ExtendContractForm extends Window {
+
+	private static final long serialVersionUID = 1L;
+	
+	private ApplicationContext applicationContext;
+	private ClassBusiness classBusiness;
+	
+	private FormLayout formLayout;
+	private HorizontalLayout hLayout;
+	private TextField termField;
+	private DateField startDate;
+	private DateField endDate;
+	private Contract contract;
+	private Customer customer;
+	private Binder<Contract> binder;
+
+	public ExtendContractForm(ApplicationContext applicationContext, Customer customer) {
+		this.applicationContext = applicationContext;
+		this.customer = customer;
+		init();
+	}
+	
+	private void init() {
+		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		contract = (Contract) classBusiness.selectEntityByHQL("From Contract WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "'");
+		
+		formLayout = new FormLayout();
+		hLayout = new HorizontalLayout();
+		binder = new Binder<>();
+		
+		termField = new TextField("Term :");
+		binder.forField(termField).withConverter(new StringToIntegerConverter("Please input Number."))
+			.bind(Contract::getTerm, Contract::setTerm);
+		termField.addValueChangeListener(valueChange -> {
+			if (!termField.getValue().isEmpty() ) {
+				endDate.setValue(startDate.getValue().plusMonths(Integer.parseInt(termField.getValue())));
+			}
+		});
+		
+		startDate = new DateField("Start End :");
+		binder.bind(startDate, Contract::getStartDate, Contract::setStartDate);
+		startDate.addValueChangeListener(valueChange -> {
+			if (!termField.getValue().isEmpty() ) {
+				endDate.setValue(startDate.getValue().plusMonths(Integer.parseInt(termField.getValue())));
+			}
+		});
+		
+		endDate = new DateField("End Date :");
+		binder.bind(endDate, Contract::getEndDate, Contract::setEndDate);
+		
+		Button btnExtend = new Button("Extend");
+		btnExtend.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		
+		Button btnCancel = new Button("Cancel");
+		btnCancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		btnCancel.addClickListener(listener -> {
+			close();
+		});
+		
+		hLayout.addComponents(btnExtend, btnCancel);
+		hLayout.setComponentAlignment(btnExtend, Alignment.TOP_CENTER);
+		hLayout.setComponentAlignment(btnCancel, Alignment.TOP_CENTER);
+		
+		formLayout.addComponents(termField, startDate, endDate, hLayout);
+		formLayout.setSizeFull();
+		formLayout.setComponentAlignment(termField, Alignment.TOP_CENTER);
+		formLayout.setComponentAlignment(startDate, Alignment.TOP_CENTER);
+		formLayout.setComponentAlignment(endDate, Alignment.TOP_CENTER);
+		
+		setContent(formLayout);
+		setCaption("Extend Form");
+		center();
+		setWidth("400px");
+		setHeight("350px");
+		
+		if (contract != null) {
+			startDate.setValue(LocalDate.now());
+		}	
+	}
+}
