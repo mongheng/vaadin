@@ -3,7 +3,9 @@ package com.emh.view;
 import java.time.LocalDate;
 
 import org.springframework.context.ApplicationContext;
+import org.vaadin.dialogs.ConfirmDialog;
 
+import com.emh.model.CashFlow;
 import com.emh.model.Contract;
 import com.emh.model.Customer;
 import com.emh.repository.business.ClassBusiness;
@@ -14,7 +16,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -32,6 +36,7 @@ public class ExtendContractForm extends Window {
 	private DateField endDate;
 	private Contract contract;
 	private Customer customer;
+	private CashFlow cashFlow;
 	private Binder<Contract> binder;
 
 	public ExtendContractForm(ApplicationContext applicationContext, Customer customer) {
@@ -70,6 +75,50 @@ public class ExtendContractForm extends Window {
 		
 		Button btnExtend = new Button("Extend");
 		btnExtend.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		btnExtend.addClickListener(clickEvent -> {
+			ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure " + customer.getCustomerName() + "wants to extend this contract?", "Yes", "No", new ConfirmDialog.Listener() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onClose(ConfirmDialog dialog) {
+					if (dialog.isConfirmed()) {
+						cashFlow = (CashFlow) classBusiness.selectEntityByHQL("From CashFlow WHERE CONTRACT_ID = '" + contract.getContractID() + "'");
+						int term = contract.getTerm();
+						int newTerm = Integer.parseInt(termField.getValue());
+						LocalDate tempEndDate = null;
+						for (int i = 1; i <= newTerm; i++) {
+							CashFlow newCashFlow = new CashFlow();
+							if (i == 1) {
+								newCashFlow.setStartDate(startDate.getValue());
+								tempEndDate = startDate.getValue().plusMonths(i);
+								newCashFlow.setEndDate(tempEndDate);
+								newCashFlow.setAmount(cashFlow.getAmount());
+								newCashFlow.setInstallmentNumber(term + i);
+								newCashFlow.setContract(contract);
+							} else {
+								newCashFlow.setStartDate(tempEndDate);
+								tempEndDate = tempEndDate.plusMonths(1);
+								newCashFlow.setEndDate(tempEndDate);
+								newCashFlow.setAmount(cashFlow.getAmount());
+								newCashFlow.setInstallmentNumber(term + i);
+								newCashFlow.setContract(contract);
+							}
+							classBusiness.createEntity(newCashFlow);
+						}
+						com.emh.model.Unit unit = customer.getUnit();
+						unit.setStatu(true);
+						classBusiness.updateEntity(unit);
+						customer.setClose(false);
+						classBusiness.updateEntity(customer);
+						contract.setEndDate(endDate.getValue());
+						contract.setTerm(term + newTerm);
+						classBusiness.updateEntity(contract);
+						Notification.show(customer.getCustomerName() + " have been Extended Contract.");
+						close();
+					}
+				}
+			});
+		});
 		
 		Button btnCancel = new Button("Cancel");
 		btnCancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
