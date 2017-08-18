@@ -7,7 +7,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-@Theme("mytheme")
+@Theme("tabsheet")
 public final class PopupWindowUI extends UI {
 
 	private static final long serialVersionUID = 1L;

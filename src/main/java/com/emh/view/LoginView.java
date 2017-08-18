@@ -52,6 +52,8 @@ public class LoginView extends VerticalLayout implements View {
 		
 		name = new TextField();
 		name.setCaption("Username :");
+		name.addStyleName("style");
+		name.setWidth("181.5px");
 		name.setIcon(VaadinIcons.USER);
 		name.setRequiredIndicatorVisible(true);
 		name.focus();
@@ -72,6 +74,8 @@ public class LoginView extends VerticalLayout implements View {
 
 		password = new PasswordField();
 		password.setCaption("Password :");
+		password.setWidth("181.5px");
+		password.addStyleName("style");
 		password.setIcon(VaadinIcons.PASSWORD);
 		password.setRequiredIndicatorVisible(true);
 		password.addShortcutListener(new ShortcutListener("KeyEnter", ShortcutAction.KeyCode.ENTER, null) {
@@ -108,11 +112,11 @@ public class LoginView extends VerticalLayout implements View {
 		formlogin.setMargin(true);
 
 		loginPanel.setWidth("400px");
-		loginPanel.addStyleName("v-loginPanel");
 		loginPanel.setContent(formlogin);
 
 		addComponents(loginPanel);
 		setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
+		addStyleName("background");
 		setHeight("95%");
 	}
 

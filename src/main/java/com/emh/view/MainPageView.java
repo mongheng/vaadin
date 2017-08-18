@@ -62,11 +62,13 @@ public class MainPageView extends AbsoluteLayout implements View {
 		addMenuBarToHeader("Dashboard",new String[]{});
 		addMenuBarToHeader("Contract",new String[]{});
 		addMenuBarToHeader("Extends Contract",new String[]{});
+		addMenuBarToHeader("Customer", new String[]{"Customer","Car Parking"});
 		addMenuBarToHeader("User", "UserListView");
 		addHeaderComponent();
 		addMenuAndContentComponent("UserListView", UserListView.class.getSimpleName());
 		addMenuAndContentComponent("Customer", TabCustomer.class.getSimpleName());
 		
+		contentLayout.setSizeFull();
 		contentLayout.addComponent(new DashboardView(applicationContext));
 		
 		bodyLayout.setFirstComponent(menuLayout);
@@ -132,7 +134,6 @@ public class MainPageView extends AbsoluteLayout implements View {
 			return new UserListView(applicationContext);
 		} else if (viewCaption.equals(TabCustomer.class.getSimpleName())) {
 			TabCustomer tabCustomer = new TabCustomer(applicationContext);
-			//tabCustomer.setSelectedTab(1);
 			return tabCustomer;
 		} else if (viewCaption.equalsIgnoreCase("Dashboard")) {
 			return new DashboardView(applicationContext);
@@ -140,6 +141,10 @@ public class MainPageView extends AbsoluteLayout implements View {
 			return new TabContract(applicationContext);
 		} else if (viewCaption.equalsIgnoreCase("Extends Contract")) {
 			return new ExtendContractView(applicationContext);
+		} else if (viewCaption.equalsIgnoreCase("Customer")) {
+			return new TabCustomer(applicationContext);
+		} else if (viewCaption.equalsIgnoreCase("Car Parking")) {
+			return new TabCustomer(applicationContext);
 		} else {
 			return null;
 		}

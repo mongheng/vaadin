@@ -7,6 +7,7 @@
 	font-style: italic;
 }
 .v-label.name{
+	color: blue;
 	font-size: 20;
 	font-family: monospace;
 	font-style: italic;
@@ -17,7 +18,8 @@
 	color: red;
 }
 .v-panel-caption{
-	color: green;
+	background-color: red;
+	color: red;
 	font-style: oblique;
 	font-size: 26px;
 }
@@ -49,4 +51,7 @@
 	font-size: 20px;
 	font-family: fantasy;
 	font-style: italic;
+}
+.v-vertical-login {
+	background-image: url("images/Chrysanthemum.jpg");
 }

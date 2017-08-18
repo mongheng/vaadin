@@ -48,8 +48,9 @@ public class ContractListView extends VerticalLayout {
 
 		grid.setDataProvider(contractDataProvider);
 		grid.setSizeFull();
+		grid.addStyleName("v-tabsheet-tabitem");
 		initGridColumn();
-
+		
 		setSizeFull();
 		addComponent(grid);
 		setCaption("Contracts");
@@ -84,5 +85,7 @@ public class ContractListView extends VerticalLayout {
 				.addColumn(contract -> contract.getCustomer().getUnit().getFloor().getFloorNumber());
 		columnFloor.setCaption("Floor Number");
 		columnFloor.setId("3");
+		
+		grid.sort(columnCustomerName);
 	}
 }

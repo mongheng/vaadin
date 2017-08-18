@@ -53,7 +53,8 @@ public class DashboardView extends VerticalLayout {
 		grid.setDataProvider(cashflowDataProvider);
 		grid.setSizeFull();
 		initColumnGrid();
-
+		
+		setSizeFull();
 		addComponent(grid);
 		//setMargin(false);
 

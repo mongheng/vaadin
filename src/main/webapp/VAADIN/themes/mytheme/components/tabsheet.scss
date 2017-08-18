@@ -1,0 +1,12 @@
+@mixin tabsheet {
+	.v-tabsheet {
+        .v-tabsheet-tabcontainer {
+            .v-tabsheet-tabitem > .v-caption {
+                font-size: 10px;
+                font-style: italic;
+                font-weight: $font-weight-light;
+                padding: 0 $v-layout-margin-left;
+            }
+        }
+    }
+}

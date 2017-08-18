@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import com.emh.view.ContractListView;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class TabContract extends TabSheet {
 	
@@ -20,6 +21,7 @@ public class TabContract extends TabSheet {
 	private void initTab() {
 		addTab(new ContractListView(applicationContext, this), 0).setId("0");
 		setSizeFull();
+		addStyleName(ValoTheme.TABSHEET_FRAMED);
 		
 		this.addSelectedTabChangeListener(selectedTab -> {
 			TabSheet tabSheet = selectedTab.getTabSheet();

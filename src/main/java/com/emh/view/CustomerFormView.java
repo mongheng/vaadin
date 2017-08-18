@@ -189,9 +189,9 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		binderContract = new Binder<>();
 
 		lblCustomerTitle = new Label("Customer Details");
-		lblCustomerTitle.addStyleName("name");
+		lblCustomerTitle.addStyleName("customerstyle");
 		lblUnitPaymentTitle = new Label("Unit/Room and Payment Details");
-		lblUnitPaymentTitle.addStyleName("name");
+		lblUnitPaymentTitle.addStyleName("customerstyle");
 
 		lblCustomerName = new Label("Customer Name :");
 		lblGender = new Label("Marital Status :");

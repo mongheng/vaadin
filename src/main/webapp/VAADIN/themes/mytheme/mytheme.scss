@@ -1,122 +1,70 @@
 // If you edit this file you need to compile the theme. See README.md for details.
-
 // Global variable overrides. Must be declared before importing Valo.
-
-// Defines the plaintext font size, weight and family. Font size affects general component sizing.
-//$v-font-size: 16px;
-//$v-font-weight: 300;
-//$v-font-family: "Open Sans", sans-serif;
-
-// Defines the border used by all components.
-//$v-border: 1px solid (v-shade 0.7);
-//$v-border-radius: 4px;
-
-// Affects the color of some component elements, e.g Button, Panel title, etc
-//$v-background-color: hsl(210, 0%, 98%);
-// Affects the color of content areas, e.g  Panel and Window content, TextField input etc
-//$v-app-background-color: $v-background-color;
-
-// Affects the visual appearance of all components
-//$v-gradient: v-linear 8%;
-//$v-bevel-depth: 30%;
-//$v-shadow-opacity: 5%;
-
-// Defines colors for indicating status (focus, success, failure)
-//$v-focus-color: valo-focus-color(); // Calculates a suitable color automatically
-//$v-friendly-color: #2c9720;
-//$v-error-indicator-color: #ed473b;
-
 // For more information, see: https://vaadin.com/book/-/page/themes.valo.html
 // Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
 
+$v-border-radius: 3px;
+$v-gradient: false;
+$v-bevel-depth: 42%;
+
+$v-font-size: 14px;
+$v-unit-size: 34px;
+$v-font-family: Roboto, sans-serif;
+$v-font-weight: 400;
+$font-weight-light: 300;
+
+/* Layout margin and spacing */
+$my-layout-margin: 15px;
+$v-layout-margin-left: $my-layout-margin;
+
+/* Grid styles */
+$v-font-size: 14px;
+$v-grid-row-background-color: #fff;
+$v-grid-row-stripe-background-color: $v-grid-row-background-color;
+$v-grid-header-background-color: #eee;
+$v-grid-header-font-size: $v-font-size;
+$v-grid-cell-focused-border: none;
+
 @import "../valo/valo.scss";
+@import "components/tabsheet.scss";
 
 @mixin mytheme {
   @include valo;
+  @include tabsheet;
 
   // Insert your own theme rules here
-  	.v-label{
+  
+  	.v-label-customerstyle{
 		color: blue;
-		font-size: 18px;
-		font-family: sans-serif;
-		font-style: italic;
-	}
-	
-	.v-label.name{
-		color: black;
-		font-size: 26px;
+		font-size: 20px;
 		font-family: monospace;
 		font-style: italic;
 	}
-	
-	.v-loginPanel{
-		border-style: solid;
-		text-shadow: black;
-		.v-panel-caption{
-			color: green;
-			font-style: oblique;
-			font-size: 26px;
-		}
-	}
-	
-	.v-window{
-	
-		.v-window-header {
-     		background-color: white;
-     		font-style: oblique;
+  
+  	.v-panel {
+  		color: blue;
+  		.v-panel-caption {
+  			color: green;
 			font-size: 20px;
-     	}
-     	
-     	.v-window-outerheader {
-     		background-color: white;
-     	}
-     
-     	.v-window-closebox{
-     		background-color: white;
-     	}
-	}
-	
-	.v-Notification.mynotificationstyle {
-    	background: white;
-    	border: 10px solid #C00000;
-    	color: blue;
-	}
-	
-	.v-grid {
-		text-align: center;
-		.v-grid-tablewrapper {
-    		.v-grid-header {
-    			.v-grid-row {
-    				color: blue;
-    				.v-grid-cell {
-      					text-align: center;
-      				}
-      			}
-      		}
-      		text-align: center;
-    	}
-	}
-	
-	.mystyle {
-    	font-family: fantasy;
-    	font-style:  italic;
-    	font-size:   25px;
-    	font-weight: bolder;
-    	line-height: 30px;
-	}
-	
-	.v-verticallayout-borderBottom {
-		border: solid;
-	}
-	
-	.v-verticallayout-border{
-		border: solid;
-		margin-bottom: 50px;
-	}
-	
-	.v-tabsheet{
-		font-size: 18px;
-		font-family: fantasy;
-		font-style: italic;
-	}
+			font-family: monospace;
+			font-style: italic;
+  		}
+  	}
+  
+  	.v-formlayout-captioncell {
+  		color: blue;
+  		font-size: 20px;
+  	}
+  	
+  	.v-verticallayout-background {
+		background-image: url("images/Chrysanthemum.jpg");
+  	}
+  
+  	.v-caption-style {
+  		font-size: 18px;
+  	}
+  	
+  	.v-checkbox > label { 
+  		color: blue;
+  	}
 }

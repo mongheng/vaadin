@@ -30,8 +30,6 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.FooterCell;
-import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -75,7 +73,7 @@ public class UserListView extends VerticalLayout implements View {
 		Column<User, String> columnUserName = grid.addColumn(User::getUsername);
 		columnUserName.setCaption("UserName");
 		columnUserName.setId("0");
-		columnUserName.setWidth(165);
+		columnUserName.setWidth(220);
 		columnUserName.setEditorComponent(tfUserName, User::setUsername).setExpandRatio(1);
 
 		Column<User, String> columnTelephon = grid.addColumn(User::getTelephone);
@@ -87,7 +85,7 @@ public class UserListView extends VerticalLayout implements View {
 		Column<User, String> columnEmail = grid.addColumn(User::getEmail);
 		columnEmail.setCaption("Email");
 		columnEmail.setId("2");
-		columnEmail.setWidth(165);
+		columnEmail.setWidth(290);
 		columnEmail.setEditorComponent(new TextField(), User::setEmail);
 
 		cbRole = new ComboBox<>();
@@ -167,8 +165,9 @@ public class UserListView extends VerticalLayout implements View {
 		title.addStyleName(ValoTheme.LABEL_H3);
 		// title.addStyleName("v-verticallayout-border");
 
-		grid.setWidth("925px");
-		grid.setHeight("330px");
+		/*grid.setWidth("925px");
+		grid.setHeight("330px");*/
+		grid.setSizeFull();
 		grid.setSortOrder(GridSortOrder.asc(columnUserName));
 		absoluteLayout.addComponent(grid, "top:40px;");
 		absoluteLayout.addComponent(title, "left:400px");
@@ -217,7 +216,7 @@ public class UserListView extends VerticalLayout implements View {
 
 		//HeaderRow filterRow = grid.prependHeaderRow(); //Adds a new row at the top of the header section.
 		HeaderRow filterRow = grid.appendHeaderRow(); //Adds a new row at the bottom of the header section.
-		FooterRow footerRow = grid.prependFooterRow();
+		//FooterRow footerRow = grid.prependFooterRow();
 
 		for (Column<User, ?> column : grid.getColumns()) {
 			if (!column.getCaption().equals("Delete Action") && !column.getCaption().equals("Update Action")) {
@@ -226,10 +225,10 @@ public class UserListView extends VerticalLayout implements View {
 				HeaderCell filterCell = filterRow.getCell(column);
 				filterCell.setComponent(createTextFieldFilter(users, column));
 				
-				FooterCell footerCell = footerRow.getCell(column);
+				/*FooterCell footerCell = footerRow.getCell(column);
 				if (column.getId().equals("2")) {
 					footerCell.setText("Email");
-				}
+				}*/
 			}
 
 		}
