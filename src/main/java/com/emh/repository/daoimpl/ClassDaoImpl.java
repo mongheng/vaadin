@@ -1,6 +1,7 @@
 package com.emh.repository.daoimpl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -9,6 +10,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -34,6 +36,26 @@ public class ClassDaoImpl implements ClassDao {
 	public <T> List<T> getListEntity(Class<T> entityClass) {
 
 		return (List<T>) sessionFactory.getCurrentSession().createCriteria(entityClass.getName()).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional
+	public <T, S> List<T> getListEntity(Class<T> firstEntityClass, Class<S> secondEntityClass, String property, Object id) {
+		
+		String firstClass = firstEntityClass.getSimpleName().toLowerCase();
+		String secondClass = secondEntityClass.getSimpleName().toLowerCase();
+		String associationPath = firstClass + "." + secondClass;
+		String propertyName = secondClass + "." + property;
+		
+		@SuppressWarnings({ "deprecation" })
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(firstEntityClass, firstClass);
+		criteria.createAlias( associationPath, secondClass, JoinType.INNER_JOIN);
+		criteria.add(Restrictions.eq(propertyName, id));
+		if (criteria.list().size() > 0) {
+			return ((List<T>) criteria.list());
+		}
+		return new ArrayList<>();
 	}
 
 	@Override

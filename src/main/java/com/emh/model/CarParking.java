@@ -3,6 +3,7 @@ package com.emh.model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,23 +16,24 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "CARPARKING")
 public class CarParking {
 
-	private String carpakingID;
+	private String carparkingID;
 	private String carType;
 	private String plantNumber;
 	private boolean free;
 	private Float amount;
+	private boolean activated;
 	private Customer customer;
 
 	@Id
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Column(name = "CARPAKING_ID", unique = true)
-	public String getCarpakingID() {
-		return carpakingID;
+	public String getCarparkingID() {
+		return carparkingID;
 	}
 
-	public void setCarpakingID(String carpakingID) {
-		this.carpakingID = carpakingID;
+	public void setCarparkingID(String carparkingID) {
+		this.carparkingID = carparkingID;
 	}
 
 	@Column(name = "CARTYPE")
@@ -70,7 +72,16 @@ public class CarParking {
 		this.amount = amount;
 	}
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@Column(name = "ACTIVATE", columnDefinition = "BOOLEAN DEFAULT false")
+	public boolean isActivated() {
+		return activated;
+	}
+
+	public void setActivated(boolean activated) {
+		this.activated = activated;
+	}
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CUSTOMER_ID")
 	public Customer getCustomer() {
 		return customer;

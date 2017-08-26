@@ -10,6 +10,8 @@ public interface ClassBusiness {
 	
 	public <T> List<T> selectAllEntity(Class<T> entityClass);
 	
+	public <T, S> List<T> selectListEntity(Class<T> firstEntityClass, Class<S> secondEntityClass,String property ,final Object id);
+	
 	public <T> T selectEntity(Class<T> entityClass, final Object id);
 	
 	public void updateEntity(Object entity);

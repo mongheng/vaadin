@@ -4097,7 +4097,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-row  > td, .mytheme .v-grid-row  > th {
-	background-color: #fff;
+	background-color: white;
 }
 
 .mytheme .v-grid-row {
@@ -4122,7 +4122,7 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .v-grid-spacer {
 	position: absolute;
 	display: block;
-	background-color: #fff;
+	background-color: white;
 }
 
 .mytheme .v-grid-spacer  > td {
@@ -4183,7 +4183,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	top: 0;
 	right: 0;
-	background-color: #eee;
+	background-color: #fafafa;
 	border: 1px solid #c3c3c3;
 	padding: 0;
 	z-index: 5;
@@ -4216,7 +4216,7 @@ div.v-layout.v-horizontal.v-widget {
 	content: "\f0c9";
 	display: block;
 	font-family: ThemeIcons, sans-serif;
-	font-size: 14px;
+	font-size: 12px;
 }
 
 .mytheme .v-grid-sidebar.v-contextmenu.closed {
@@ -4229,7 +4229,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-grid-sidebar.v-contextmenu.open .v-grid-sidebar-button:after {
 	content: "\f0c9";
-	font-size: 14px;
+	font-size: 12px;
 	line-height: 1;
 }
 
@@ -4248,7 +4248,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-cell {
-	background-color: #fff;
+	background-color: white;
 	padding: 0 16.5px;
 	line-height: 34px;
 	text-overflow: ellipsis;
@@ -4290,7 +4290,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-row-stripe > td {
-	background-color: #fff;
+	background-color: #f5f5f5;
 }
 
 .mytheme .v-grid-row-selected > td {
@@ -4303,8 +4303,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-grid-header th {
 	position: relative;
-	background-color: #eee;
-	font-size: 14px;
+	background-color: #fafafa;
+	font-size: 12px;
 	font-weight: inherit;
 	border-left: 1px solid #c3c3c3;
 	border-bottom: 1px solid #c3c3c3;
@@ -4317,7 +4317,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-header .sort-asc, .mytheme .v-grid-header .sort-desc {
-	padding-right: 33.5px;
+	padding-right: 30.5px;
 }
 
 .mytheme .v-grid-header .sort-asc:after, .mytheme .v-grid-header .sort-desc:after {
@@ -4325,7 +4325,7 @@ div.v-layout.v-horizontal.v-widget {
 	content: "\f0de" " " attr(sort-order);
 	position: absolute;
 	right: 16.5px;
-	font-size: 12px;
+	font-size: 10px;
 }
 
 .mytheme .v-grid-header .sort-desc:after {
@@ -4363,8 +4363,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-footer td {
-	background-color: #eee;
-	font-size: 14px;
+	background-color: #fafafa;
+	font-size: 12px;
 	font-weight: inherit;
 	border-left: 1px solid #c3c3c3;
 	border-top: 1px solid #c3c3c3;
@@ -4391,17 +4391,17 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .v-grid-header-deco {
 	border-top: 1px solid #c3c3c3;
 	border-right: 1px solid #c3c3c3;
-	background-color: #eee;
+	background-color: #fafafa;
 }
 
 .mytheme .v-grid-footer-deco {
 	border-bottom: 1px solid #c3c3c3;
 	border-right: 1px solid #c3c3c3;
-	background-color: #eee;
+	background-color: #fafafa;
 }
 
 .mytheme .v-grid-horizontal-scrollbar-deco {
-	background-color: #eee;
+	background-color: #fafafa;
 	border: 1px solid #c3c3c3;
 	border-top: none;
 }
@@ -4417,7 +4417,7 @@ div.v-layout.v-horizontal.v-widget {
 	right: 0;
 	bottom: 0;
 	left: 0;
-	border: none;
+	border: 2px solid #197de1;
 	display: none;
 	pointer-events: none;
 }
@@ -4461,7 +4461,7 @@ div.v-layout.v-horizontal.v-widget {
 	display: inline-block;
 	box-sizing: border-box;
 	vertical-align: middle;
-	background: #fff;
+	background: white;
 }
 
 .mytheme .v-grid-editor-cells  > div:first-child {
@@ -4524,7 +4524,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 34px;
 	border-top: 1px solid #c3c3c3;
 	margin-top: -1px;
-	background: #fff;
+	background: white;
 	padding: 0 5px;
 }
 
@@ -4571,14 +4571,14 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .v-grid-spacer > td {
 	display: block;
 	padding: 0;
-	background-color: #fff;
+	background-color: white;
 	border-top: 1px solid #e8e8e8;
 	border-bottom: 1px solid #c3c3c3;
 }
 
 .mytheme .v-grid-spacer.stripe > td {
-	background-color: #fff;
-	border-top: 1px solid #e8e8e8;
+	background-color: #f5f5f5;
+	border-top: 1px solid #dfdfdf;
 	border-bottom: 1px solid #c3c3c3;
 }
 
@@ -4617,7 +4617,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-header .v-grid-cell {
-	background: #eee;
+	background: #fafafa;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
@@ -4634,16 +4634,16 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-footer .v-grid-cell {
-	background: #eee;
+	background: #fafafa;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .mytheme .v-grid-header-deco {
-	background: #eee;
+	background: #fafafa;
 }
 
 .mytheme .v-grid-footer-deco, .mytheme .v-grid-horizontal-scrollbar-deco {
-	background: #eee;
+	background: #fafafa;
 }
 
 .mytheme .v-grid-row-selected  > .v-grid-cell {
@@ -4782,7 +4782,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-sidebar.v-contextmenu.closed {
-	background: #eee;
+	background: #fafafa;
 }
 
 .mytheme .v-grid-scroller::-webkit-scrollbar {
@@ -12331,6 +12331,27 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0 15px;
 }
 
+.mytheme .v-grid .v-grid-tablewrapper .v-grid-header .v-grid-row .v-grid-cell {
+	text-align: center;
+	background-color: #eee;
+	font-size: 15px;
+	font-family: fantasy;
+	font-style: italic;
+}
+
+.mytheme .v-grid .v-grid-tablewrapper .v-grid-header .v-grid-row .v-grid-cell-focused {
+	border: medium;
+}
+
+.mytheme .v-grid .v-grid-tablewrapper .v-grid-body .v-grid-row-has-data .v-grid-cell {
+	background-color: #fff;
+	text-align: center;
+}
+
+.mytheme .v-grid .v-grid-tablewrapper .v-grid-body .v-grid-row-stripe {
+	background-color: red;
+}
+
 .mytheme .v-label-customerstyle {
 	color: blue;
 	font-size: 20px;
@@ -12351,7 +12372,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-formlayout-captioncell {
 	color: blue;
-	font-size: 20px;
+	font-size: 17px;
 }
 
 .mytheme .v-verticallayout-background {
@@ -12360,6 +12381,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-caption-style {
 	font-size: 18px;
+}
+
+.mytheme .v-grid-cell > .v-caption {
+	text-align: center;
 }
 
 .mytheme .v-checkbox > label {

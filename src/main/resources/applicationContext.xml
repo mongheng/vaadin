@@ -49,6 +49,7 @@
 				<value>com.emh.model.CashFlow</value>
 				<value>com.emh.model.Payment</value>
 				<value>com.emh.model.CarParking</value>
+				<value>com.emh.model.ParkingCashFlow</value>
 			</list>
 		</property>
 		<!-- <property name="mappingResources"> <list> <value>User.hbm.xml</value> 

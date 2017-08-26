@@ -28,6 +28,12 @@ public class ClassBusinessImpl implements ClassBusiness {
 		
 		return classDao.getListEntity(entityClass);
 	}
+	
+	@Override
+	public <T, S> List<T> selectListEntity(Class<T> firstEntityClass, Class<S> secondEntityClass,String property, Object id) {
+		
+		return classDao.getListEntity(firstEntityClass, secondEntityClass, property, id);
+	}
 
 	@Override
 	public <T> T selectEntity(Class<T> entityClass, Object id) {

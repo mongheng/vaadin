@@ -10,6 +10,8 @@ public interface ClassDao {
 	
 	public <T> List<T> getListEntity(Class<T> entityClass);
 	
+	public <T, S> List<T> getListEntity(Class<T> firstEntityClass, Class<S> secondEntityClass,String property ,final Object id);
+	
 	public <T> T getEntity(Class<T> entityClass, final Object id);
 	
 	public void update(Object entity);

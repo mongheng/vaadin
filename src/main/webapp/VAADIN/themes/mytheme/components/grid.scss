@@ -1,0 +1,34 @@
+@mixin grid {
+	.v-grid {
+		
+		.v-grid-tablewrapper {
+			
+			.v-grid-header {	
+				.v-grid-row {
+					.v-grid-cell {
+						text-align: center;
+						background-color: #eee;
+						font-size: 15px;
+						font-family: fantasy;
+						font-style: italic;	
+					}
+					.v-grid-cell-focused { 
+						border: medium;
+					}
+				}
+			}
+			
+			.v-grid-body {
+				.v-grid-row-has-data {
+					.v-grid-cell {
+						background-color: #fff;
+						text-align: center;
+					}	
+				}
+				.v-grid-row-stripe {
+					background-color: red;
+				}
+			}
+		}
+	}
+}

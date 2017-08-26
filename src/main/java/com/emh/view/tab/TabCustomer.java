@@ -28,6 +28,7 @@ public class TabCustomer extends TabSheet {
 		customersGirdView = new CustomersGirdView(applicationContext, this);
 		tab1.addComponent(customersGirdView);
 		//tab1.setMargin(false);
+		tab1.setSizeFull();
 		tab1.setCaption("Customers");
 		tab1.setIcon(VaadinIcons.AIRPLANE);
 		

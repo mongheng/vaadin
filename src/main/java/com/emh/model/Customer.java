@@ -24,6 +24,7 @@ public class Customer {
 	private String address;
 	private String phoneNumber;
 	private boolean close;
+	private boolean parkStatu;
 	private Unit unit;
 
 	@Id
@@ -100,6 +101,15 @@ public class Customer {
 
 	public void setClose(boolean close) {
 		this.close = close;
+	}
+
+	@Column(name = "PARK_STATU", columnDefinition = "BOOLEAN DEFAULT false")
+	public boolean isParkStatu() {
+		return parkStatu;
+	}
+
+	public void setParkStatu(boolean parkStatu) {
+		this.parkStatu = parkStatu;
 	}
 
 	@OneToOne

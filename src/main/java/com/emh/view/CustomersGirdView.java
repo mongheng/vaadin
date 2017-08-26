@@ -82,6 +82,7 @@ public class CustomersGirdView extends VerticalLayout implements View {
 		grid.setSizeFull();
 		grid.setSortOrder(GridSortOrder.asc(columnName));
 		addComponent(grid);
+		setSizeFull();
 		
 		grid.addSelectionListener(listener -> {
 			grid.getSelectedItems().forEach(customer -> {
