@@ -17,6 +17,8 @@ public class Payment {
 	private Integer floorNumber;
 	private Integer unitNumber;
 	private Float amount;
+	private String carType;
+	private String PlantNumber;
 	private LocalDate paymentDate;
 
 	@Id
@@ -72,6 +74,24 @@ public class Payment {
 
 	public void setAmount(Float amount) {
 		this.amount = amount;
+	}
+
+	@Column(name = "CARTPYE")
+	public String getCarType() {
+		return carType;
+	}
+
+	public void setCarType(String carType) {
+		this.carType = carType;
+	}
+
+	@Column(name = "PLANTNUMBER")
+	public String getPlantNumber() {
+		return PlantNumber;
+	}
+
+	public void setPlantNumber(String plantNumber) {
+		PlantNumber = plantNumber;
 	}
 
 	@Column(name = "PAYMENT_DATE")

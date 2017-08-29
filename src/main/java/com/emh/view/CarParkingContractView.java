@@ -47,6 +47,8 @@ public class CarParkingContractView extends VerticalLayout {
 						+ "'";
 				List<ParkingCashFlow> parkingCashFlows = classBusiness.selectListEntityByHQL(ParkingCashFlow.class,
 						HQL);
+				List<ParkingCashFlow> parkingCashFlows = classBusiness.selectListEntity(ParkingCashFlow.class,
+						CarParking.class, "carparkingID", carParking.getCarparkingID());
 
 				dataProvider = parkingCashFlows.size() > 0 ? new ListDataProvider<>(parkingCashFlows)
 						: new ListDataProvider<>(new ArrayList<>());

@@ -38,7 +38,7 @@ public class ParkingCashFlow {
 		this.cashflowID = cashflowID;
 	}
 
-	@Column(name ="INSTALLMENT_NUMBER")
+	@Column(name = "INSTALLMENT_NUMBER")
 	public Integer getInstallmentNumber() {
 		return installmentNumber;
 	}
@@ -47,7 +47,7 @@ public class ParkingCashFlow {
 		this.installmentNumber = installmentNumber;
 	}
 
-	@Column(name ="AMOUNT")
+	@Column(name = "AMOUNT")
 	public Float getAmount() {
 		return amount;
 	}
@@ -85,12 +85,20 @@ public class ParkingCashFlow {
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CARPARKING_ID")
-	public CarParking getCarParking() {
+	public CarParking getCarparking() {
 		return carparking;
 	}
 
-	public void setCarParking(CarParking carParking) {
-		this.carparking = carParking;
+	public void setCarparking(CarParking carparking) {
+		this.carparking = carparking;
+	}
+
+	@Override
+	public String toString() {
+
+		return "cashflowID:" + cashflowID + ", carparkingID:" + carparking.getCarparkingID() + ", installmentNumber:"
+				+ installmentNumber + ", amount:" + amount + ", startDate:" + startDate + ", endDate:" + endDate
+				+ ", statu:" + statu;
 	}
 
 }

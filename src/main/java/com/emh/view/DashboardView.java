@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CashFlow;
+import com.emh.model.Customer;
 import com.emh.model.ParkingCashFlow;
 import com.emh.model.Payment;
 import com.emh.repository.business.ClassBusiness;
@@ -58,7 +59,7 @@ public class DashboardView extends VerticalLayout {
 		} else {
 			cashflowDataProvider = new ListDataProvider<>(new ArrayList<>());
 		}
-		
+
 		if (parkingCashFlows.size() > 0) {
 			parkingCashflowDataProvider = new ListDataProvider<>(parkingCashFlows);
 		} else {
@@ -72,7 +73,7 @@ public class DashboardView extends VerticalLayout {
 		grid.addStyleName("gridstyle");
 		initColumnGrid();
 		initColumnParkingGrid();
-		
+
 		setSizeFull();
 		addComponents(grid, parkingGrid);
 		// setMargin(false);
@@ -151,36 +152,85 @@ public class DashboardView extends VerticalLayout {
 		}));
 		columnButtonPay.setCaption("Action Pay");
 		grid.setSortOrder(GridSortOrder.asc(columnCustomerName));
-		
+
 	}
-	
+
 	private void initColumnParkingGrid() {
-		Column<ParkingCashFlow, String> columnCustomerName = parkingGrid.addColumn(parkingCashFlow -> parkingCashFlow.getCarParking().getCustomer().getCustomerName());
+		Column<ParkingCashFlow, String> columnCustomerName = parkingGrid
+				.addColumn(parkingCashFlow -> parkingCashFlow.getCarparking().getCustomer().getCustomerName());
 		columnCustomerName.setCaption("Customer Name");
-		
-		Column<ParkingCashFlow, String> columnCarType = parkingGrid.addColumn(parkingCashFlow -> parkingCashFlow.getCarParking().getCarType());
+
+		Column<ParkingCashFlow, String> columnCarType = parkingGrid
+				.addColumn(parkingCashFlow -> parkingCashFlow.getCarparking().getCarType());
 		columnCarType.setCaption("Car Type");
-		
-		Column<ParkingCashFlow, String> columnPlantNumber = parkingGrid.addColumn(parkingCashFlow -> parkingCashFlow.getCarParking().getPlantNumber());
+
+		Column<ParkingCashFlow, String> columnPlantNumber = parkingGrid
+				.addColumn(parkingCashFlow -> parkingCashFlow.getCarparking().getPlantNumber());
 		columnPlantNumber.setCaption("Plant Number");
-		
-		Column<ParkingCashFlow, Float> columnAmount = parkingGrid.addColumn(parkingCashFlow -> parkingCashFlow.getAmount());
+
+		Column<ParkingCashFlow, Float> columnAmount = parkingGrid
+				.addColumn(parkingCashFlow -> parkingCashFlow.getAmount());
 		columnAmount.setCaption("Amount");
-		
-		Column<ParkingCashFlow, Integer> columnInstallment = parkingGrid.addColumn(parkingCashFlow -> parkingCashFlow.getInstallmentNumber());
+
+		Column<ParkingCashFlow, Integer> columnInstallment = parkingGrid
+				.addColumn(parkingCashFlow -> parkingCashFlow.getInstallmentNumber());
 		columnInstallment.setCaption("Installment Number");
-		
-		Column<ParkingCashFlow, LocalDate> columnStartDate = parkingGrid.addColumn(parkingCashFlow -> parkingCashFlow.getStartDate());
+
+		Column<ParkingCashFlow, LocalDate> columnStartDate = parkingGrid
+				.addColumn(parkingCashFlow -> parkingCashFlow.getStartDate());
 		columnStartDate.setCaption("Start Date");
-		
-		Column<ParkingCashFlow, LocalDate> columnEndDate = parkingGrid.addColumn(parkingCashFlow -> parkingCashFlow.getEndDate());
+
+		Column<ParkingCashFlow, LocalDate> columnEndDate = parkingGrid
+				.addColumn(parkingCashFlow -> parkingCashFlow.getEndDate());
 		columnEndDate.setCaption("End Date");
-		
-		Column<ParkingCashFlow, String> columnPay = parkingGrid.addColumn(pay -> "Paid", new ButtonRenderer<>(clickEvent -> {
-			
-		}));
+
+		Column<ParkingCashFlow, String> columnPay = parkingGrid.addColumn(pay -> "Paid",
+				new ButtonRenderer<>(clickEvent -> {
+					ParkingCashFlow parkingCashFlow = clickEvent.getItem();
+
+					ConfirmDialog.show(UI.getCurrent(), "Confirmation",
+							"Are you sure you want to pay "
+									+ parkingCashFlow.getCarparking().getCustomer().getCustomerName()
+									+ ", Installment Number :" + parkingCashFlow.getInstallmentNumber() + ", CarType :"
+									+ parkingCashFlow.getCarparking().getCarType() + ", PlantNumber :"
+									+ parkingCashFlow.getCarparking().getPlantNumber(),
+							"Yes", "No", new ConfirmDialog.Listener() {
+
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void onClose(ConfirmDialog dialog) {
+									if (dialog.isConfirmed()) {
+										Payment payment = new Payment();
+										Customer customer = parkingCashFlow.getCarparking().getCustomer();
+										payment.setPaymentID(parkingCashFlow.getCashflowID());
+										payment.setInstallmentNumber(parkingCashFlow.getInstallmentNumber());
+										payment.setCustomerName(customer.getCustomerName());
+										payment.setAmount(parkingCashFlow.getAmount());
+										payment.setFloorNumber(customer.getUnit().getFloor().getFloorNumber());
+										payment.setUnitNumber(customer.getUnit().getUnitNumber());
+										payment.setCarType(parkingCashFlow.getCarparking().getCarType());
+										payment.setPlantNumber(parkingCashFlow.getCarparking().getPlantNumber());
+										payment.setPaymentDate(LocalDate.now());
+										classBusiness.createEntity(payment);
+
+										parkingCashFlow.setStatu(true);
+										classBusiness.updateEntity(parkingCashFlow);
+										parkingCashflowDataProvider.getItems().remove(parkingCashFlow);
+										parkingGrid.setDataProvider(parkingCashflowDataProvider);
+										Notification.show(parkingCashFlow.getCarparking().getCustomer()
+												.getCustomerName() + ", Installment Number :"
+												+ parkingCashFlow.getInstallmentNumber() + ", CarType :"
+												+ parkingCashFlow.getCarparking().getCarType() + ", PlantNumber :"
+												+ parkingCashFlow.getCarparking().getPlantNumber() + "has been paid.");
+									} else {
+										dialog.close();
+									}
+								}
+							});
+				}));
 		columnPay.setCaption("Action Paid");
-		
+
 		parkingGrid.setSortOrder(GridSortOrder.asc(columnCustomerName));
 	}
 }
