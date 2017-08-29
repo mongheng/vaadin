@@ -40,13 +40,6 @@ public class CarParkingContractView extends VerticalLayout {
 			ListDataProvider<ParkingCashFlow> dataProvider = new ListDataProvider<>(new ArrayList<>());
 			if (carParking.isActivated()) {
 
-				/*List<ParkingCashFlow> parkingCashFlows1 = classBusiness.selectListEntity(ParkingCashFlow.class,
-						CarParking.class, "carparkingID", carParking.getCarparkingID().toString());*/
-
-				String HQL = "FROM ParkingCashFlow WHERE CARPARKING_ID='" + carParking.getCarparkingID().toString()
-						+ "'";
-				List<ParkingCashFlow> parkingCashFlows = classBusiness.selectListEntityByHQL(ParkingCashFlow.class,
-						HQL);
 				List<ParkingCashFlow> parkingCashFlows = classBusiness.selectListEntity(ParkingCashFlow.class,
 						CarParking.class, "carparkingID", carParking.getCarparkingID());
 
