@@ -41,16 +41,17 @@ public class ClassDaoImpl implements ClassDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public <T, S> List<T> getListEntity(Class<T> firstEntityClass, Class<S> secondEntityClass, String property, Object id) {
-		
+	public <T, S> List<T> getListEntity(Class<T> firstEntityClass, Class<S> secondEntityClass, String property,
+			Object id) {
+
 		String firstClass = firstEntityClass.getSimpleName().toLowerCase();
 		String secondClass = secondEntityClass.getSimpleName().toLowerCase();
 		String associationPath = firstClass + "." + secondClass;
 		String propertyName = secondClass + "." + property;
-		
+
 		@SuppressWarnings({ "deprecation" })
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(firstEntityClass, firstClass);
-		criteria.createAlias( associationPath, secondClass, JoinType.INNER_JOIN);
+		criteria.createAlias(associationPath, secondClass, JoinType.INNER_JOIN);
 		criteria.add(Restrictions.eq(propertyName, id));
 		if (criteria.list().size() > 0) {
 			return ((List<T>) criteria.list());
@@ -88,7 +89,7 @@ public class ClassDaoImpl implements ClassDao {
 
 		return query.uniqueResult();
 	}
-	
+
 	@Override
 	@Transactional
 	public <T> List<T> getEntitysByHQL(Class<T> entityClass, String HQL) {

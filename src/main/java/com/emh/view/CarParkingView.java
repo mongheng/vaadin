@@ -239,7 +239,7 @@ public class CarParkingView extends VerticalLayout {
 					parkingCashFlow.setEndDate(tempEndDate);
 					parkingCashFlow.setInstallmentNumber(i);
 					parkingCashFlow.setAmount(carParking.getAmount());
-					parkingCashFlow.setCarParking(carParking);
+					parkingCashFlow.setCarparking(carParking);
 					classBusiness.createEntity(parkingCashFlow);
 				} else {
 					parkingCashFlow.setStartDate(tempEndDate);
@@ -247,7 +247,7 @@ public class CarParkingView extends VerticalLayout {
 					parkingCashFlow.setEndDate(tempEndDate);
 					parkingCashFlow.setInstallmentNumber(i);
 					parkingCashFlow.setAmount(carParking.getAmount());
-					parkingCashFlow.setCarParking(carParking);;
+					parkingCashFlow.setCarparking(carParking);;
 					classBusiness.createEntity(parkingCashFlow);
 				}
 				carParking.setActivated(true);
