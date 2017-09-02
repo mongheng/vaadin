@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+	
+	<bean id="socketAlertSender" class="com.effecia.model.sender.SocketAlertSender">
+		<constructor-arg type="java.lang.String" value="203.167.16.245"/>
+		<constructor-arg type="int" value="7788"/>
+		<property name="host" value="203.167.16.245" />
+		<property name="port" value="7788" />
+		<!-- <constructor-arg type="java.lang.String" value="192.168.1.220"/>
+		<constructor-arg type="int" value="7788"/>
+		<property name="host" value="192.168.1.220" />
+		<property name="port" value="7788" /> -->
+	</bean>
+
+	<bean id="httpAlertSender" class="com.effecia.model.sender.HttpAlertSender">
+		<property name="host" value="203.167.16.245" />
+		<property name="port" value="9999" />
+	</bean>
+
+	<bean id="alertAgent" class="com.effecia.model.AlertAgent">
+	 	<property name="alertSender" ref="socketAlertSender"/>
+		<property name="moduleName" value="Slot SERVER" />
+		<property name="receivers">
+			<set>
+				<value>Mr.tiger</value>
+				<value>Mr.Heng</value>
+			</set>
+		</property>
+	</bean>
+
+	<bean id="alertCommand" class="com.effecia.model.AlertCommand">
+		<property name="alertCommandType" value="ALERT" />
+	</bean>
+
+	<bean id="alertMessager" class="com.effecia.model.AlertMessager">
+		<property name="counter" value="631" />
+	</bean>
+</beans>

@@ -11,7 +11,7 @@ public class MainController {
 
 	@RequestMapping(name = "/index", method = RequestMethod.GET)
 	public String loadPage(SitePreference sitePreference, Device device) {
-
+		
 		if (sitePreference == SitePreference.MOBILE || device.isMobile()) {
 			return "index";
 		} else if (sitePreference == SitePreference.TABLET || device.isTablet()) {
