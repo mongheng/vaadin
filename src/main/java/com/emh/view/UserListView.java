@@ -20,7 +20,6 @@ import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
@@ -39,7 +38,6 @@ public class UserListView extends VerticalLayout implements View {
 
 	private static final long serialVersionUID = 1L;
 	private ApplicationContext applicationContext;
-	private AbsoluteLayout absoluteLayout;
 	private Grid<User> grid;
 	private TextField tfUserName;
 	private ComboBox<Role> cbRole;
@@ -56,8 +54,6 @@ public class UserListView extends VerticalLayout implements View {
 	}
 
 	private void init() {
-		absoluteLayout = new AbsoluteLayout();
-		absoluteLayout.setWidth("100%");
 
 		List<User> users = getUsers();
 		if (users != null) {
@@ -69,23 +65,23 @@ public class UserListView extends VerticalLayout implements View {
 
 		grid.setDataProvider(userDataProvider);
 		tfUserName = new TextField();
-		
+
 		Column<User, String> columnUserName = grid.addColumn(User::getUsername);
 		columnUserName.setCaption("UserName");
 		columnUserName.setId("0");
-		columnUserName.setWidth(220);
+		// columnUserName.setWidth(220);
 		columnUserName.setEditorComponent(tfUserName, User::setUsername).setExpandRatio(1);
 
 		Column<User, String> columnTelephon = grid.addColumn(User::getTelephone);
 		columnTelephon.setCaption("Telephone");
 		columnTelephon.setId("1");
-		columnTelephon.setWidth(165);
+		// columnTelephon.setWidth(165);
 		columnTelephon.setEditorComponent(new TextField(), User::setTelephone);
 
 		Column<User, String> columnEmail = grid.addColumn(User::getEmail);
 		columnEmail.setCaption("Email");
 		columnEmail.setId("2");
-		columnEmail.setWidth(290);
+		// columnEmail.setWidth(290);
 		columnEmail.setEditorComponent(new TextField(), User::setEmail);
 
 		cbRole = new ComboBox<>();
@@ -96,7 +92,7 @@ public class UserListView extends VerticalLayout implements View {
 		Column<User, String> columnRole = grid.addColumn(user -> user.getRole().getRoleName());
 		columnRole.setCaption("Role");
 		columnRole.setId("3");
-		columnRole.setWidth(165);
+		// columnRole.setWidth(165);
 		columnRole.setEditorBinding(userBinding);
 		// columnRole.setEditorComponent(cbRole,
 		// User::setRole::setRoleName).setExpandRatio(2);
@@ -123,6 +119,7 @@ public class UserListView extends VerticalLayout implements View {
 					});
 
 		}));
+		columnButton.setId("4");
 		columnButton.setCaption("Delete Action");
 
 		Column<User, String> columnUpdate = grid.addColumn(user -> "Update", new ButtonRenderer<>(clickEvent -> {
@@ -152,6 +149,7 @@ public class UserListView extends VerticalLayout implements View {
 				Notification.show("Please select the item if you want to update.", Type.HUMANIZED_MESSAGE);
 			}
 		}));
+		columnUpdate.setId("5");
 		columnUpdate.setCaption("Update Action");
 
 		setFilterGrid(userDataProvider);
@@ -163,20 +161,12 @@ public class UserListView extends VerticalLayout implements View {
 
 		Label title = new Label("User Information");
 		title.addStyleName(ValoTheme.LABEL_H3);
-		// title.addStyleName("v-verticallayout-border");
 
-		/*grid.setWidth("925px");
-		grid.setHeight("330px");*/
 		grid.setSizeFull();
 		grid.setSortOrder(GridSortOrder.asc(columnUserName));
-		absoluteLayout.addComponent(grid, "top:40px;");
-		absoluteLayout.addComponent(title, "left:400px");
-		// addComponents(title,grid);
-		addComponents(absoluteLayout);
+
+		addComponent(grid);
 		setSizeFull();
-		addStyleName("v-verticallayout-borderBottom");
-		// setComponentAlignment(grid, Alignment.TOP_CENTER);
-		// setComponentAlignment(title, Alignment.TOP_CENTER);
 	}
 
 	private List<User> getUsers() {
@@ -214,24 +204,31 @@ public class UserListView extends VerticalLayout implements View {
 
 	private void setFilterGrid(ListDataProvider<User> users) {
 
-		//HeaderRow filterRow = grid.prependHeaderRow(); //Adds a new row at the top of the header section.
-		HeaderRow filterRow = grid.appendHeaderRow(); //Adds a new row at the bottom of the header section.
-		//FooterRow footerRow = grid.prependFooterRow();
+		HeaderRow row = grid.prependHeaderRow(); // Adds a new row at the top of
+													// the header section.
+		HeaderRow filterRow = grid.appendHeaderRow(); // Adds a new row at the
+														// bottom of the header
+														// section.
+		// FooterRow footerRow = grid.prependFooterRow();
 
 		for (Column<User, ?> column : grid.getColumns()) {
 			if (!column.getCaption().equals("Delete Action") && !column.getCaption().equals("Update Action")) {
-				/*HeaderCell topCell = filterRowTop.getCell(column);
-				topCell.setText(column.getCaption());*/
+				/*
+				 * HeaderCell topCell = filterRowTop.getCell(column);
+				 * topCell.setText(column.getCaption());
+				 */
 				HeaderCell filterCell = filterRow.getCell(column);
 				filterCell.setComponent(createTextFieldFilter(users, column));
-				
-				/*FooterCell footerCell = footerRow.getCell(column);
-				if (column.getId().equals("2")) {
-					footerCell.setText("Email");
-				}*/
-			}
 
+				/*
+				 * FooterCell footerCell = footerRow.getCell(column); if
+				 * (column.getId().equals("2")) { footerCell.setText("Email"); }
+				 */
+			}
 		}
+		HeaderCell cell = row.join(row.getCell("0"), row.getCell("1"), row.getCell("2"), row.getCell("3"),
+				row.getCell("4"), row.getCell("5"));
+		cell.setText("User Information");
 	}
 
 	private TextField createTextFieldFilter(ListDataProvider<User> users, Column<User, ?> column) {
