@@ -1,7 +1,11 @@
 package com.emh.view;
 
+import java.util.UUID;
+
 import org.springframework.context.ApplicationContext;
 
+import com.effecia.model.AlertAgent;
+import com.effecia.model.AlertLevel;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.event.FieldEvents.BlurEvent;
@@ -100,9 +104,9 @@ public class LoginView extends VerticalLayout implements View {
 		btnSignup.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnSignup.addClickListener(e -> {
 			// getUI().getNavigator().navigateTo("signupview/params=10");
-			//UI.getCurrent().addWindow(new SignupView(applicationContext));
+			UI.getCurrent().addWindow(new SignupView(applicationContext));
 			//UI.getCurrent().addWindow(new FloorView(applicationContext));
-			UI.getCurrent().addWindow(new UnitView(applicationContext));
+			//UI.getCurrent().addWindow(new UnitView(applicationContext));
 		});
 
 		hLayout.addComponents(btnLogin, btnSignup);
@@ -118,6 +122,8 @@ public class LoginView extends VerticalLayout implements View {
 		setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
 		addStyleName("background");
 		setHeight("95%");
+		
+		AlertAgent.trigerAlert(UUID.randomUUID().toString(), "Testing System....", AlertLevel.WARN);
 	}
 
 	@Override

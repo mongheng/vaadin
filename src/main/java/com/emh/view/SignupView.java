@@ -8,6 +8,7 @@ import com.emh.model.Role;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.emh.util.Utility;
+import com.emh.view.upload.FileUploader;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.data.validator.EmailValidator;
@@ -25,8 +26,10 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -49,6 +52,8 @@ public class SignupView extends Window {
 	private Button btnCreate;
 	private Button btnCancel;
 	private ComboBox<Role> cbRole;
+	private Upload upload;
+	private ProgressBar progressBar;
 
 	public SignupView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -61,6 +66,7 @@ public class SignupView extends Window {
 		formLayout = new FormLayout();
 		hSignup = new HorizontalLayout();
 		binder = new Binder<>();
+		progressBar = new ProgressBar(0.0f);
 
 		username = new TextField("UserName :");
 		username.setIcon(VaadinIcons.USER);
@@ -117,20 +123,27 @@ public class SignupView extends Window {
 			}
 		});
 		
+		upload = new Upload("Please Select File.", new FileUploader(progressBar));
+		upload.setButtonCaption("Upload");
+		FileUploader receiver = new FileUploader(progressBar);
+		upload.addSucceededListener(receiver);
+		upload.addProgressListener(receiver);
+		upload.addFailedListener(receiver);
+		
 		hSignup.addComponents(btnCreate, btnCancel);
 		hSignup.setComponentAlignment(btnCreate, Alignment.MIDDLE_RIGHT);
 		hSignup.setWidth("400px");
 		hSignup.setSpacing(true);
 
-		formLayout.addComponents(username, password, repeatPassword, telephone, email, cbRole);
+		formLayout.addComponents(username, password, repeatPassword, telephone, email, cbRole, upload, progressBar);
 		vSignup.addComponents(formLayout, hSignup);
+		progressBar.setVisible(false);
 		// vSignup.setHeight("95%");
 
 		setContent(vSignup);
 		center();
 		setModal(true);
-		addStyleName("v-window");
-		setResizable(false);
+		//setResizable(false);
 
 		setHeight("465px");
 		setWidth("400px");

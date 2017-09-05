@@ -74,12 +74,11 @@ public class MainPageView extends AbsoluteLayout implements View {
 		bodyLayout.setFirstComponent(menuLayout);
 		bodyLayout.setSecondComponent(contentLayout);
 		bodyLayout.setSizeFull();
-		bodyLayout.addStyleName("v-verticallayout-borderBottom");
+		bodyLayout.setLocked(true);
 		bodyLayout.setSplitPosition(13);
 		
 		addComponent(headerLayout);
 		addComponent(bodyLayout,"top:70px;bottom:10px");
-		addStyleName("v-verticallayout-borderBottom");
 		setSizeFull();
 
 	}
@@ -118,14 +117,12 @@ public class MainPageView extends AbsoluteLayout implements View {
 		// innerHeaderLayout.setExpandRatio(btnSignout, 1);
 		innerHeaderLayout.setSpacing(true);
 		innerHeaderLayout.setSizeUndefined();
-		innerHeaderLayout.addStyleName("v-verticallayout-borderBottom");
 		innerHeaderLayout.setComponentAlignment(btnSignout, Alignment.TOP_RIGHT);
 		headerLayout.setSizeFull();
 		headerLayout.addComponent(innerHeaderLayout);
 		headerLayout.setMargin(new MarginInfo(false, true, false, false));
 		headerLayout.setComponentAlignment(innerHeaderLayout, Alignment.TOP_RIGHT);
 
-		headerLayout.addStyleName("v-verticallayout-borderBottom");
 		headerLayout.setHeight(2, Unit.CM);
 	}
 
@@ -163,7 +160,6 @@ public class MainPageView extends AbsoluteLayout implements View {
 			contentLayout.addComponent(getViewComponent(viewComponent));
 			contentLayout.setSizeFull();
 			contentLayout.setMargin(false);
-			contentLayout.addStyleName("v-verticallayout-borderBottom");
 		});
 	}
 	
@@ -183,7 +179,6 @@ public class MainPageView extends AbsoluteLayout implements View {
 		menuBar.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
 		menuHeaderLayout.addComponent(menuBar);
 		menuHeaderLayout.setSizeUndefined();
-		menuHeaderLayout.addStyleName("v-verticallayout-borderBottom");
 		menuHeaderLayout.setComponentAlignment(menuBar, Alignment.TOP_CENTER);
 		
 		headerLayout.addComponent(menuBar);

@@ -127,7 +127,7 @@ public class CarParkingView extends VerticalLayout {
 		btnActivated.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnActivated.setEnabled(false);
 		btnActivated.addClickListener(new ActivatedClickEvent());
-
+		
 		setValueCustomer();
 
 		hLayout.addComponents(btnSave, btnNew, btnActivated);
