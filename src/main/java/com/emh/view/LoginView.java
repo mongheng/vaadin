@@ -16,8 +16,10 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Responsive;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
@@ -35,6 +37,7 @@ public class LoginView extends VerticalLayout implements View {
 
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
+	private CssLayout cssLayout;
 	private HorizontalLayout hLayout;
 	private Panel loginPanel;
 	private FormLayout formlogin;
@@ -51,7 +54,10 @@ public class LoginView extends VerticalLayout implements View {
 		loginPanel = new Panel("Login Form");
 		formlogin = new FormLayout();
 		hLayout = new HorizontalLayout();
+		cssLayout = new CssLayout();
 
+		Responsive.makeResponsive(cssLayout);
+		
 		classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		
 		name = new TextField();
@@ -104,9 +110,10 @@ public class LoginView extends VerticalLayout implements View {
 		btnSignup.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnSignup.addClickListener(e -> {
 			// getUI().getNavigator().navigateTo("signupview/params=10");
-			UI.getCurrent().addWindow(new SignupView(applicationContext));
+			//UI.getCurrent().addWindow(new SignupView(applicationContext));
 			//UI.getCurrent().addWindow(new FloorView(applicationContext));
 			//UI.getCurrent().addWindow(new UnitView(applicationContext));
+			getUI().getNavigator().navigateTo(ResponsiveLayout.class.getSimpleName());
 		});
 
 		hLayout.addComponents(btnLogin, btnSignup);
@@ -118,12 +125,16 @@ public class LoginView extends VerticalLayout implements View {
 		loginPanel.setWidth("400px");
 		loginPanel.setContent(formlogin);
 
-		addComponents(loginPanel);
-		setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
+		cssLayout.addComponent(loginPanel);
+		cssLayout.addStyleName("middle");
+		
+		addComponents(cssLayout);
 		addStyleName("background");
-		setHeight("95%");
+		setComponentAlignment(cssLayout, Alignment.MIDDLE_CENTER);
+		setSizeFull();
 		
 		AlertAgent.trigerAlert(UUID.randomUUID().toString(), "Testing System....", AlertLevel.WARN);
+		//JavaScript.getCurrent().execute("alert('Hello')");
 	}
 
 	@Override

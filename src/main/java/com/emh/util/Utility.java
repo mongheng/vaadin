@@ -16,12 +16,14 @@ public class Utility {
 	public static String encryptionPassword(String password) {
 		try {
 			if (password != null) {
+				int i = 1;
 				char[] cPassword = password.toCharArray();
 				StringBuilder s = new StringBuilder();
 				for (char c : cPassword) {
-					int value = ((int) c + 2) * 3;
+					int value = (((int) c + 2) * 3) + i;
 					s.append(String.valueOf(value));
 					s.append("-");
+					i++;
 				}
 
 				return s.toString();
@@ -35,11 +37,13 @@ public class Utility {
 
 	public static String decryptionPassword(String password) {
 		try {
+			int i = 1;
 			String[] splitPassword = password.split("-");
 			StringBuilder decryption = new StringBuilder();
 			for (String values : splitPassword) {
-				int value = (Integer.valueOf(values) / 3) - 2;
+				int value = ((Integer.valueOf(values) - i) / 3) - 2;
 				decryption.append((char) value);
+				i++;
 			}
 			return decryption.toString();
 		} catch (Exception e) {

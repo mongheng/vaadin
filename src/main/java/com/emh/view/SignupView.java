@@ -42,6 +42,7 @@ public class SignupView extends Window {
 	private VerticalLayout vSignup;
 	private FormLayout formLayout;
 	private HorizontalLayout hSignup;
+	private HorizontalLayout hBar;
 	private Binder<User> binder;
 
 	private TextField username;
@@ -65,8 +66,9 @@ public class SignupView extends Window {
 		vSignup = new VerticalLayout();
 		formLayout = new FormLayout();
 		hSignup = new HorizontalLayout();
+		hBar = new HorizontalLayout();
 		binder = new Binder<>();
-		progressBar = new ProgressBar(0.0f);
+		progressBar = new ProgressBar();
 
 		username = new TextField("UserName :");
 		username.setIcon(VaadinIcons.USER);
@@ -131,18 +133,20 @@ public class SignupView extends Window {
 		upload.addFailedListener(receiver);
 		
 		hSignup.addComponents(btnCreate, btnCancel);
-		hSignup.setComponentAlignment(btnCreate, Alignment.MIDDLE_RIGHT);
+		hSignup.setComponentAlignment(btnCreate, Alignment.TOP_RIGHT);
 		hSignup.setWidth("400px");
 		hSignup.setSpacing(true);
 
-		formLayout.addComponents(username, password, repeatPassword, telephone, email, cbRole, upload, progressBar);
+		hBar.addComponents(progressBar);
+		
+		formLayout.addComponents(username, password, repeatPassword, telephone, email, cbRole, upload, hBar);
 		vSignup.addComponents(formLayout, hSignup);
 		progressBar.setVisible(false);
 		// vSignup.setHeight("95%");
 
 		setContent(vSignup);
 		center();
-		setModal(true);
+		//setModal(true);
 		//setResizable(false);
 
 		setHeight("465px");

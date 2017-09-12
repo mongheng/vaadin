@@ -1,4 +1,4 @@
-package com.emh.UIProvider;
+package com.emh.uiprovider;
 
 import com.emh.MainUI;
 import com.emh.mobile.MobileUI;

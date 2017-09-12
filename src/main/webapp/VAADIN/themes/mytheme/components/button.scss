@@ -1,0 +1,34 @@
+@mixin button {
+	.textstyle .v-button-caption {
+		border: none;
+		font-size: 17px;
+		color: #bcc2cd;
+		cursor: pointer;
+		text-align: right;
+	}
+	
+	.textstylehover:HOVER .v-button-caption {
+		color: white;
+	}
+	
+	.icon .v-icon {
+		color: #bcc2cd;
+		margin-left: 0px;
+	}
+	
+	.iconhover:HOVER .v-icon {
+		color: white;
+	}
+	
+	.focus:FOCUS .v-button-caption {
+		color: white;
+	}
+	
+	.iconfocus:FOCUS .v-icon {
+		color: white;
+	}
+	
+	.hideborder:FOCUS .v-button {
+		border: none;
+	}
+}

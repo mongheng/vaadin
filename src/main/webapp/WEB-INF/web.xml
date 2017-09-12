@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
@@ -9,6 +10,7 @@
 			org.springframework.web.context.ContextLoaderListener
 		</listener-class>
 	</listener>
+	
 	<!-- <context-param> <param-name>contextClass</param-name> <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext 
 		</param-value> </context-param> -->
 	<servlet>
@@ -18,16 +20,15 @@
 		<!-- <servlet-class>com.vaadin.server.VaadinServlet</servlet-class> -->
 		<!-- <init-param> <param-name>UIProvider</param-name> <param-value>com.emh.UIProvider.DefineUIProvider</param-value> 
 			</init-param> -->
-		<servlet-class>com.vaadin.spring.server.SpringVaadinServlet
-		</servlet-class>
-		<!-- <init-param> <param-name>UIProvider</param-name> <param-value>com.emh.UIProvider.DefineUIProvider</param-value> 
-			</init-param> -->
-		<init-param>
+		<servlet-class>com.vaadin.spring.server.SpringVaadinServlet</servlet-class>
+		<init-param> 
+			<param-name>defineSpringUIProvider</param-name> 
+			<param-value>com.emh.uiprovider.DefineSpringUIProvider</param-value> 
+		</init-param>
+		<!-- <init-param>
 			<param-name>SpringUIProvider</param-name>
 			<param-value>com.vaadin.spring.server.SpringUIProvider</param-value>
-		</init-param>
-		<!-- <init-param> <param-name>contextConfigLocation</param-name> <param-value>/WEB-INF/spring/applicationContext.xml</param-value> 
-			</init-param> -->
+		</init-param> -->
 		<load-on-startup>1</load-on-startup>
 		<async-supported>true</async-supported>
 	</servlet>
@@ -44,8 +45,6 @@
 		<param-name>productionMode</param-name>
 		<param-value>false</param-value>
 	</context-param>
-	<!-- <context-param> <param-name>contextConfigLocation</param-name> <param-value>/WEB-INF/spring/applicationContext.xml</param-value> 
-		</context-param> -->
 
 	<servlet>
 		<description>
@@ -70,5 +69,4 @@
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
-	s
 </web-app>

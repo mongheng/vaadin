@@ -1,4 +1,4 @@
-package com.emh.UIProvider;
+package com.emh.uiprovider;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;

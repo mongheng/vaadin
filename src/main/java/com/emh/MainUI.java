@@ -1,13 +1,17 @@
 package com.emh;
 
+import org.apache.log4j.Logger;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.emh.view.LoginView;
 import com.emh.view.MainPageView;
+import com.emh.view.ResponsiveLayout;
 import com.emh.view.UserListView;
 import com.vaadin.annotations.PreserveOnRefresh;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
@@ -27,13 +31,21 @@ import com.vaadin.ui.UI;
 @SpringUI
 @SpringViewDisplay
 @PreserveOnRefresh
+@Push
 public class MainUI extends UI {
 
 	private static final long serialVersionUID = 1L;
+	private final static Logger logger = Logger.getLogger(MainUI.class.getName());
 	private ApplicationContext applicationContext;
+	
+	static {
+		SLF4JBridgeHandler.install();
+	}
 	
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
+		logger.info("Loadin Main Form");
+		
 		applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 		getPage().setTitle("Vaadin Project");
 	
@@ -42,6 +54,7 @@ public class MainUI extends UI {
         navigator.addView(LoginView.class.getSimpleName(), new LoginView(applicationContext));
         navigator.addView(MainPageView.class.getSimpleName(), new MainPageView(applicationContext));
         navigator.addView(UserListView.class.getSimpleName(), new UserListView(applicationContext));
+        navigator.addView(ResponsiveLayout.class.getSimpleName(), new ResponsiveLayout(applicationContext));
         
         navigator.navigateTo(LoginView.class.getSimpleName());
     }

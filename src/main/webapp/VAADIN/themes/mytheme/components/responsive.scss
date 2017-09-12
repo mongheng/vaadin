@@ -1,0 +1,32 @@
+@mixin responsive {
+	.v-csslayout.responsive {
+		overflow: visible;
+		
+		&[width-range~="0-500px"] {
+	    	.v-panel {
+	      		width: 100%;
+	    	}
+	    	.middle .v-csslayout-container {
+				vertical-align: middle;
+			}
+	  	}
+	  
+	  	&[width-range~="501-800px"] {
+	    	.v-panel {
+	      		width: 100%;
+	    	}
+	    	.middle .v-csslayout-container {
+				vertical-align: middle;
+			}
+	  	}
+	  
+	  	&[width-range~="801px-"] {
+	    	.v-panel {
+	      		width: 100%;
+	    	}
+	    	.middle .v-csslayout-container {
+				vertical-align: middle;
+			}
+	  	}
+	}
+}

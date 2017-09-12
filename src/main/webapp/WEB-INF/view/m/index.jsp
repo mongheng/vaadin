@@ -8,6 +8,7 @@
         <title>JSP Page</title>
     </head>
     <body>
+    	<%response.sendRedirect("app/"); %>
         <h1>Mobile Hello World!</h1>
     </body>
 </html>

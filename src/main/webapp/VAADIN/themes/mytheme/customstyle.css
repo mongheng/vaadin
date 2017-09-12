@@ -55,3 +55,6 @@
 .v-vertical-login {
 	background-image: url("images/Chrysanthemum.jpg");
 }
+.middle .v-csslayout-container {
+	vertical-align: middle;
+}

@@ -1,10 +1,7 @@
 package com.emh;
 
 import java.util.List;
-import java.util.UUID;
 
-import com.effecia.model.AlertAgent;
-import com.effecia.model.AlertLevel;
 import com.emh.configuration.ConfigApplicationContext;
 import com.emh.model.CarParking;
 import com.emh.model.ParkingCashFlow;
@@ -14,8 +11,9 @@ public class Run {
 
 	public static void main(String[] args) {
 		System.out.println(Utility.encryptionPassword("MoNgheng#@$fg132"));
-		System.out.println(Utility.decryptionPassword("237-339-240-315-318-309-336-315-111-198-114-312-315-153-159-156-"));
-		AlertAgent.trigerAlert(UUID.randomUUID().toString(), "MongHeng Waring System.......", AlertLevel.WARN);
+		System.out.println(Utility.encryptionPassword("EarMoNgheng#@$fg132"));
+		System.out.println(Utility.decryptionPassword("238-341-243-319-323-315-343-323-120-208-125-324-328-167-174-172-"));
+		//AlertAgent.trigerAlert(UUID.randomUUID().toString(), "MongHeng Waring System.......", AlertLevel.WARN);
 		//AlertAgent.trigerAlert(UUID.randomUUID().toString(), "MongHeng Waring System.......", AlertLevel.ERROR);
 		//AlertAgent.trigerAlert(UUID.randomUUID().toString(), "MongHeng Waring System.......", AlertLevel.FATAL);
 		test();

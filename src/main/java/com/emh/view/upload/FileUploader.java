@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.ProgressBar;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload.FailedEvent;
 import com.vaadin.ui.Upload.FailedListener;
 import com.vaadin.ui.Upload.ProgressListener;
@@ -29,23 +30,31 @@ public class FileUploader implements Receiver, SucceededListener, FailedListener
 
 	@Override
 	public void updateProgress(long readBytes, long contentLength) {
-		progressBar.setVisible(true);
-		if (contentLength == -1) {
-			progressBar.setIndeterminate(true);
-		} else {
-			float current = progressBar.getValue();
-			System.out.println("Current = " + current);
-			progressBar.setIndeterminate(false);
-			if (current < 1.0f) {
-				progressBar.setValue((float) readBytes / (float) contentLength);
+		UI.getCurrent().access(new Runnable() {
+
+			@Override
+			public void run() {
+				progressBar.setVisible(true);
+				if (contentLength == -1) {
+					progressBar.setIndeterminate(true);
+				} else {
+					float current = (float) readBytes / (float) contentLength;
+					System.out.println("Current = " + current);
+					progressBar.setIndeterminate(false);
+					if (current <= 1.0f) {
+						progressBar.setValue(current);
+					}
+					System.out.println(progressBar.getValue());
+					progressBar.setCaption(((Integer) Math.round(current * 100)).toString() + "%");
+				}
 			}
-			System.out.println(progressBar.getValue());
-		}
+		});
+
 	}
 
 	@Override
 	public void uploadSucceeded(SucceededEvent event) {
-		Notification.show("Upload file Succeeded.");
+		Notification.show("Upload " + event.getFilename() + " file Succeeded.");
 	}
 
 	@Override
