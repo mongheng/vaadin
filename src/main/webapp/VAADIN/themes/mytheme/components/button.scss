@@ -29,6 +29,10 @@
 	}
 	
 	.hideborder:FOCUS .v-button {
-		border: none;
+		border-color: #3D4653;
+	}
+	
+	.hideborder:ACTIVE {
+		border-color: #3D4653;
 	}
 }

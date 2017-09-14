@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -22,6 +23,7 @@ public class User implements Serializable {
 	private String password;
 	private String telephone;
 	private String email;
+	private byte[] image;
 	private Role role;
 
 	public User() {
@@ -83,6 +85,16 @@ public class User implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Lob
+	@Column(name = "IMAGE", columnDefinition = "mediumblob")
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
 	}
 
 	@OneToOne

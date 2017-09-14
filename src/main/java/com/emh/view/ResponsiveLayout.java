@@ -1,6 +1,10 @@
 package com.emh.view;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.springframework.context.ApplicationContext;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.User;
 import com.emh.view.tab.TabContract;
@@ -8,6 +12,8 @@ import com.emh.view.tab.TabCustomer;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -40,12 +46,6 @@ public class ResponsiveLayout extends CssLayout implements View {
 	private Label titleContent;
 	private Image image;
 	private MenuBar menuBar;
-	private Button btnDashboard;
-	private Button btnCustomer;
-	private Button btnContract;
-	private Button btnExtendContract;
-	private Button btnCarParking;
-	private Button btnUserView;
 	
 	@Override
 	public void enter(ViewChangeEvent event) {	
@@ -70,8 +70,13 @@ public class ResponsiveLayout extends CssLayout implements View {
 		titleContent.addStyleName("menutitle");
 		titleContent.setDescription("This is Title Content in Menu Layout.");
 		
-		ThemeResource resource = new ThemeResource("images/android.png");
-		image = new Image("profile pic", resource);
+		if (user.getImage() == null) {
+			ThemeResource resource = new ThemeResource("images/person.png");
+			image = new Image("profile pic", resource);
+		} else {
+			StreamResource resource = new StreamResource(new ImageResource(), user.getUsername());
+			image = new Image("profile pic", resource);
+		}
 		menuBar = new MenuBar();
 		
 		menuTitleLayout.addComponent(titleContent);
@@ -82,20 +87,24 @@ public class ResponsiveLayout extends CssLayout implements View {
 		menuTitleLayout.addStyleName("menulayout");
 		
 		menuProfileLayout.addComponent(image);
-		addMenuBarToHeader("sok", "1", new String[] {"Edit Profile", "Preferences", "Sign Out"});
+		addMenuBarToHeader(user.getUsername(), "1", new String[] {"Edit Profile", "Preferences", "Sign Out"});
 		menuProfileLayout.setComponentAlignment(image, Alignment.TOP_CENTER);
+		menuProfileLayout.setExpandRatio(image, 0.7f);
+		menuProfileLayout.setExpandRatio(menuBar, 1.3f);
 		menuProfileLayout.setSpacing(false);
 		menuProfileLayout.setMargin(false);
 		menuProfileLayout.setSizeFull();
 		menuProfileLayout.addStyleName("menulayout");
 		menuProfileLayout.setResponsive(true);
 		
-		//processButton();
 		addMenuAndContentComponent("Dashboard", DashboardView.class.getSimpleName(), VaadinIcons.DASHBOARD);
 		addMenuAndContentComponent("Customer", TabCustomer.class.getSimpleName(), VaadinIcons.MALE);
 		addMenuAndContentComponent("Contract", TabContract.class.getSimpleName(), VaadinIcons.ADOBE_FLASH);
 		addMenuAndContentComponent("Extend Contract", ExtendContractView.class.getSimpleName(), VaadinIcons.ALARM);
 		addMenuAndContentComponent("Users", UserListView.class.getSimpleName(), VaadinIcons.GROUP);
+		formLayout.setSpacing(false);
+		formLayout.setMargin(false);
+		formLayout.setSizeFull();
 		menuContentLayout.setSpacing(false);
 		menuContentLayout.setMargin(false);
 		menuContentLayout.setSizeFull();
@@ -107,8 +116,8 @@ public class ResponsiveLayout extends CssLayout implements View {
 		menuLayout.setSpacing(false);
 		menuLayout.setMargin(false);
 		menuLayout.setExpandRatio(menuTitleLayout, 0.3f);
-		menuLayout.setExpandRatio(menuProfileLayout, 1.3f);
-		menuLayout.setExpandRatio(menuContentLayout, 4.4f);
+		menuLayout.setExpandRatio(menuProfileLayout, 1.1f);
+		menuLayout.setExpandRatio(menuContentLayout, 4.6f);
 		menuLayout.setComponentAlignment(menuContentLayout, Alignment.TOP_CENTER);
 		menuLayout.setComponentAlignment(menuProfileLayout, Alignment.TOP_CENTER);
 		menuLayout.setResponsive(true);
@@ -128,13 +137,13 @@ public class ResponsiveLayout extends CssLayout implements View {
 		MenuItem menuItem;
 		Integer i = 0;
 		if (subMenuCaptions.length == 0) {
-			menuItem = menuBar.addItem(topLevelMenuCatpion, new MenuCommand());
+			menuItem = menuBar.addItem(topLevelMenuCatpion, new MenuCommand(this));
 			menuItem.setStyleName(ValoTheme.MENU_ROOT);
 		} else {
 			menuItem = menuBar.addItem(topLevelMenuCatpion, null);
 			menuItem.setStyleName(ValoTheme.MENU_ROOT);
 			for (String menuItemCaption : subMenuCaptions) {
-				MenuItem subMenuItem = menuItem.addItem(menuItemCaption, new MenuCommand());
+				MenuItem subMenuItem = menuItem.addItem(menuItemCaption, new MenuCommand(this));
 				subMenuItem.setIcon(VaadinIcons.GROUP);
 				if (indexSparator != null) {
 					if (i.toString().equals(indexSparator)) {
@@ -145,7 +154,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 			}
 		}
 		menuBar.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
-		menuBar.addStyleName("menucaptioncolor");
+		menuBar.addStyleName("menufoucs");
 		menuProfileLayout.addComponent(menuBar);
 		menuProfileLayout.setSizeUndefined();
 		menuProfileLayout.setComponentAlignment(menuBar, Alignment.BOTTOM_CENTER);
@@ -154,80 +163,29 @@ public class ResponsiveLayout extends CssLayout implements View {
 	private class MenuCommand implements MenuBar.Command {
 
 		private static final long serialVersionUID = 1L;
-
+		private ResponsiveLayout responsiveLayout;
+		
+		public MenuCommand(ResponsiveLayout responsiveLayout) {
+			this.responsiveLayout = responsiveLayout;
+		}
+		
 		@Override
 		public void menuSelected(MenuItem selectedItem) {
 			
-			//String command = selectedItem.getText();		
+			String command = selectedItem.getText();
+			System.out.println(command);
+			if (command.equalsIgnoreCase("Sign Out")) {
+				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure you want to Sign out?", "Yes", "No",
+						dialog -> {
+							if (dialog.isConfirmed()) {
+								contentLayout.removeAllComponents();
+								menuLayout.removeAllComponents();
+								responsiveLayout.removeAllComponents();
+								getUI().getNavigator().navigateTo(LoginView.class.getSimpleName());
+							}
+						});
+			}
 		}
-	}
-	
-	private void processButton() {
-		btnDashboard = new Button("Dashboard");
-		btnDashboard.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		btnDashboard.addStyleName("textstyle");
-		btnDashboard.addStyleName("textstylehover");
-		btnDashboard.addStyleName("icon");
-		btnDashboard.addStyleName("iconhover");
-		btnDashboard.addStyleName("focus");
-		btnDashboard.addStyleName("iconfocus");
-		btnDashboard.addStyleName("hideborder");
-		btnDashboard.setIcon(VaadinIcons.DASHBOARD);
-		
-		btnCustomer = new Button("Customer");
-		btnCustomer.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		btnCustomer.addStyleName("textstyle");
-		btnCustomer.addStyleName("textstylehover");
-		btnCustomer.addStyleName("icon");
-		btnCustomer.addStyleName("iconhover");
-		btnCustomer.addStyleName("focus");
-		btnCustomer.addStyleName("iconfocus");
-		btnCustomer.setIcon(VaadinIcons.GROUP);
-		
-		btnContract = new Button("Contract");
-		btnContract.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		btnContract.addStyleName("textstyle");
-		btnContract.addStyleName("textstylehover");
-		btnContract.addStyleName("icon");
-		btnContract.addStyleName("iconhover");
-		btnContract.addStyleName("focus");
-		btnContract.addStyleName("iconfocus");
-		btnContract.setIcon(VaadinIcons.ADOBE_FLASH);
-		
-		btnExtendContract = new Button("Extend Contract");
-		btnExtendContract.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		btnExtendContract.addStyleName("textstyle");
-		btnExtendContract.addStyleName("textstylehover");
-		btnExtendContract.addStyleName("icon");
-		btnExtendContract.addStyleName("iconhover");
-		btnExtendContract.addStyleName("focus");
-		btnExtendContract.addStyleName("iconfocus");
-		btnExtendContract.setIcon(VaadinIcons.ALARM);
-		
-		btnCarParking = new Button("Car Parking");
-		btnCarParking.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		btnCarParking.addStyleName("textstyle");
-		btnCarParking.addStyleName("textstylehover");
-		btnCarParking.addStyleName("icon");
-		btnCarParking.addStyleName("iconhover");
-		btnCarParking.addStyleName("focus");
-		btnCarParking.addStyleName("iconfocus");
-		btnCarParking.setIcon(VaadinIcons.CAR);
-		
-		btnUserView = new Button("Users");
-		btnUserView.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		btnUserView.addStyleName("textstyle");
-		btnUserView.addStyleName("textstylehover");
-		btnUserView.addStyleName("icon");
-		btnUserView.addStyleName("iconhover");
-		btnUserView.addStyleName("focus");
-		btnUserView.addStyleName("iconfocus");
-		btnUserView.setIcon(VaadinIcons.GROUP);
-		
-		formLayout.addComponents(btnDashboard, btnCustomer, btnContract, btnExtendContract, btnCarParking, btnUserView);
-		formLayout.setSizeFull();
-		menuContentLayout.addComponent(formLayout);
-		menuContentLayout.setComponentAlignment(formLayout, Alignment.TOP_CENTER);
 	}
 	
 	private void addMenuAndContentComponent(String buttonCaption, String viewComponent, VaadinIcons vaadinIcons) {
@@ -240,9 +198,10 @@ public class ResponsiveLayout extends CssLayout implements View {
 		menuTitle.addStyleName("iconhover");
 		menuTitle.addStyleName("focus");
 		menuTitle.addStyleName("iconfocus");
+		menuTitle.addStyleName("hideborder");
 		menuTitle.setIcon(vaadinIcons);
 		formLayout.addComponents(menuTitle);
-		formLayout.setSizeFull();
+		formLayout.setComponentAlignment(menuTitle, Alignment.TOP_CENTER);
 		menuContentLayout.addComponent(formLayout);
 		menuContentLayout.setComponentAlignment(formLayout, Alignment.TOP_CENTER);
 		
@@ -273,6 +232,16 @@ public class ResponsiveLayout extends CssLayout implements View {
 			return new TabCustomer(applicationContext);
 		} else {
 			return null;
+		}
+	}
+	
+	private final class ImageResource implements StreamSource {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public InputStream getStream() {
+			return new ByteArrayInputStream(user.getImage());
 		}
 	}
 }

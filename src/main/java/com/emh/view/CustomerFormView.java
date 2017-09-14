@@ -1,5 +1,6 @@
 package com.emh.view;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import com.emh.model.Contract;
 import com.emh.model.Customer;
 import com.emh.model.Floor;
 import com.emh.repository.business.ClassBusiness;
+import com.emh.util.Utility;
 import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
@@ -382,6 +384,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 					binderContract.writeBean(contract);
 					contract.setCustomer(customer);
 					customer.getUnit().setStatu(true);
+					customer.setImage(Utility.readImage(new File(Utility.CUSTOMER_PATH + Utility.CUSTOMER_SUBPATH)));
 					classBusiness.createEntity(customer);
 					classBusiness.createEntity(contract);
 					classBusiness.updateEntity(customer.getUnit());

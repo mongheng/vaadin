@@ -1,8 +1,16 @@
 package com.emh.util;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
+import org.imgscalr.Scalr;
 import org.springframework.context.ApplicationContext;
 
 import com.emh.model.Floor;
@@ -12,6 +20,11 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
 public class Utility {
+
+	public static final String STAFF_PATH = "C:\\staff\\";
+	public static final String STAFF_SUBPATH = "image\\";
+	public static final String CUSTOMER_PATH = "C:\\customer\\";
+	public static final String CUSTOMER_SUBPATH = "image\\";
 
 	public static String encryptionPassword(String password) {
 		try {
@@ -50,6 +63,78 @@ public class Utility {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static boolean checkFolder(String path) {
+		File file = new File(path);
+		if (!file.exists() && !file.isDirectory()) {
+			file.mkdirs();
+			return true;
+		}
+		return false;
+	}
+
+	public static byte[] resizeImage(File imageFile) {
+		try {
+			BufferedImage originalImage = ImageIO.read(imageFile);
+			originalImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, 50, 50);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(originalImage, "png", baos);
+			baos.flush();
+			baos.close();
+			return baos.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static OutputStream writeImage(File imageFile, String newPath, String newFileName) {
+		try {
+			String basePath = newPath + newFileName;
+			byte[] bs = resizeImage(imageFile);
+			FileOutputStream fileOutputStream = new FileOutputStream(basePath + ".png");
+			fileOutputStream.write(bs);
+			fileOutputStream.close();
+			return fileOutputStream;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static byte[] readImage(File file) {
+		try {
+			if (file.isDirectory() && file.exists()) {
+				if (file.listFiles().length > 0) {
+					BufferedImage originalImage = ImageIO.read(file.listFiles()[0]);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(originalImage, "png", baos);
+					baos.flush();
+					baos.close();
+					return baos.toByteArray();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void deleteDirectory(File file) {
+		if (file.exists()) {
+			File[] files = file.listFiles();
+			if (files.length > 0) {
+				for (File f : files) {
+					if(f.isFile()) {
+						f.delete();
+					} else if (f.isDirectory()) {
+						deleteDirectory(f);
+					}
+				}
+			}
+		}
+		file.delete();
 	}
 
 	public static List<Role> getRoles(ApplicationContext applicationContext) {

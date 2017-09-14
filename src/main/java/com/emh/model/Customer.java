@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,6 +24,7 @@ public class Customer {
 	private String job;
 	private String address;
 	private String phoneNumber;
+	private byte[] image;
 	private boolean close;
 	private boolean parkStatu;
 	private Unit unit;
@@ -58,7 +60,7 @@ public class Customer {
 	}
 
 	@Column(name = "DOB")
-	//@Temporal(TemporalType.TIMESTAMP)
+	// @Temporal(TemporalType.TIMESTAMP)
 	public LocalDate getDob() {
 		return dob;
 	}
@@ -92,6 +94,16 @@ public class Customer {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	@Lob
+	@Column(name = "IMAGE", columnDefinition = "mediumblob")
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
 	}
 
 	@Column(name = "CLOSE", columnDefinition = "BOOLEAN DEFAULT false")

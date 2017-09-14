@@ -1,6 +1,10 @@
 @mixin menubar {
 	
 	.v-menubar {
-		font-size: 20px;
+		font-size: 18px;
+	}
+	
+	.menufoucs:FOCUS .v-menubar-menuitem {
+		background-color: #3D4653;
 	}
 }

@@ -110,10 +110,10 @@ public class LoginView extends VerticalLayout implements View {
 		btnSignup.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnSignup.addClickListener(e -> {
 			// getUI().getNavigator().navigateTo("signupview/params=10");
-			//UI.getCurrent().addWindow(new SignupView(applicationContext));
+			UI.getCurrent().addWindow(new SignupView(applicationContext));
 			//UI.getCurrent().addWindow(new FloorView(applicationContext));
 			//UI.getCurrent().addWindow(new UnitView(applicationContext));
-			getUI().getNavigator().navigateTo(ResponsiveLayout.class.getSimpleName());
+			//getUI().getNavigator().navigateTo(ResponsiveLayout.class.getSimpleName());
 		});
 
 		hLayout.addComponents(btnLogin, btnSignup);
@@ -152,7 +152,8 @@ public class LoginView extends VerticalLayout implements View {
 		if (isStatu) {
 			if (nUser != null) {
 				UI.getCurrent().getSession().setAttribute(User.class, nUser);
-				getUI().getNavigator().navigateTo(MainPageView.class.getSimpleName());
+				//getUI().getNavigator().navigateTo(MainPageView.class.getSimpleName());
+				getUI().getNavigator().navigateTo(ResponsiveLayout.class.getSimpleName());
 				name.clear();
 				password.clear();
 			} else {

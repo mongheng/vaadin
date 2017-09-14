@@ -1,5 +1,6 @@
 package com.emh.view;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -38,7 +39,7 @@ public class SignupView extends Window {
 	private static final long serialVersionUID = 1L;
 
 	private ApplicationContext applicationContext;
-	
+
 	private VerticalLayout vSignup;
 	private FormLayout formLayout;
 	private HorizontalLayout hSignup;
@@ -114,7 +115,7 @@ public class SignupView extends Window {
 
 		btnCancel = new Button("Cancel");
 		btnCancel.addStyleName("primary");
-		
+
 		btnCancel.addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = 1L;
@@ -124,21 +125,23 @@ public class SignupView extends Window {
 				close();
 			}
 		});
-		
-		upload = new Upload("Please Select File.", new FileUploader(progressBar));
+
+		upload = new Upload("Please Select File.", new FileUploader(progressBar, Utility.STAFF_PATH, Utility.STAFF_SUBPATH));
 		upload.setButtonCaption("Upload");
-		FileUploader receiver = new FileUploader(progressBar);
+		FileUploader receiver = new FileUploader(progressBar, Utility.STAFF_PATH, Utility.STAFF_SUBPATH);
+		receiver.setUpload(upload);
+		upload.addStartedListener(receiver);
 		upload.addSucceededListener(receiver);
 		upload.addProgressListener(receiver);
 		upload.addFailedListener(receiver);
-		
+
 		hSignup.addComponents(btnCreate, btnCancel);
 		hSignup.setComponentAlignment(btnCreate, Alignment.TOP_RIGHT);
 		hSignup.setWidth("400px");
 		hSignup.setSpacing(true);
 
 		hBar.addComponents(progressBar);
-		
+
 		formLayout.addComponents(username, password, repeatPassword, telephone, email, cbRole, upload, hBar);
 		vSignup.addComponents(formLayout, hSignup);
 		progressBar.setVisible(false);
@@ -146,8 +149,8 @@ public class SignupView extends Window {
 
 		setContent(vSignup);
 		center();
-		//setModal(true);
-		//setResizable(false);
+		// setModal(true);
+		// setResizable(false);
 
 		setHeight("465px");
 		setWidth("400px");
@@ -224,6 +227,7 @@ public class SignupView extends Window {
 			Role r = cbRole.getSelectedItem().get();
 			if (user.getUsername() != null && user.getPassword() != null && r != null) {
 				user.setRole(r);
+				user.setImage(Utility.readImage(new File(Utility.STAFF_PATH + Utility.STAFF_SUBPATH)));
 				classBusiness.createEntity(user);
 				Notification.show("The data save successfully in Data Source.", Type.HUMANIZED_MESSAGE);
 				close();

@@ -12381,7 +12381,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-menubar {
-	font-size: 20px;
+	font-size: 18px;
+}
+
+.mytheme .menufoucs:FOCUS .v-menubar-menuitem {
+	background-color: #3D4653;
 }
 
 .mytheme .textstyle .v-button-caption {
@@ -12414,7 +12418,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .hideborder:FOCUS .v-button {
-	border: none;
+	border-color: #3D4653;
+}
+
+.mytheme .hideborder:ACTIVE {
+	border-color: #3D4653;
 }
 
 .mytheme .v-label-customerstyle {
