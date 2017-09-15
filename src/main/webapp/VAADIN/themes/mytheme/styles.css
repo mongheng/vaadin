@@ -12475,3 +12475,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: solid;
 	background-color: #3D4653;
 }
+
+.mytheme .contentlayout {
+	border: solid;
+}

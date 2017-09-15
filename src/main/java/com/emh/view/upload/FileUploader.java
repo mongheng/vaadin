@@ -30,7 +30,7 @@ public class FileUploader implements StartedListener, Receiver, SucceededListene
 	private String PATH;
 	private String SUBPATH;
 	private boolean allowed = false;
-	
+
 	private List<String> mimeTypes = Arrays.asList("image/bmp", "image/jpeg", "image/png", "image/pjpeg");
 
 	public FileUploader() {
@@ -41,19 +41,20 @@ public class FileUploader implements StartedListener, Receiver, SucceededListene
 		this.PATH = PATH;
 		this.SUBPATH = SUBPATH;
 	}
-	
+
 	@Override
 	public void uploadStarted(StartedEvent event) {
 		mimeTypes.forEach(mimeType -> {
-			if(mimeType.equalsIgnoreCase(event.getMIMEType())) {
+			if (mimeType.equalsIgnoreCase(event.getMIMEType())) {
 				allowed = true;
 				return;
 			}
 		});
-		if(!allowed) {
-			Notification.show("Error", "\nAllowed MIME: " + event.getMIMEType() + ", Please upload image again.", Type.ERROR_MESSAGE);
+		if (!allowed) {
+			Notification.show("Error", "\nAllowed MIME: " + event.getMIMEType() + ", Please upload image again.",
+					Type.ERROR_MESSAGE);
 			upload.interruptUpload();
-		} 
+		}
 	}
 
 	@Override
@@ -97,9 +98,14 @@ public class FileUploader implements StartedListener, Receiver, SucceededListene
 	public OutputStream receiveUpload(String filename, String mimeType) {
 		OutputStream outputStream = null;
 		try {
-			Utility.checkFolder(PATH);
-			file = new File(PATH + filename);
-			outputStream = new FileOutputStream(file);
+			for (String type : mimeTypes) {
+				if (mimeType.equalsIgnoreCase(type)) {
+					Utility.checkFolder(PATH);
+					file = new File(PATH + filename);
+					outputStream = new FileOutputStream(file);
+					return outputStream;
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
