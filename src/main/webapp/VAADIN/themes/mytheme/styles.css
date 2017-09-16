@@ -12388,6 +12388,10 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: #3D4653;
 }
 
+.mytheme .meuncaption .v-menubar {
+	color: white;
+}
+
 .mytheme .textstyle .v-button-caption {
 	border: none;
 	font-size: 17px;

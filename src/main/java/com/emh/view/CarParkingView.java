@@ -24,6 +24,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -40,9 +41,13 @@ public class CarParkingView extends VerticalLayout {
 	private ListDataProvider<CarParking> dataProvider;
 	private Binder<CarParking> binder;
 
+	private VerticalLayout titleVLayout;
+	private VerticalLayout topVLayout;
+	private VerticalLayout bottomVLayout;
 	private FormLayout formLayout;
 	private HorizontalLayout hLayout;
 	private Grid<CarParking> grid;
+	private Label title;
 	private ComboBox<Customer> cboCustomer;
 	private TextField carTypeField;
 	private TextField plantNumberField;
@@ -58,6 +63,9 @@ public class CarParkingView extends VerticalLayout {
 	}
 
 	private void init() {
+		titleVLayout = new VerticalLayout();
+		topVLayout = new VerticalLayout();
+		bottomVLayout = new VerticalLayout();
 		formLayout = new FormLayout();
 		hLayout = new HorizontalLayout();
 		grid = new Grid<>();
@@ -65,19 +73,26 @@ public class CarParkingView extends VerticalLayout {
 		binder = new Binder<>();
 		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 
+		title = new Label("Car Parking Information.");
+		title.addStyleName("customerstyle");
+		
 		cboCustomer = new ComboBox<>("Please Select Customer :");
+		cboCustomer.setWidth(6.8f, Unit.CM);
 		binder.bind(cboCustomer, CarParking::getCustomer, CarParking::setCustomer);
 
 		carTypeField = new TextField("Car Type :");
+		carTypeField.setWidth(6.8f, Unit.CM);
 		binder.forField(carTypeField).withValidator(carType -> carType != null, "Please input the car type.")
 				.bind(CarParking::getCarType, CarParking::setCarType);
 
 		plantNumberField = new TextField("Plant Number :");
+		plantNumberField.setWidth(6.8f, Unit.CM);
 		binder.forField(plantNumberField)
 				.withValidator(plantNumber -> plantNumber != null, "Please input the Plant Number.")
 				.bind(CarParking::getPlantNumber, CarParking::setPlantNumber);
 
 		amountField = new TextField("Amount :");
+		amountField.setWidth(6.8f, Unit.CM);
 		binder.forField(amountField).withConverter(new StringToFloatConverter("Please input number."))
 				.bind(CarParking::getAmount, CarParking::setAmount);
 
@@ -134,14 +149,25 @@ public class CarParkingView extends VerticalLayout {
 		hLayout.setComponentAlignment(btnSave, Alignment.MIDDLE_CENTER);
 		formLayout.addComponents(cboCustomer, carTypeField, plantNumberField, amountField, ckbFree, hLayout);
 
+		titleVLayout.addComponent(title);
+		titleVLayout.setComponentAlignment(title, Alignment.TOP_CENTER);
+		titleVLayout.setSizeFull();
+		titleVLayout.setMargin(false);
+		titleVLayout.setSpacing(false);
+		
+		topVLayout.addComponent(formLayout);
+		topVLayout.setSizeFull();
 		initColumnGrid();
-		grid.setWidth("100%");
-		grid.setHeight("220px");
-		addComponents(formLayout, grid);
-		setComponentAlignment(grid, Alignment.BOTTOM_LEFT);
+		grid.setSizeFull();
+		bottomVLayout.addComponent(grid);
+		bottomVLayout.setSizeFull();
+		
+		addComponents(titleVLayout, topVLayout, bottomVLayout);
 		setCaption("Car Parking");
 		setSizeFull();
-		setExpandRatio(formLayout, 7);
+		setExpandRatio(titleVLayout, 0.1f);
+		setExpandRatio(topVLayout, 1.55f);
+		setExpandRatio(bottomVLayout, 1.35f);
 		setSpacing(false);
 	}
 

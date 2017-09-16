@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationContext;
 import com.emh.view.CarParkingView;
 import com.emh.view.CustomerFormView;
 import com.emh.view.CustomersGirdView;
-import com.emh.view.ResponsiveCustomerFormView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
@@ -34,8 +33,8 @@ public class TabCustomer extends TabSheet {
 		tab1.setIcon(VaadinIcons.AIRPLANE);
 		
 		addTab(tab1, 0);
-		//addTab(new CustomerFormView(applicationContext), "Customer", null, 1);
-		addTab(new ResponsiveCustomerFormView(), "Customer", null, 1);
+		addTab(new CustomerFormView(applicationContext), "Customer", null, 1);
+		//addTab(new ResponsiveCustomerFormView(), "Customer", null, 1);
 		
 		addTab(new CarParkingView(applicationContext), 2);
 		

@@ -124,30 +124,30 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		addComponent(customerNameField, "top:61.0px;left:178.0px;");
 		addComponent(lblGender, "top:69.0px;left:390.0px;");
 		addComponent(cboGender, "top:61.0px;left:540.0px;");
-		addComponent(lblDOB, "top:69.0px;left:756.0px;");
+		addComponent(lblDOB, "top:69.0px;left:780.0px;");
 		addComponent(dobDateField, "top:61.0px;left:940.0px;");
 
-		addComponent(lblJob, "top:117.0px;left:126.0px;");
+		addComponent(lblJob, "top:117.0px;left:95.0px;");
 		addComponent(jobField, "top:114.0px;left:178.0px;");
-		addComponent(lblAddress, "top:117.0px;left:765.0px;");
+		addComponent(lblAddress, "top:117.0px;left:809.0px;");
 		addComponent(addressTextArea, "top:109.0px;left:940.0px;");
-		addComponent(lblPhone, "top:117.0px;left:400.0px;");
+		addComponent(lblPhone, "top:117.0px;left:435.0px;");
 		addComponent(phoneField, "top:114.0px;left:540.0px;");
 
 		addComponent(lblFloor, "top:223.0px;left:34.0px;");
 		addComponent(cboFloor, "top:216.0px;left:178.0px;");
-		addComponent(btnAddFloor, "top:216.0px;left:330.0px;");
+		addComponent(btnAddFloor, "top:216.0px;left:315.0px;");
 		addComponent(lblUnit, "top:223.0px;left:393.0px;");
 		addComponent(cboUnit, "top:216.0px;left:540.0px;");
-		addComponent(btnAddUnit, "top:216.0px;left:692.0px;");
+		addComponent(btnAddUnit, "top:216.0px;left:677.0px;");
 
 		addComponent(lblPayment, "top:223.0px;left:756.0px;");
 		addComponent(paymentField, "top:216.0px;left:940.0px;");
-		addComponent(lblTerm, "top:269.0px;left:105.0px;");
+		addComponent(lblTerm, "top:269.0px;left:90.0px;");
 		addComponent(termField, "top:269.0px;left:178.0px;");
-		addComponent(lblStartDate, "top:269.0px;left:393.0px;");
+		addComponent(lblStartDate, "top:269.0px;left:406.0px;");
 		addComponent(startDateField, "top:269.0px;left:540.0px;");
-		addComponent(lblEndDate, "top:269.0px;left:765.0px;");
+		addComponent(lblEndDate, "top:269.0px;left:805.0px;");
 		addComponent(endDateField, "top:269.0px;left:940.0px;");
 		addComponent(btnSave, "top:320.0px;left:455.0px;");
 		addComponent(btnClear, "top:320.0px;left:555.0px;");
@@ -258,14 +258,14 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		});
 
 		cboFloor = new ComboBox<>();
-		cboFloor.setWidth("151px");
+		cboFloor.setWidth("137px");
 		// binderCustomer.forField(cboFloor).bind(customer ->
 		// customer.getUnit().getFloor(), (customer, formValue )->
 		// customer.getUnit().setFloor(formValue));
 		binderUnit.bind(cboFloor, com.emh.model.Unit::getFloor, com.emh.model.Unit::setFloor);
 
 		cboUnit = new ComboBox<>();
-		cboUnit.setWidth("151px");
+		cboUnit.setWidth("137px");
 		binderCustomer.bind(cboUnit, Customer::getUnit, Customer::setUnit);
 		cboUnit.addValueChangeListener(listener -> {
 			valueChange = true;
@@ -328,8 +328,8 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		btnStart.addClickListener(new StartContractClickEvent());
 
 		grid = new Grid<>();
-		grid.setWidth("1110px");
-		grid.setHeight("150px");
+		grid.setWidth("1095px");
+		grid.setHeight("255px");
 
 		List<String> genders = Arrays.asList("Male", "Female");
 		cboGender.setItems(genders);

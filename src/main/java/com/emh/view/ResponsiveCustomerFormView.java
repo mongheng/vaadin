@@ -3,11 +3,8 @@ package com.emh.view;
 import java.util.Arrays;
 import java.util.List;
 
-import com.emh.model.Contract;
 import com.emh.model.Customer;
 import com.emh.model.Floor;
-import com.vaadin.data.Binder;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
@@ -69,9 +66,9 @@ public class ResponsiveCustomerFormView extends CssLayout {
 
 	private Grid<Customer> grid;
 
-	private Binder<Customer> binderCustomer;
+	/*private Binder<Customer> binderCustomer;
 	private Binder<com.emh.model.Unit> binderUnit;
-	private Binder<Contract> binderContract;
+	private Binder<Contract> binderContract;*/
 
 	public ResponsiveCustomerFormView() {
 		init();
@@ -123,8 +120,6 @@ public class ResponsiveCustomerFormView extends CssLayout {
 		initComponents();
 		// Top Left
 		topCustomerLeftFormLayout.addComponents(customerNameField, jobField);
-		topCustomerLeftFormLayout.setComponentAlignment(customerNameField, Alignment.TOP_RIGHT);
-		topCustomerLeftFormLayout.setComponentAlignment(jobField, Alignment.TOP_RIGHT);
 		topCustomerLeftFormLayout.setSizeFull();
 		topCustomerLeftFormLayout.setMargin(false);
 		topCustomerContentLeftLayout.addComponent(topCustomerLeftFormLayout);
@@ -134,8 +129,6 @@ public class ResponsiveCustomerFormView extends CssLayout {
 
 		// Top Center
 		topCustomerCenterFormLayout.addComponents(cboGender, phoneField);
-		topCustomerCenterFormLayout.setComponentAlignment(cboGender, Alignment.TOP_RIGHT);
-		topCustomerCenterFormLayout.setComponentAlignment(phoneField, Alignment.TOP_RIGHT);
 		topCustomerCenterFormLayout.setSizeFull();
 		topCustomerCenterFormLayout.setMargin(false);
 		topCustomerContentCenterLayout.addComponent(topCustomerCenterFormLayout);
@@ -144,8 +137,6 @@ public class ResponsiveCustomerFormView extends CssLayout {
 
 		// Top Right
 		topCustomerRightFormLayout.addComponents(dobDateField, addressTextArea);
-		topCustomerRightFormLayout.setComponentAlignment(dobDateField, Alignment.TOP_RIGHT);
-		topCustomerRightFormLayout.setComponentAlignment(addressTextArea, Alignment.TOP_RIGHT);
 		topCustomerRightFormLayout.setSizeFull();
 		topCustomerRightFormLayout.setMargin(false);
 		topCustomerContentRightLayout.addComponent(topCustomerRightFormLayout);
@@ -194,9 +185,9 @@ public class ResponsiveCustomerFormView extends CssLayout {
 
 	private void initComponents() {
 
-		binderCustomer = new Binder<>();
+		/*binderCustomer = new Binder<>();
 		binderUnit = new Binder<>();
-		binderContract = new Binder<>();
+		binderContract = new Binder<>();*/
 
 		lblCustomerTitle = new Label("Customer Details");
 		lblCustomerTitle.addStyleName("customerstyle");
@@ -236,8 +227,6 @@ public class ResponsiveCustomerFormView extends CssLayout {
 	private void initDetailComponent() {
 		// Top Detail Left
 		topDetailLeftFormLayout.addComponents(cboFloor, termField);
-		topDetailLeftFormLayout.setComponentAlignment(cboFloor, Alignment.TOP_RIGHT);
-		topDetailLeftFormLayout.setComponentAlignment(termField, Alignment.TOP_RIGHT);
 		topDetailLeftFormLayout.setSizeFull();
 		topDetailLeftFormLayout.setMargin(false);
 		topDetailContentLeftLayout.addComponent(topDetailLeftFormLayout);
@@ -247,8 +236,6 @@ public class ResponsiveCustomerFormView extends CssLayout {
 
 		// Top Detail Center
 		topDetailCenterFormLayout.addComponents(cboUnit, startDateField);
-		topDetailCenterFormLayout.setComponentAlignment(cboUnit, Alignment.TOP_RIGHT);
-		topDetailCenterFormLayout.setComponentAlignment(startDateField, Alignment.TOP_RIGHT);
 		topDetailCenterFormLayout.setSizeFull();
 		topDetailCenterFormLayout.setMargin(false);
 		topDetailContentCenterLayout.addComponent(topDetailCenterFormLayout);
@@ -257,8 +244,6 @@ public class ResponsiveCustomerFormView extends CssLayout {
 
 		// Top Detail Right
 		topDetailRightFormLayout.addComponents(paymentField, endDateField);
-		topDetailRightFormLayout.setComponentAlignment(paymentField, Alignment.TOP_RIGHT);
-		topDetailRightFormLayout.setComponentAlignment(endDateField, Alignment.TOP_RIGHT);
 		topDetailRightFormLayout.setSizeFull();
 		topDetailRightFormLayout.setMargin(false);
 		topDetailContentRightLayout.addComponent(topDetailRightFormLayout);
