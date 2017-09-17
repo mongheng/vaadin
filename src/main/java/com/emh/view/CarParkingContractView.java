@@ -11,6 +11,7 @@ import com.emh.model.CarParking;
 import com.emh.model.Customer;
 import com.emh.model.ParkingCashFlow;
 import com.emh.model.Payment;
+import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Page;
@@ -29,6 +30,7 @@ public class CarParkingContractView extends VerticalLayout {
 	private static final long serialVersionUID = 1L;
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
+	private User user;
 	private Customer customer;
 	private Grid<ParkingCashFlow> grid;
 	ListDataProvider<ParkingCashFlow> dataProvider;
@@ -41,6 +43,7 @@ public class CarParkingContractView extends VerticalLayout {
 
 	private void init() {
 		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
 		List<CarParking> carParkings = classBusiness.selectListEntity(CarParking.class, Customer.class, "customerID",
 				customer.getCustomerID().toString());
 		carParkings.forEach(carParking -> {
@@ -156,6 +159,7 @@ public class CarParkingContractView extends VerticalLayout {
 							payment.setCarType(parkingCashFlow.getCarparking().getCarType());
 							payment.setPlantNumber(parkingCashFlow.getCarparking().getPlantNumber());
 							payment.setPaymentDate(LocalDate.now());
+							payment.setUser(user);
 							classBusiness.createEntity(payment);
 
 							parkingCashFlow.setStatu(true);

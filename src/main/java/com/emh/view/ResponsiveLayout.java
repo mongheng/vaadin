@@ -9,6 +9,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 import com.emh.model.User;
 import com.emh.view.tab.TabContract;
 import com.emh.view.tab.TabCustomer;
+import com.emh.view.tab.TabReport;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -72,10 +73,10 @@ public class ResponsiveLayout extends CssLayout implements View {
 		
 		if (user.getImage() == null) {
 			ThemeResource resource = new ThemeResource("images/person.png");
-			image = new Image("profile pic", resource);
+			image = new Image("", resource);
 		} else {
 			StreamResource resource = new StreamResource(new ImageResource(), user.getUsername());
-			image = new Image("profile pic", resource);
+			image = new Image("", resource);
 		}
 		menuBar = new MenuBar();
 		
@@ -102,6 +103,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 		addMenuAndContentComponent("Contract", TabContract.class.getSimpleName(), VaadinIcons.ADOBE_FLASH);
 		addMenuAndContentComponent("Extend Contract", ExtendContractView.class.getSimpleName(), VaadinIcons.ALARM);
 		addMenuAndContentComponent("Users", UserListView.class.getSimpleName(), VaadinIcons.GROUP);
+		addMenuAndContentComponent("Report", TabReport.class.getSimpleName(), VaadinIcons.BOOK);
 		formLayout.setSpacing(false);
 		formLayout.setMargin(false);
 		formLayout.setSizeFull();
@@ -122,9 +124,15 @@ public class ResponsiveLayout extends CssLayout implements View {
 		menuLayout.setComponentAlignment(menuProfileLayout, Alignment.TOP_CENTER);
 		menuLayout.setResponsive(true);
 		
+		contentLayout.addComponent(new DashboardView(applicationContext));
+		contentLayout.setSizeFull();
+		contentLayout.setSpacing(false);
+		contentLayout.setMargin(false);
+		
 		hsLayout.setFirstComponent(menuLayout);
 		hsLayout.setSecondComponent(contentLayout);
-		hsLayout.setSplitPosition(18);
+		hsLayout.setSplitPosition(15);
+		hsLayout.setLocked(true);
 		hsLayout.setSizeFull();
 		hsLayout.setResponsive(true);
 		
@@ -230,6 +238,8 @@ public class ResponsiveLayout extends CssLayout implements View {
 			return new TabCustomer(applicationContext);
 		} else if (viewCaption.equalsIgnoreCase("Car Parking")) {
 			return new TabCustomer(applicationContext);
+		} else if (viewCaption.equalsIgnoreCase(TabReport.class.getSimpleName())) {
+			return new TabReport();
 		} else {
 			return null;
 		}

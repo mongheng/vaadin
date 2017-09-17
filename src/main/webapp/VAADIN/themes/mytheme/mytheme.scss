@@ -90,11 +90,14 @@ $v-grid-cell-focused-border: none;
   	}
   	
   	.menulayout {
-		border: solid;
 		background-color: #3D4653;
 	}
 	
 	.contentlayout {
 		border: solid;
+	}
+	
+	.caption {
+		color: blue;
 	}
 }

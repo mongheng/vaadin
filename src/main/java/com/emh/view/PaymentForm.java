@@ -8,6 +8,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 import com.emh.model.CashFlow;
 import com.emh.model.Customer;
 import com.emh.model.Payment;
+import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToFloatConverter;
@@ -29,6 +30,7 @@ public class PaymentForm extends Window {
 
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
+	private User user;
 	private CashFlow cashFlow;
 	private VerticalLayout vLayout;
 	private HorizontalLayout hLayout;
@@ -55,6 +57,8 @@ public class PaymentForm extends Window {
 
 		binder = new Binder<>();
 
+		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
+		
 		TextField customerNameField = new TextField();
 		customerNameField.setCaption("Customer Name : ");
 		customerNameField.setValue(cashFlow.getContract().getCustomer().getCustomerName());
@@ -110,6 +114,7 @@ public class PaymentForm extends Window {
 									binder.writeBean(payment);
 									payment.setPaymentID(cashFlow.getCashflowID());
 									payment.setPaymentDate(LocalDate.now());
+									payment.setUser(user);
 									cashFlow.setStatu(true);
 									classBusiness.updateEntity(cashFlow);
 									classBusiness.createEntity(payment);

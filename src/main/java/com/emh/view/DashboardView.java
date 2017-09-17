@@ -11,6 +11,7 @@ import com.emh.model.CashFlow;
 import com.emh.model.Customer;
 import com.emh.model.ParkingCashFlow;
 import com.emh.model.Payment;
+import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.data.provider.GridSortOrder;
 import com.vaadin.data.provider.ListDataProvider;
@@ -28,6 +29,7 @@ public class DashboardView extends VerticalLayout {
 
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
+	private User user;
 
 	private ListDataProvider<CashFlow> cashflowDataProvider;
 	private ListDataProvider<ParkingCashFlow> parkingCashflowDataProvider;
@@ -43,6 +45,7 @@ public class DashboardView extends VerticalLayout {
 	private void init() {
 		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 
+		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
 		grid = new Grid<>();
 		parkingGrid = new Grid<>();
 
@@ -74,9 +77,10 @@ public class DashboardView extends VerticalLayout {
 		initColumnGrid();
 		initColumnParkingGrid();
 
-		setSizeFull();
 		addComponents(grid, parkingGrid);
-		// setMargin(false);
+		setSizeFull();
+		//setMargin(false);
+		//setSpacing(false);
 
 		/*
 		 * grid.addItemClickListener(clickEvent -> {
@@ -133,6 +137,7 @@ public class DashboardView extends VerticalLayout {
 								payment.setUnitNumber(cashFlow.getContract().getCustomer().getUnit().getUnitNumber());
 								payment.setInstallmentNumber(cashFlow.getInstallmentNumber());
 								payment.setPaymentDate(LocalDate.now());
+								payment.setUser(user);
 								classBusiness.createEntity(payment);
 
 								cashFlow.setStatu(true);
@@ -212,6 +217,7 @@ public class DashboardView extends VerticalLayout {
 										payment.setCarType(parkingCashFlow.getCarparking().getCarType());
 										payment.setPlantNumber(parkingCashFlow.getCarparking().getPlantNumber());
 										payment.setPaymentDate(LocalDate.now());
+										payment.setUser(user);
 										classBusiness.createEntity(payment);
 
 										parkingCashFlow.setStatu(true);

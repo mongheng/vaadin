@@ -1,11 +1,7 @@
 package com.emh.view;
 
-import java.util.UUID;
-
 import org.springframework.context.ApplicationContext;
 
-import com.effecia.model.AlertAgent;
-import com.effecia.model.AlertLevel;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.event.FieldEvents.BlurEvent;
@@ -133,7 +129,7 @@ public class LoginView extends VerticalLayout implements View {
 		setComponentAlignment(cssLayout, Alignment.MIDDLE_CENTER);
 		setSizeFull();
 		
-		AlertAgent.trigerAlert(UUID.randomUUID().toString(), "Testing System....", AlertLevel.WARN);
+		//AlertAgent.trigerAlert(UUID.randomUUID().toString(), "Testing System....", AlertLevel.WARN);
 		//JavaScript.getCurrent().execute("alert('Hello')");
 	}
 

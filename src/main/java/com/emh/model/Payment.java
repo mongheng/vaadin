@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -20,6 +22,7 @@ public class Payment {
 	private String carType;
 	private String PlantNumber;
 	private LocalDate paymentDate;
+	private User user;
 
 	@Id
 	@Column(name = "PAYMENT_ID")
@@ -103,4 +106,13 @@ public class Payment {
 		this.paymentDate = paymentDate;
 	}
 
+	@OneToOne
+	@JoinColumn(name = "USER_ID", nullable = true)
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 }
