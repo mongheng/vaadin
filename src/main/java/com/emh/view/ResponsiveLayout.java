@@ -239,7 +239,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 		} else if (viewCaption.equalsIgnoreCase("Car Parking")) {
 			return new TabCustomer(applicationContext);
 		} else if (viewCaption.equalsIgnoreCase(TabReport.class.getSimpleName())) {
-			return new TabReport();
+			return new TabReport(applicationContext);
 		} else {
 			return null;
 		}

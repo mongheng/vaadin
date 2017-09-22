@@ -89,7 +89,7 @@ public class ContractListView extends VerticalLayout {
 		parkingGrid.addItemClickListener(itemClick -> {
 			Customer customer = itemClick.getItem();
 			if (customer != null) {
-				tabSheet.addTab(new CarParkingContractView(applicationContext, customer), 1).setId("1");
+				tabSheet.addTab(new CarParkingContractView(applicationContext, customer, contracts), 1).setId("1");
 				tabSheet.setSelectedTab(1);
 			}
 		});

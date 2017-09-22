@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.emh.model.Floor;
 import com.emh.model.Role;
+import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -161,6 +162,23 @@ public class Utility {
 				List<Floor> floors = (List<Floor>) classBusiness.selectAllEntity(Floor.class);
 				if (floors.size() > 0) {
 					return floors;
+				}
+			}
+		} catch (Exception ex) {
+			Notification.show(ex.getMessage(), Type.HUMANIZED_MESSAGE);
+			ex.printStackTrace();
+		}
+		return new ArrayList<>();
+	}
+	
+	public static List<User> getEmployee(ApplicationContext applicationContext) {
+		try {
+			ClassBusiness classBusiness = (ClassBusiness) applicationContext
+					.getBean(ClassBusiness.class.getSimpleName());
+			if (classBusiness != null) {
+				List<User> users = (List<User>) classBusiness.selectAllEntity(User.class);
+				if (users.size() > 0) {
+					return users;
 				}
 			}
 		} catch (Exception ex) {

@@ -51,11 +51,22 @@ $v-grid-cell-focused-border: none;
 		font-style: italic;
 	}
   
+  	.v-label-plusequal {
+  		font-style: oblique;
+  		font-size: 16px;
+  	}
+  
   	.v-label-menutitle {
   		color: white;
   		font-size: 20px;
   		font-family: monospace;
   		font-style: italic;
+  	}
+  	
+  	.v-textfield-textalig {
+  		text-align: center;
+  		font-size: 16px;
+  		font-style: oblique;
   	}
   	
   	.v-panel {

@@ -22,6 +22,7 @@ public class CarParking {
 	private boolean free;
 	private Float amount;
 	private boolean activated;
+	private boolean close;
 	private Customer customer;
 
 	@Id
@@ -81,6 +82,15 @@ public class CarParking {
 		this.activated = activated;
 	}
 
+	@Column(name = "CLOSE", columnDefinition = "BOOLEAN DEFAULT false")
+	public boolean isClose() {
+		return close;
+	}
+
+	public void setClose(boolean close) {
+		this.close = close;
+	}
+	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CUSTOMER_ID")
 	public Customer getCustomer() {

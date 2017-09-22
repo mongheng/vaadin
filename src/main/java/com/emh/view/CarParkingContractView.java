@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CarParking;
+import com.emh.model.Contract;
 import com.emh.model.Customer;
 import com.emh.model.ParkingCashFlow;
 import com.emh.model.Payment;
@@ -32,12 +33,14 @@ public class CarParkingContractView extends VerticalLayout {
 	private ClassBusiness classBusiness;
 	private User user;
 	private Customer customer;
+	private List<Contract> contracts;
 	private Grid<ParkingCashFlow> grid;
 	ListDataProvider<ParkingCashFlow> dataProvider;
 
-	public CarParkingContractView(ApplicationContext applicationContext, Customer customer) {
+	public CarParkingContractView(ApplicationContext applicationContext, Customer customer, List<Contract> contracts) {
 		this.applicationContext = applicationContext;
 		this.customer = customer;
+		this.contracts = contracts;
 		init();
 	}
 
@@ -164,6 +167,19 @@ public class CarParkingContractView extends VerticalLayout {
 
 							parkingCashFlow.setStatu(true);
 							classBusiness.updateEntity(parkingCashFlow);
+							
+							contracts.forEach(contract -> {
+								if (contract.getCustomer().getCustomerID().equals(customer.getCustomerID())) {
+									if (contract.getTerm().equals(parkingCashFlow.getInstallmentNumber())) {
+										String HQL = "FROM CarParking WHERE CARPAKING_ID = '" + parkingCashFlow.getCarparking().getCarparkingID() + "'";
+										CarParking carParking = (CarParking) classBusiness.selectEntityByHQL(HQL);
+										carParking.setClose(true);
+										classBusiness.updateEntity(carParking);
+										return;
+									}
+								}
+							});
+							
 							Notification.show(parkingCashFlow.getCarparking().getCustomer()
 									.getCustomerName() + ", Installment Number :"
 									+ parkingCashFlow.getInstallmentNumber() + ", CarType :"

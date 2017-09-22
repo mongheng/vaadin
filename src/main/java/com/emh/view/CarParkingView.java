@@ -3,6 +3,7 @@ package com.emh.view;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationContext;
 
@@ -75,7 +76,7 @@ public class CarParkingView extends VerticalLayout {
 
 		title = new Label("Car Parking Information.");
 		title.addStyleName("customerstyle");
-		
+
 		cboCustomer = new ComboBox<>("Please Select Customer :");
 		cboCustomer.setWidth(6.8f, Unit.CM);
 		binder.bind(cboCustomer, CarParking::getCustomer, CarParking::setCustomer);
@@ -142,7 +143,7 @@ public class CarParkingView extends VerticalLayout {
 		btnActivated.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnActivated.setEnabled(false);
 		btnActivated.addClickListener(new ActivatedClickEvent());
-		
+
 		setValueCustomer();
 
 		hLayout.addComponents(btnSave, btnNew, btnActivated);
@@ -154,14 +155,14 @@ public class CarParkingView extends VerticalLayout {
 		titleVLayout.setSizeFull();
 		titleVLayout.setMargin(false);
 		titleVLayout.setSpacing(false);
-		
+
 		topVLayout.addComponent(formLayout);
 		topVLayout.setSizeFull();
 		initColumnGrid();
 		grid.setSizeFull();
 		bottomVLayout.addComponent(grid);
 		bottomVLayout.setSizeFull();
-		
+
 		addComponents(titleVLayout, topVLayout, bottomVLayout);
 		setCaption("Car Parking");
 		setSizeFull();
@@ -172,7 +173,9 @@ public class CarParkingView extends VerticalLayout {
 	}
 
 	private void setValueCustomer() {
-		List<Customer> customers = classBusiness.selectAllEntity(Customer.class);
+		List<Customer> customers = classBusiness.selectAllEntity(Customer.class).stream().filter(predicate -> !predicate.isClose()).map(mapper -> {
+					return mapper;
+				}).collect(Collectors.toList());
 		if (customers.size() > 0) {
 			cboCustomer.setItems(customers);
 			cboCustomer.setItemCaptionGenerator(Customer::getCustomerName);
@@ -225,14 +228,14 @@ public class CarParkingView extends VerticalLayout {
 			if (carParking.getAmount() == null) {
 				carParking.setAmount(0f);
 			}
-			if(carParking.isActivated()) {
+			if (carParking.isActivated()) {
 				btnActivated.setVisible(false);
 			} else if (carParking.isFree()) {
 				btnActivated.setVisible(false);
 			} else {
 				btnActivated.setVisible(true);
 			}
-			
+
 			binder.readBean(carParking);
 		});
 	}
@@ -273,7 +276,8 @@ public class CarParkingView extends VerticalLayout {
 					parkingCashFlow.setEndDate(tempEndDate);
 					parkingCashFlow.setInstallmentNumber(i);
 					parkingCashFlow.setAmount(carParking.getAmount());
-					parkingCashFlow.setCarparking(carParking);;
+					parkingCashFlow.setCarparking(carParking);
+					;
 					classBusiness.createEntity(parkingCashFlow);
 				}
 				carParking.setActivated(true);
