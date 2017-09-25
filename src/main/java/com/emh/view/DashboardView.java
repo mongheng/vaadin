@@ -7,7 +7,9 @@ import java.util.List;
 import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
+import com.emh.model.CarParking;
 import com.emh.model.CashFlow;
+import com.emh.model.Contract;
 import com.emh.model.Customer;
 import com.emh.model.ParkingCashFlow;
 import com.emh.model.Payment;
@@ -145,8 +147,18 @@ public class DashboardView extends VerticalLayout {
 
 								cashflowDataProvider.getItems().remove(cashFlow);
 								grid.setDataProvider(cashflowDataProvider);
+								String message = " have been paid.";
+								if (cashFlow.getContract().getTerm().equals(cashFlow.getInstallmentNumber())) {
+									Customer closeCustomer = cashFlow.getContract().getCustomer();
+									com.emh.model.Unit openUnit = closeCustomer.getUnit();
+									openUnit.setStatu(false);
+									classBusiness.updateEntity(openUnit);
+									closeCustomer.setClose(true);
+									classBusiness.updateEntity(closeCustomer);
+									message = message + " This contract is end of these month.";
+								}
 								Notification.show(
-										cashFlow.getContract().getCustomer().getCustomerName() + " have been paid.",
+										cashFlow.getContract().getCustomer().getCustomerName() + message,
 										Type.HUMANIZED_MESSAGE);
 
 							} else {
@@ -224,11 +236,22 @@ public class DashboardView extends VerticalLayout {
 										classBusiness.updateEntity(parkingCashFlow);
 										parkingCashflowDataProvider.getItems().remove(parkingCashFlow);
 										parkingGrid.setDataProvider(parkingCashflowDataProvider);
+										
+										Contract contract = (Contract) classBusiness.selectEntityByHQL("From Contract WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "'");
+										String message = " has been paid.";
+										if (contract.getTerm().equals(parkingCashFlow.getInstallmentNumber())) {
+											String HQL = "FROM CarParking WHERE CARPAKING_ID = '" + parkingCashFlow.getCarparking().getCarparkingID() + "'";
+											CarParking carParking = (CarParking) classBusiness.selectEntityByHQL(HQL);
+											carParking.setClose(true);
+											classBusiness.updateEntity(carParking);
+											message = message + " This car contract is end of these month.";
+										}
+										
 										Notification.show(parkingCashFlow.getCarparking().getCustomer()
 												.getCustomerName() + ", Installment Number :"
 												+ parkingCashFlow.getInstallmentNumber() + ", CarType :"
 												+ parkingCashFlow.getCarparking().getCarType() + ", PlantNumber :"
-												+ parkingCashFlow.getCarparking().getPlantNumber() + "has been paid.");
+												+ parkingCashFlow.getCarparking().getPlantNumber() + message);
 									} else {
 										dialog.close();
 									}

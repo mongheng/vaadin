@@ -95,7 +95,7 @@ public class PaymentForm extends Window {
 				.bind(Payment::getAmount, Payment::setAmount);
 
 		Button btnPay = new Button();
-		btnPay.setCaption("Paied");
+		btnPay.setCaption("Paid");
 		btnPay.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnPay.addClickListener(clickEvent -> {
 			ConfirmDialog.show(UI.getCurrent(), "Confrimation",
@@ -110,6 +110,7 @@ public class PaymentForm extends Window {
 								classBusiness = (ClassBusiness) applicationContext
 										.getBean(ClassBusiness.class.getSimpleName());
 								Payment payment = new Payment();
+								String message = " have been paid.";
 								try {
 									binder.writeBean(payment);
 									payment.setPaymentID(cashFlow.getCashflowID());
@@ -125,9 +126,10 @@ public class PaymentForm extends Window {
 										classBusiness.updateEntity(openUnit);
 										closeCustomer.setClose(true);
 										classBusiness.updateEntity(closeCustomer);
+										message = message + " This contract is end of these month.";
 									}
 									close();
-									Notification.show(cashFlow.getContract().getCustomer().getCustomerName() + " have been paid.");
+									Notification.show(cashFlow.getContract().getCustomer().getCustomerName() + message);
 							
 								} catch (Exception e) {
 									e.printStackTrace();

@@ -36,6 +36,8 @@ public class CarParkingContractView extends VerticalLayout {
 	private List<Contract> contracts;
 	private Grid<ParkingCashFlow> grid;
 	ListDataProvider<ParkingCashFlow> dataProvider;
+	
+	String message = " has been paid.";
 
 	public CarParkingContractView(ApplicationContext applicationContext, Customer customer, List<Contract> contracts) {
 		this.applicationContext = applicationContext;
@@ -175,6 +177,7 @@ public class CarParkingContractView extends VerticalLayout {
 										CarParking carParking = (CarParking) classBusiness.selectEntityByHQL(HQL);
 										carParking.setClose(true);
 										classBusiness.updateEntity(carParking);
+										message = message + " This car contract is end of these month.";
 										return;
 									}
 								}
@@ -184,7 +187,7 @@ public class CarParkingContractView extends VerticalLayout {
 									.getCustomerName() + ", Installment Number :"
 									+ parkingCashFlow.getInstallmentNumber() + ", CarType :"
 									+ parkingCashFlow.getCarparking().getCarType() + ", PlantNumber :"
-									+ parkingCashFlow.getCarparking().getPlantNumber() + "has been paid.");
+									+ parkingCashFlow.getCarparking().getPlantNumber() + message);
 							
 							Page.getCurrent().reload();
 						} else {

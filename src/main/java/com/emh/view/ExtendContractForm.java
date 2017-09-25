@@ -1,10 +1,12 @@
 package com.emh.view;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
+import com.emh.model.CarParking;
 import com.emh.model.CashFlow;
 import com.emh.model.Contract;
 import com.emh.model.Customer;
@@ -13,6 +15,7 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -34,8 +37,10 @@ public class ExtendContractForm extends Window {
 	private TextField termField;
 	private DateField startDate;
 	private DateField endDate;
+	private ComboBox<CarParking> cboCarParking;
 	private Contract contract;
 	private Customer customer;
+	private List<CarParking> carParkings;
 	private CashFlow cashFlow;
 	private Binder<Contract> binder;
 
@@ -48,6 +53,7 @@ public class ExtendContractForm extends Window {
 	private void init() {
 		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		contract = (Contract) classBusiness.selectEntityByHQL("From Contract WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "'");
+		carParkings = classBusiness.selectListEntityByHQL(CarParking.class, "From CarParking WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "' and ACTIVATE = true");
 		
 		formLayout = new FormLayout();
 		hLayout = new HorizontalLayout();
@@ -72,6 +78,15 @@ public class ExtendContractForm extends Window {
 		
 		endDate = new DateField("End Date :");
 		binder.bind(endDate, Contract::getEndDate, Contract::setEndDate);
+		
+		cboCarParking = new ComboBox<>("Vehicle :");
+		cboCarParking.setItems(carParkings);
+		cboCarParking.setItemCaptionGenerator(carParking -> {
+			if (carParkings.size() > 0) {
+				return carParking.getCarType() + " - " + carParking.getPlantNumber();
+			}
+			return null;
+		});
 		
 		Button btnExtend = new Button("Extend");
 		btnExtend.addStyleName(ValoTheme.BUTTON_FRIENDLY);
@@ -121,7 +136,6 @@ public class ExtendContractForm extends Window {
 		});
 		
 		Button btnCancel = new Button("Cancel");
-		btnCancel.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnCancel.addClickListener(listener -> {
 			close();
 		});
@@ -130,7 +144,7 @@ public class ExtendContractForm extends Window {
 		hLayout.setComponentAlignment(btnExtend, Alignment.TOP_CENTER);
 		hLayout.setComponentAlignment(btnCancel, Alignment.TOP_CENTER);
 		
-		formLayout.addComponents(termField, startDate, endDate, hLayout);
+		formLayout.addComponents(termField, cboCarParking, startDate, endDate, hLayout);
 		formLayout.setSizeFull();
 		formLayout.setComponentAlignment(termField, Alignment.TOP_CENTER);
 		formLayout.setComponentAlignment(startDate, Alignment.TOP_CENTER);
