@@ -2,6 +2,8 @@ package com.emh.view;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
@@ -253,5 +255,52 @@ public class ResponsiveLayout extends CssLayout implements View {
 		public InputStream getStream() {
 			return new ByteArrayInputStream(user.getImage());
 		}
+	}
+	
+	private void addTreeAndContentComponent(Set<String> mainTrees, Map<String, Set<String>> subTrees) {
+		Tree<String> tree = new Tree<>();
+		TreeData<String> treeData = new TreeData<>();
+
+		mainTrees.forEach(mainTree -> {
+			treeData.addItems(null, mainTrees);
+			subTrees.forEach((captionMainTree, captionSubTree) -> {
+				treeData.addItems(captionMainTree, captionSubTree);
+			});
+		});
+
+		tree.setDataProvider(new TreeDataProvider<>(treeData));
+
+		tree.addStyleName(ValoTheme.TREETABLE_BORDERLESS);
+		tree.addStyleName("focus");
+		tree.setItemIconGenerator(iconGenerator -> {
+			if (iconGenerator.equals("Desktops")) {
+				return VaadinIcons.DESKTOP;
+			} else if (iconGenerator.equals("Setting")) {
+				return VaadinIcons.COGS;
+			}
+			return null;
+		});
+		formLayout.addComponent(tree);
+		formLayout.setComponentAlignment(tree, Alignment.TOP_CENTER);
+
+		menuContentLayout.addComponent(formLayout);
+		menuContentLayout.setComponentAlignment(formLayout, Alignment.TOP_CENTER);
+
+		tree.addItemClickListener(itemClick -> {
+			String caption = itemClick.getItem();
+			if (caption.equals("Setting")) {
+				tree.expand("Setting");
+				tree.collapse("Desktops");
+			} else if (caption.equals("Desktops")) {
+				tree.expand("Desktops");
+				tree.collapse("Setting");
+			} else {
+				contentLayout.removeAllComponents();
+				contentLayout.addComponent(getViewComponent(caption));
+				contentLayout.setSizeFull();
+				contentLayout.setMargin(false);
+				contentLayout.setSpacing(false);
+			}
+		});
 	}
 }

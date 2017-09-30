@@ -6,6 +6,7 @@ import com.vaadin.server.VaadinService;
 public class Run {
 
 	public static void main(String[] args) {
+		System.out.println(Utility.encryptionPassword("12345"));
 		System.out.println(Utility.encryptionPassword("MoNgheng#@$fg132"));
 		System.out.println(Utility.encryptionPassword("EarMoNgheng#@$fg132"));
 		System.out.println(Utility.decryptionPassword("238-341-243-319-323-315-343-323-120-208-125-324-328-167-174-172-"));

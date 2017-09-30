@@ -18,7 +18,6 @@ public class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
 
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
-		// TODO Auto-generated method stub
 		ChannelPipeline p = ch.pipeline();
 		
 		          // Enable HTTPS if necessary.

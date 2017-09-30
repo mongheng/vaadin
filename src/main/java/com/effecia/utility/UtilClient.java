@@ -44,7 +44,6 @@ public class UtilClient {
 				} catch (LineUnavailableException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
