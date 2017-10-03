@@ -2,8 +2,6 @@ package com.emh.view;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.Set;
 
 import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
@@ -257,7 +255,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 		}
 	}
 	
-	private void addTreeAndContentComponent(Set<String> mainTrees, Map<String, Set<String>> subTrees) {
+	/*private void addTreeAndContentComponent(Set<String> mainTrees, Map<String, Set<String>> subTrees) {
 		Tree<String> tree = new Tree<>();
 		TreeData<String> treeData = new TreeData<>();
 
@@ -302,5 +300,5 @@ public class ResponsiveLayout extends CssLayout implements View {
 				contentLayout.setSpacing(false);
 			}
 		});
-	}
+	}*/
 }
