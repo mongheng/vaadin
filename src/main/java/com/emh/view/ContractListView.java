@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
+import com.emh.model.CarParking;
 import com.emh.model.Contract;
 import com.emh.model.Customer;
 import com.emh.repository.business.ClassBusiness;
@@ -57,7 +58,8 @@ public class ContractListView extends VerticalLayout {
 		if (customers.size() > 0) {
 			customers.forEach(customer -> {
 				if (customer.isParkStatu()) {
-					if (!customer.isClose()) {
+					CarParking carParking = (CarParking) classBusiness.selectEntityByHQL("FROM CarParking WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "'");
+					if (!customer.isClose() || !carParking.isClose()) {
 						parkDataProvider.getItems().add(customer);
 					}
 				}

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationContext;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CarParking;
 import com.emh.model.Contract;
@@ -21,6 +22,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
@@ -28,7 +30,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class CarParkingView extends VerticalLayout {
@@ -38,6 +42,7 @@ public class CarParkingView extends VerticalLayout {
 	private ClassBusiness classBusiness;
 	private Customer customer;
 	private CarParking carParking;
+	private Contract contract;
 	private List<CarParking> currectCarParkingCustomers;
 	private ListDataProvider<CarParking> dataProvider;
 	private Binder<CarParking> binder;
@@ -50,6 +55,9 @@ public class CarParkingView extends VerticalLayout {
 	private Grid<CarParking> grid;
 	private Label title;
 	private ComboBox<Customer> cboCustomer;
+	private TextField termField;
+	private DateField startDate;
+	private DateField endDate;
 	private TextField carTypeField;
 	private TextField plantNumberField;
 	private TextField amountField;
@@ -81,6 +89,27 @@ public class CarParkingView extends VerticalLayout {
 		cboCustomer.setWidth(6.8f, Unit.CM);
 		binder.bind(cboCustomer, CarParking::getCustomer, CarParking::setCustomer);
 
+		termField = new TextField("Term :");
+		termField.setWidth(6.8f,  Unit.CM);
+		termField.addValueChangeListener(valueChange -> {
+			if (!termField.getValue().isEmpty()) {
+				endDate.setValue(startDate.getValue().plusMonths(Integer.parseInt(termField.getValue())));
+			}
+		});
+		
+		startDate = new DateField("Start End :");
+		startDate.setWidth(6.8f, Unit.CM);
+		startDate.setValue(LocalDate.now());
+		startDate.addValueChangeListener(valueChange -> {
+			if (!termField.getValue().isEmpty()) {
+				endDate.setValue(startDate.getValue().plusMonths(Integer.parseInt(termField.getValue())));
+			}
+		});
+		
+		endDate = new DateField("End Date :");
+		endDate.setWidth(6.8f, Unit.CM);
+		endDate.setValue(LocalDate.now());
+		
 		carTypeField = new TextField("Car Type :");
 		carTypeField.setWidth(6.8f, Unit.CM);
 		binder.forField(carTypeField).withValidator(carType -> carType != null, "Please input the car type.")
@@ -148,8 +177,8 @@ public class CarParkingView extends VerticalLayout {
 
 		hLayout.addComponents(btnSave, btnNew, btnActivated);
 		hLayout.setComponentAlignment(btnSave, Alignment.MIDDLE_CENTER);
-		formLayout.addComponents(cboCustomer, carTypeField, plantNumberField, amountField, ckbFree, hLayout);
-
+		formLayout.addComponents(cboCustomer, termField, startDate, endDate, carTypeField, plantNumberField, amountField, ckbFree, hLayout);
+		
 		titleVLayout.addComponent(title);
 		titleVLayout.setComponentAlignment(title, Alignment.TOP_CENTER);
 		titleVLayout.setSizeFull();
@@ -158,18 +187,24 @@ public class CarParkingView extends VerticalLayout {
 
 		topVLayout.addComponent(formLayout);
 		topVLayout.setSizeFull();
+		topVLayout.setSpacing(false);
 		initColumnGrid();
 		grid.setSizeFull();
 		bottomVLayout.addComponent(grid);
+		bottomVLayout.setComponentAlignment(grid, Alignment.BOTTOM_LEFT);
 		bottomVLayout.setSizeFull();
+		bottomVLayout.setSpacing(false);
 
-		addComponents(titleVLayout, topVLayout, bottomVLayout);
+		addComponents(/*titleVLayout, */topVLayout, bottomVLayout);
 		setCaption("Car Parking");
 		setSizeFull();
-		setExpandRatio(titleVLayout, 0.1f);
-		setExpandRatio(topVLayout, 1.55f);
-		setExpandRatio(bottomVLayout, 1.35f);
+		/*setExpandRatio(titleVLayout, 0.001f);
+		setExpandRatio(topVLayout, 1.849f);
+		setExpandRatio(bottomVLayout, 1.15f);*/
+		setExpandRatio(topVLayout, 2.1f);
+		setExpandRatio(bottomVLayout, 1);
 		setSpacing(false);
+		setMargin(false);
 	}
 
 	private void setValueCustomer() {
@@ -195,6 +230,11 @@ public class CarParkingView extends VerticalLayout {
 			grid.setDataProvider(dataProvider);
 
 			if (currectCarParkingCustomers.size() > 0) {
+				String HQL_CONTRACT = "FROM Contract WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "'";
+				contract = (Contract) classBusiness.selectEntityByHQL(HQL_CONTRACT);
+				if (contract != null) {
+					termField.setValue(contract.getTerm().toString());
+				}
 				ckbFree.setValue(false);
 				amountField.setEnabled(true);
 				btnActivated.setEnabled(true);
@@ -203,6 +243,10 @@ public class CarParkingView extends VerticalLayout {
 				amountField.setEnabled(false);
 				btnActivated.setEnabled(false);
 			}
+			carTypeField.clear();
+			plantNumberField.clear();
+			amountField.clear();
+			ckbFree.setValue(false);
 		});
 	}
 
@@ -222,6 +266,29 @@ public class CarParkingView extends VerticalLayout {
 			return carParking.getAmount() == null ? "free" : carParking.getAmount().toString();
 		});
 		columnAmount.setCaption("Amount");
+		
+		Column<CarParking, String> columnDelete = grid.addColumn(delete -> "Delete", new ButtonRenderer<>(deleteAction -> {
+			CarParking carParking = deleteAction.getItem();
+			if (carParking.isFree()) {
+			
+			} else if (!carParking.isActivated()) {
+				
+			}
+			else {
+				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure you want to delete this vehicle? ", "Yes", "No", new ConfirmDialog.Listener() {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClose(ConfirmDialog dialog) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
+			}
+		}));
+		columnDelete.setCaption("Action");
 
 		grid.addItemClickListener(itemClick -> {
 			carParking = itemClick.getItem();
@@ -236,6 +303,9 @@ public class CarParkingView extends VerticalLayout {
 				btnActivated.setVisible(true);
 			}
 
+			String HQL_CONTRACT = "FROM Contract WHERE CUSTOMER_ID = '" + carParking.getCustomer().getCustomerID() + "'";
+			contract = (Contract) classBusiness.selectEntityByHQL(HQL_CONTRACT);
+			termField.setValue(contract.getTerm().toString());
 			binder.readBean(carParking);
 		});
 	}
@@ -255,16 +325,15 @@ public class CarParkingView extends VerticalLayout {
 
 		@Override
 		public void buttonClick(ClickEvent event) {
-			String HQL = "FROM Contract WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "'";
-			Contract contract = (Contract) classBusiness.selectEntityByHQL(HQL);
-			int term = contract.getTerm();
+			
+			int term = Integer.valueOf(termField.getValue());
 			LocalDate tempEndDate = null;
 
 			for (int i = 1; i <= term; i++) {
 				ParkingCashFlow parkingCashFlow = new ParkingCashFlow();
 				if (i == 1) {
-					parkingCashFlow.setStartDate(contract.getStartDate());
-					tempEndDate = contract.getStartDate().plusMonths(i);
+					parkingCashFlow.setStartDate(startDate.getValue());
+					tempEndDate = startDate.getValue().plusMonths(i);
 					parkingCashFlow.setEndDate(tempEndDate);
 					parkingCashFlow.setInstallmentNumber(i);
 					parkingCashFlow.setAmount(carParking.getAmount());
@@ -277,16 +346,16 @@ public class CarParkingView extends VerticalLayout {
 					parkingCashFlow.setInstallmentNumber(i);
 					parkingCashFlow.setAmount(carParking.getAmount());
 					parkingCashFlow.setCarparking(carParking);
-					;
+	
 					classBusiness.createEntity(parkingCashFlow);
 				}
-				carParking.setActivated(true);
-				classBusiness.updateEntity(carParking);
-				customer.setParkStatu(true);
-				classBusiness.updateEntity(customer);
-				Notification.show("The Car Parking start successfully.");
-				btnActivated.setVisible(false);
 			}
+			carParking.setActivated(true);
+			classBusiness.updateEntity(carParking);
+			customer.setParkStatu(true);
+			classBusiness.updateEntity(customer);
+			Notification.show("The Car Parking start successfully.");
+			btnActivated.setVisible(false);
 		}
 
 	}

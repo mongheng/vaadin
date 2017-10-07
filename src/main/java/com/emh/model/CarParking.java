@@ -3,7 +3,6 @@ package com.emh.model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -91,7 +90,7 @@ public class CarParking {
 		this.close = close;
 	}
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "CUSTOMER_ID")
 	public Customer getCustomer() {
 		return customer;

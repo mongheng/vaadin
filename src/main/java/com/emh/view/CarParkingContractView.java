@@ -112,14 +112,17 @@ public class CarParkingContractView extends VerticalLayout {
 			int installmentNumber = parkingCashFlow.getInstallmentNumber();
 			if (!parkingCashFlow.isStatu()) {
 				if (installmentNumber == 1) {
-					payment(parkingCashFlow);
+					payment(parkingCashFlow, false);
 				} else {
+					String HQL_CHECKVALUE = "From ParkingCashFlow WHERE CARPARKING_ID = '" + parkingCashFlow.getCarparking().getCarparkingID() + "'";
+					List<ParkingCashFlow> parkingCashFlows = classBusiness.selectListEntityByHQL(ParkingCashFlow.class, HQL_CHECKVALUE);
+					boolean checkValue = installmentNumber == parkingCashFlows.size() ? true: false;
 					installmentNumber = installmentNumber - 1;
 					String HQL = "FROM ParkingCashFlow WHERE INSTALLMENT_NUMBER = " + installmentNumber
 							+ " and CARPARKING_ID = '" + parkingCashFlow.getCarparking().getCarparkingID() + "'";
 					ParkingCashFlow pcf = (ParkingCashFlow) classBusiness.selectEntityByHQL(HQL);
 					if (pcf.isStatu()) {
-						payment(parkingCashFlow);
+						payment(parkingCashFlow, checkValue);
 					} else {
 						Notification.show("Please paid by order.", Type.WARNING_MESSAGE);
 					}
@@ -139,7 +142,7 @@ public class CarParkingContractView extends VerticalLayout {
 		addComponent(grid);
 	}
 	
-	private void payment(ParkingCashFlow parkingCashFlow) {
+	private void payment(ParkingCashFlow parkingCashFlow, boolean checkValue) {
 		ConfirmDialog.show(UI.getCurrent(), "Confirmation",
 				"Are you sure you want to pay "
 						+ parkingCashFlow.getCarparking().getCustomer().getCustomerName()
@@ -172,7 +175,7 @@ public class CarParkingContractView extends VerticalLayout {
 							
 							contracts.forEach(contract -> {
 								if (contract.getCustomer().getCustomerID().equals(customer.getCustomerID())) {
-									if (contract.getTerm().equals(parkingCashFlow.getInstallmentNumber())) {
+									if (contract.getTerm().equals(parkingCashFlow.getInstallmentNumber()) || checkValue) {
 										String HQL = "FROM CarParking WHERE CARPAKING_ID = '" + parkingCashFlow.getCarparking().getCarparkingID() + "'";
 										CarParking carParking = (CarParking) classBusiness.selectEntityByHQL(HQL);
 										carParking.setClose(true);
