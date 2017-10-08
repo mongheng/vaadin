@@ -2,10 +2,8 @@ package com.emh.model;
 
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -83,7 +81,7 @@ public class ParkingCashFlow {
 		this.statu = statu;
 	}
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "CARPARKING_ID")
 	public CarParking getCarparking() {
 		return carparking;

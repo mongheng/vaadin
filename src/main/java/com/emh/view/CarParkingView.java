@@ -270,21 +270,45 @@ public class CarParkingView extends VerticalLayout {
 		Column<CarParking, String> columnDelete = grid.addColumn(delete -> "Delete", new ButtonRenderer<>(deleteAction -> {
 			CarParking carParking = deleteAction.getItem();
 			if (carParking.isFree()) {
-			
-			} else if (!carParking.isActivated()) {
-				
-			}
-			else {
-				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure you want to delete this vehicle? ", "Yes", "No", new ConfirmDialog.Listener() {
-
+				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure you want to delete this free vehicle? ", "Yes", "No", new ConfirmDialog.Listener() {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClose(ConfirmDialog dialog) {
-						// TODO Auto-generated method stub
-						
+						classBusiness.deleteEntity(carParking);
+						dataProvider.getItems().remove(carParking);
+						grid.setDataProvider(dataProvider);
+						Notification.show("The vehicle had deleted successfully.");
 					}
+				});
+			} else if (!carParking.isActivated()) {
+				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure you want to delete this inactivated vehicle? ", "Yes", "No", new ConfirmDialog.Listener() {
+					private static final long serialVersionUID = 1L;
 					
+					@Override
+					public void onClose(ConfirmDialog dialog) {
+						classBusiness.deleteEntity(carParking);
+						dataProvider.getItems().remove(carParking);
+						grid.setDataProvider(dataProvider);
+						Notification.show("The vehicle had deleted successfully.");
+					}
+				});
+			}
+			else {
+				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure you want to delete this activated vehicle? ", "Yes", "No", new ConfirmDialog.Listener() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClose(ConfirmDialog dialog) {
+						List<ParkingCashFlow> pcfs =  classBusiness.selectListEntityByHQL(ParkingCashFlow.class, "FROM ParkingCashFlow WHERE CARPARKING_ID = '" + carParking.getCarparkingID() + "'");
+						pcfs.forEach(pcf -> {
+							classBusiness.deleteEntity(pcf);
+						});
+						classBusiness.deleteEntity(carParking);
+						dataProvider.getItems().remove(carParking);
+						grid.setDataProvider(dataProvider);
+						Notification.show("The vehicle had deleted successfully.");						
+					}
 				});
 			}
 		}));
