@@ -107,6 +107,8 @@ public class ResponsiveReceiverView extends CssLayout {
 		addComponent(mainLayout);
 		setSizeFull();
 		setCaption("Receive Payment");
+		
+		Utility.createReport();
 	}
 
 	private void initTopLayout() {
@@ -278,15 +280,15 @@ public class ResponsiveReceiverView extends CssLayout {
 		plusSign = new Label("+");
 		plusSign.addStyleName("plusequal");
 
-		totalAmountField = new TextField();
+		totalAmountField = new TextField("Grand Total :");
 		totalAmountField.setReadOnly(true);
 		totalAmountField.addStyleName("textalig");
 
-		totalCarParkingAmountField = new TextField();
+		totalCarParkingAmountField = new TextField("Vehicle Total :");
 		totalCarParkingAmountField.setReadOnly(true);
 		totalCarParkingAmountField.addStyleName("textalig");
 
-		totalRoomAmountField = new TextField();
+		totalRoomAmountField = new TextField("Room Total :");
 		totalRoomAmountField.setReadOnly(true);
 		totalRoomAmountField.addStyleName("textalig");
 
@@ -313,6 +315,7 @@ public class ResponsiveReceiverView extends CssLayout {
 											hPayment.setFloorNumber(payment.getFloorNumber());
 											hPayment.setInstallmentNumber(payment.getInstallmentNumber());
 											hPayment.setPaymentDate(payment.getPaymentDate());
+											hPayment.setReceiveDate(LocalDate.now());
 											hPayment.setUnitNumber(payment.getUnitNumber());
 											hPayment.setUser(payment.getUser());
 
@@ -328,6 +331,7 @@ public class ResponsiveReceiverView extends CssLayout {
 											hPayment.setFloorNumber(payment.getFloorNumber());
 											hPayment.setInstallmentNumber(payment.getInstallmentNumber());
 											hPayment.setPaymentDate(payment.getPaymentDate());
+											hPayment.setReceiveDate(LocalDate.now());
 											hPayment.setUnitNumber(payment.getUnitNumber());
 											hPayment.setUser(payment.getUser());
 											hPayment.setCarType(payment.getCarType());
@@ -356,12 +360,13 @@ public class ResponsiveReceiverView extends CssLayout {
 		bottomGridLayout.setWidth("800px");
 		bottomGridLayout.addComponent(totalRoomAmountField, 0, 0);
 		bottomGridLayout.addComponent(plusSign, 1, 0);
-		bottomGridLayout.setComponentAlignment(plusSign, Alignment.MIDDLE_CENTER);
+		bottomGridLayout.setComponentAlignment(plusSign, Alignment.BOTTOM_CENTER);
 		bottomGridLayout.addComponent(totalCarParkingAmountField, 2, 0);
 		bottomGridLayout.addComponent(equalSign, 3, 0);
-		bottomGridLayout.setComponentAlignment(equalSign, Alignment.MIDDLE_CENTER);
+		bottomGridLayout.setComponentAlignment(equalSign, Alignment.BOTTOM_CENTER);
 		bottomGridLayout.addComponent(totalAmountField, 4, 0);
 		bottomGridLayout.addComponent(btnRecevier, 5, 0);
+		bottomGridLayout.setComponentAlignment(btnRecevier, Alignment.BOTTOM_CENTER);
 
 		bottomGridLayout.setColumnExpandRatio(1, 0.1f);
 		bottomGridLayout.setColumnExpandRatio(3, 0.1f);

@@ -52,12 +52,10 @@ public class DashboardView extends VerticalLayout {
 		parkingGrid = new Grid<>();
 
 		List<CashFlow> cashflows = classBusiness.selectListEntityByHQL(CashFlow.class,
-				"from CashFlow where STATU = false and (STARTDATE <= '" + LocalDate.now() + "' and ENDDATE >= '"
-						+ LocalDate.now() + "')");
+				"from CashFlow where STATU = false and ENDDATE <= '" + LocalDate.now() + "'");
 
 		List<ParkingCashFlow> parkingCashFlows = classBusiness.selectListEntityByHQL(ParkingCashFlow.class,
-				"from ParkingCashFlow where STATU = false and (STARTDATE <= '" + LocalDate.now() + "' and ENDDATE >= '"
-						+ LocalDate.now() + "')");
+				"from ParkingCashFlow where STATU = false and ENDDATE <= '" + LocalDate.now() + "'");
 
 		if (cashflows.size() > 0) {
 			cashflowDataProvider = new ListDataProvider<>(cashflows);

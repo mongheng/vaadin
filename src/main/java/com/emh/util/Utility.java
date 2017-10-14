@@ -1,5 +1,6 @@
 package com.emh.util;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,12 +14,25 @@ import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
 import org.springframework.context.ApplicationContext;
 
+import com.emh.configuration.ConfigApplicationContext;
 import com.emh.model.Floor;
+import com.emh.model.HistoryPayment;
 import com.emh.model.Role;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.Columns;
+import net.sf.dynamicreports.report.builder.component.Components;
+import net.sf.dynamicreports.report.builder.datatype.DataTypes;
+import net.sf.dynamicreports.report.builder.style.StyleBuilder;
+import net.sf.dynamicreports.report.builder.style.StyleBuilders;
+import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class Utility {
 
@@ -127,7 +141,7 @@ public class Utility {
 			File[] files = file.listFiles();
 			if (files.length > 0) {
 				for (File f : files) {
-					if(f.isFile()) {
+					if (f.isFile()) {
 						f.delete();
 					} else if (f.isDirectory()) {
 						deleteDirectory(f);
@@ -170,7 +184,7 @@ public class Utility {
 		}
 		return new ArrayList<>();
 	}
-	
+
 	public static List<User> getEmployee(ApplicationContext applicationContext) {
 		try {
 			ClassBusiness classBusiness = (ClassBusiness) applicationContext
@@ -186,5 +200,39 @@ public class Utility {
 			ex.printStackTrace();
 		}
 		return new ArrayList<>();
+	}
+
+	private static JRDataSource createDataSource() {
+		List<HistoryPayment> historyPayments = ConfigApplicationContext.classBusiness
+				.selectAllEntity(HistoryPayment.class);
+		return new JRBeanCollectionDataSource(historyPayments);
+	}
+
+	public static void createReport() {
+		JasperReportBuilder reportBuilder = DynamicReports.report();
+		StyleBuilders styleBuilders = DynamicReports.stl;
+		StyleBuilder boldStyle = styleBuilders.style().bold();
+		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle)
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		StyleBuilder columnTitleStyle = styleBuilders.style(boldCenteredStyle).setBorder(styleBuilders.pen1Point())
+				.setBackgroundColor(Color.LIGHT_GRAY);
+		reportBuilder
+				.columns(Columns.column("Customer Name", "customerName", DataTypes.stringType()),
+						Columns.column("Amount", "amount", DataTypes.floatType()),
+						Columns.column("Floor", "floorNumber", DataTypes.integerType()),
+						Columns.column("Unit", "unitNumber", DataTypes.integerType()))
+				.setTextStyle(boldCenteredStyle).setColumnStyle(columnTitleStyle).highlightDetailEvenRows()
+				.title(Components.text("Daily Report").setHorizontalTextAlignment(HorizontalTextAlignment.CENTER)
+						.setStyle(boldCenteredStyle))
+				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle)).setDataSource(createDataSource());
+
+		try {
+			reportBuilder.toPdf(new FileOutputStream("c:/staff/dailyReport.pdf"));
+			ProcessBuilder processBuilder = new ProcessBuilder("C:/Program Files (x86)/Foxit Software/Foxit PhantomPDF/FoxitPhantomPDF.exe", "c:/staff/dailyReport.pdf");
+			Process process = processBuilder.start();
+			process.waitFor();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
 	}
 }

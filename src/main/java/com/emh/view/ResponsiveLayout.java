@@ -131,7 +131,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 		
 		hsLayout.setFirstComponent(menuLayout);
 		hsLayout.setSecondComponent(contentLayout);
-		hsLayout.setSplitPosition(15);
+		hsLayout.setSplitPosition(16);
 		hsLayout.setLocked(true);
 		hsLayout.setSizeFull();
 		hsLayout.setResponsive(true);

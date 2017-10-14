@@ -22,6 +22,7 @@ public class HistoryPayment {
 	private String carType;
 	private String PlantNumber;
 	private LocalDate paymentDate;
+	private LocalDate receiveDate;
 	private User user;
 
 	@Id
@@ -104,6 +105,15 @@ public class HistoryPayment {
 
 	public void setPaymentDate(LocalDate paymentDate) {
 		this.paymentDate = paymentDate;
+	}
+
+	@Column(name = "RECEIVE_DATE")
+	public LocalDate getReceiveDate() {
+		return receiveDate;
+	}
+
+	public void setReceiveDate(LocalDate receiveDate) {
+		this.receiveDate = receiveDate;
 	}
 
 	@OneToOne
