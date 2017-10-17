@@ -2,6 +2,7 @@ package com.emh.view.report;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -61,6 +62,7 @@ public class ResponsiveReceiverView extends CssLayout {
 	private TextField totalCarParkingAmountField;
 	private TextField totalAmountField;
 	private Button btnRecevier;
+	private Button btnExtra;
 
 	private ListDataProvider<Payment> dataProvider;
 	private Grid<Payment> roomGrid;
@@ -89,6 +91,9 @@ public class ResponsiveReceiverView extends CssLayout {
 		centerHLayout = new HorizontalLayout();
 		bottomGridLayout = new GridLayout(6, 1);
 
+		roomsPayment = new HashSet<>();
+		carsParkingPayment = new HashSet<>();
+		
 		// Top Layout.
 		initTopLayout();
 		// Center Layout.
@@ -107,8 +112,6 @@ public class ResponsiveReceiverView extends CssLayout {
 		addComponent(mainLayout);
 		setSizeFull();
 		setCaption("Receive Payment");
-		
-		Utility.createReport();
 	}
 
 	private void initTopLayout() {
@@ -143,8 +146,14 @@ public class ResponsiveReceiverView extends CssLayout {
 			search(HQL);
 		});
 
+		btnExtra = new Button("Extration");
+		btnExtra.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		btnExtra.addClickListener(clickEvent -> {
+			Utility.createReport(applicationContext);
+		});
+		
 		topFormHLayout.addComponents(startDate, endDate, cboEmployee);
-		topButtonHLayout.addComponent(btnSearch);
+		topButtonHLayout.addComponents(btnSearch, btnExtra);
 		formLayout.addComponents(topFormHLayout, topButtonHLayout);
 		formLayout.addStyleName("caption");
 
@@ -307,48 +316,56 @@ public class ResponsiveReceiverView extends CssLayout {
 								if (totalamount != "") {
 									Float checkValue = Float.valueOf(totalamount);
 									if (!checkValue.equals(0.0f)) {
-										roomsPayment.forEach(payment -> {
-											HistoryPayment hPayment = new HistoryPayment();
-											hPayment.setHistoryID(payment.getPaymentID());
-											hPayment.setAmount(payment.getAmount());
-											hPayment.setCustomerName(payment.getCustomerName());
-											hPayment.setFloorNumber(payment.getFloorNumber());
-											hPayment.setInstallmentNumber(payment.getInstallmentNumber());
-											hPayment.setPaymentDate(payment.getPaymentDate());
-											hPayment.setReceiveDate(LocalDate.now());
-											hPayment.setUnitNumber(payment.getUnitNumber());
-											hPayment.setUser(payment.getUser());
+										
+										if (roomsPayment.size() > 0) {
+											roomsPayment.forEach(payment -> {
+												HistoryPayment hPayment = new HistoryPayment();
+												hPayment.setHistoryID(payment.getPaymentID());
+												hPayment.setAmount(payment.getAmount());
+												hPayment.setCustomerName(payment.getCustomerName());
+												hPayment.setFloorNumber(payment.getFloorNumber());
+												hPayment.setInstallmentNumber(payment.getInstallmentNumber());
+												hPayment.setPaymentDate(payment.getPaymentDate());
+												hPayment.setReceiveDate(LocalDate.now());
+												hPayment.setUnitNumber(payment.getUnitNumber());
+												hPayment.setUser(payment.getUser());
 
-											classBusiness.createEntity(hPayment);
-											classBusiness.deleteEntity(payment);
-										});
+												classBusiness.createEntity(hPayment);
+												classBusiness.deleteEntity(payment);
+											});
+										}
 
-										carsParkingPayment.forEach(payment -> {
-											HistoryPayment hPayment = new HistoryPayment();
-											hPayment.setHistoryID(payment.getPaymentID());
-											hPayment.setAmount(payment.getAmount());
-											hPayment.setCustomerName(payment.getCustomerName());
-											hPayment.setFloorNumber(payment.getFloorNumber());
-											hPayment.setInstallmentNumber(payment.getInstallmentNumber());
-											hPayment.setPaymentDate(payment.getPaymentDate());
-											hPayment.setReceiveDate(LocalDate.now());
-											hPayment.setUnitNumber(payment.getUnitNumber());
-											hPayment.setUser(payment.getUser());
-											hPayment.setCarType(payment.getCarType());
-											hPayment.setPlantNumber(payment.getPlantNumber());
+										if (carsParkingPayment.size() > 0) {
+											carsParkingPayment.forEach(payment -> {
+												HistoryPayment hPayment = new HistoryPayment();
+												hPayment.setHistoryID(payment.getPaymentID());
+												hPayment.setAmount(payment.getAmount());
+												hPayment.setCustomerName(payment.getCustomerName());
+												hPayment.setFloorNumber(payment.getFloorNumber());
+												hPayment.setInstallmentNumber(payment.getInstallmentNumber());
+												hPayment.setPaymentDate(payment.getPaymentDate());
+												hPayment.setReceiveDate(LocalDate.now());
+												hPayment.setUnitNumber(payment.getUnitNumber());
+												hPayment.setUser(payment.getUser());
+												hPayment.setCarType(payment.getCarType());
+												hPayment.setPlantNumber(payment.getPlantNumber());
 
-											classBusiness.createEntity(hPayment);
-											classBusiness.deleteEntity(payment);
-										});
+												classBusiness.createEntity(hPayment);
+												classBusiness.deleteEntity(payment);
+											});
+										}
+										
 										loadGrid();
 										cboEmployee.clear();
 										startDate.clear();
 										endDate.clear();
 									} else {
-										Notification.show("You can not receive. Please check your data again.", Type.ERROR_MESSAGE);
+										Notification.show("You can not receive. Please check your data again.",
+												Type.ERROR_MESSAGE);
 									}
 								} else {
-									Notification.show("You can not receive. Please check your data again.", Type.ERROR_MESSAGE);
+									Notification.show("You can not receive. Please check your data again.",
+											Type.ERROR_MESSAGE);
 								}
 							} else {
 								dialog.close();

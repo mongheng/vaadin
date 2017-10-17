@@ -53,7 +53,8 @@ $v-grid-cell-focused-border: none;
   
   	.v-label-plusequal {
   		font-style: oblique;
-  		font-size: 16px;
+  		font-size: 20px;
+  		font-weight: bold;
   	}
   
   	.v-label-menutitle {
@@ -63,10 +64,11 @@ $v-grid-cell-focused-border: none;
   		font-style: italic;
   	}
   	
-  	.v-textfield-textalig {
+  	.v-caption-textalig {
   		text-align: center;
   		font-size: 16px;
   		font-style: oblique;
+  		color: blue;
   	}
   	
   	.v-panel {

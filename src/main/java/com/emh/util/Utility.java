@@ -1,10 +1,12 @@
 package com.emh.util;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,23 +16,27 @@ import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
 import org.springframework.context.ApplicationContext;
 
-import com.emh.configuration.ConfigApplicationContext;
 import com.emh.model.Floor;
 import com.emh.model.HistoryPayment;
 import com.emh.model.Role;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
+import com.vaadin.server.FileResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.DynamicReports;
 import net.sf.dynamicreports.report.builder.column.Columns;
+import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.component.Components;
 import net.sf.dynamicreports.report.builder.datatype.DataTypes;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilders;
+import net.sf.dynamicreports.report.builder.subtotal.SubtotalBuilders;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
+import net.sf.dynamicreports.report.constant.VerticalTextAlignment;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
@@ -202,37 +208,81 @@ public class Utility {
 		return new ArrayList<>();
 	}
 
-	private static JRDataSource createDataSource() {
-		List<HistoryPayment> historyPayments = ConfigApplicationContext.classBusiness
-				.selectAllEntity(HistoryPayment.class);
+	private static JRDataSource createDataSource(ApplicationContext applicationContext) {
+		ClassBusiness classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		List<HistoryPayment> historyPayments = classBusiness.selectAllEntity(HistoryPayment.class);
 		return new JRBeanCollectionDataSource(historyPayments);
 	}
 
-	public static void createReport() {
+	public static void createReport(ApplicationContext applicationContext) {
+		
+		InputStream is = titleImageReport();
+		
 		JasperReportBuilder reportBuilder = DynamicReports.report();
+
+		SubtotalBuilders sbt = DynamicReports.sbt;
+
 		StyleBuilders styleBuilders = DynamicReports.stl;
 		StyleBuilder boldStyle = styleBuilders.style().bold();
 		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle)
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
-		StyleBuilder columnTitleStyle = styleBuilders.style(boldCenteredStyle).setBorder(styleBuilders.pen1Point())
-				.setBackgroundColor(Color.LIGHT_GRAY);
-		reportBuilder
-				.columns(Columns.column("Customer Name", "customerName", DataTypes.stringType()),
-						Columns.column("Amount", "amount", DataTypes.floatType()),
-						Columns.column("Floor", "floorNumber", DataTypes.integerType()),
-						Columns.column("Unit", "unitNumber", DataTypes.integerType()))
-				.setTextStyle(boldCenteredStyle).setColumnStyle(columnTitleStyle).highlightDetailEvenRows()
-				.title(Components.text("Daily Report").setHorizontalTextAlignment(HorizontalTextAlignment.CENTER)
-						.setStyle(boldCenteredStyle))
-				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle)).setDataSource(createDataSource());
+		StyleBuilder titleStyle = styleBuilders.style(boldCenteredStyle)
+				.setVerticalTextAlignment(VerticalTextAlignment.MIDDLE).setFontSize(15);
+		StyleBuilder columnTitleStyle = styleBuilders.style(
+				boldCenteredStyle);
+
+		TextColumnBuilder<String> customerName = Columns.column("Customer Name", "customerName",
+				DataTypes.stringType());
+		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType());
+		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
+				DataTypes.integerType());
+		TextColumnBuilder<Integer> floorNumber = Columns.column("Floor", "floorNumber", DataTypes.integerType());
+		TextColumnBuilder<Integer> unitNumber = Columns.column("Unit", "unitNumber", DataTypes.integerType());
+
+		reportBuilder.columns(customerName, installmentNumber, floorNumber, unitNumber, amount)
+				.subtotalsAtSummary(sbt.sum(amount).setLabel("Total Amount")).setTextStyle(boldCenteredStyle)
+				.setColumnStyle(
+						columnTitleStyle)
+				.highlightDetailEvenRows().highlightDetailOddRows()
+				.title(Components.horizontalList()
+						.add(Components.image(is)
+								.setFixedDimension(80, 80),
+								Components.text("Dynamic Report").setStyle(titleStyle)
+										.setHorizontalTextAlignment(HorizontalTextAlignment.LEFT),
+								Components.text("Getting Started").setStyle(titleStyle)
+										.setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT)).newRow()
+								.add(Components.filler().setStyle(styleBuilders.style().setTopBorder(styleBuilders.pen2Point())).setFixedHeight(10)))
+				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle))
+				.setDataSource(createDataSource(applicationContext));
 
 		try {
-			reportBuilder.toPdf(new FileOutputStream("c:/staff/dailyReport.pdf"));
-			ProcessBuilder processBuilder = new ProcessBuilder("C:/Program Files (x86)/Foxit Software/Foxit PhantomPDF/FoxitPhantomPDF.exe", "c:/staff/dailyReport.pdf");
-			Process process = processBuilder.start();
-			process.waitFor();
+			File file = new File("C:\\dialyReport");
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			reportBuilder.toPdf(new FileOutputStream("c:/dialyReport/dailyReport.pdf")).show(false);
+
+			/*
+			 * ProcessBuilder processBuilder = new ProcessBuilder(
+			 * "C:/Program Files (x86)/Foxit Software/Foxit PhantomPDF/FoxitPhantomPDF.exe"
+			 * , "c:/dialyReport/dailyReport.pdf"); Process process =
+			 * processBuilder.start(); process.waitFor();
+			 */
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
+	}
+	
+	public static InputStream titleImageReport() {
+		String path = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+		FileResource fileResource = new FileResource(new File(path + "/WEB-INF/images/report.png"));
+		File fileImage = fileResource.getSourceFile();
+		InputStream is = null;
+		try {
+			is = new FileInputStream(fileImage);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		return is;
 	}
 }
