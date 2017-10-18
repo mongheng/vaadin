@@ -13,8 +13,11 @@ import com.emh.model.HistoryPayment;
 import com.emh.model.Payment;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
+import com.emh.util.ReportUtil;
 import com.emh.util.Utility;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -41,6 +44,7 @@ public class ResponsiveReceiverView extends CssLayout {
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private User user;
+	private User userSession;
 	private VerticalLayout mainLayout;
 	private VerticalLayout topLayout;
 	private VerticalLayout centerLayout;
@@ -63,6 +67,7 @@ public class ResponsiveReceiverView extends CssLayout {
 	private TextField totalAmountField;
 	private Button btnRecevier;
 	private Button btnExtra;
+	private FileDownloader fileDownloader;
 
 	private ListDataProvider<Payment> dataProvider;
 	private Grid<Payment> roomGrid;
@@ -81,6 +86,7 @@ public class ResponsiveReceiverView extends CssLayout {
 	}
 
 	private void init() {
+		userSession = (User) UI.getCurrent().getSession().getAttribute(User.class);
 		mainLayout = new VerticalLayout();
 		topLayout = new VerticalLayout();
 		centerLayout = new VerticalLayout();
@@ -149,7 +155,13 @@ public class ResponsiveReceiverView extends CssLayout {
 		btnExtra = new Button("Extration");
 		btnExtra.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnExtra.addClickListener(clickEvent -> {
-			Utility.createReport(applicationContext);
+			/*ReportUtil.createReportPDF(applicationContext, userSession, ReportUtil.PDF); 
+			ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(userSession, ReportUtil.PDF);*/
+			ReportUtil.createReportExcel(applicationContext, userSession, ReportUtil.XSL); 
+			ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(userSession, ReportUtil.XSL);
+			StreamResource sr = new StreamResource(streamSource, "report-" + LocalDate.now() + ReportUtil.XSL);
+			fileDownloader = new FileDownloader(sr);
+			fileDownloader.extend(btnExtra);
 		});
 		
 		topFormHLayout.addComponents(startDate, endDate, cboEmployee);
