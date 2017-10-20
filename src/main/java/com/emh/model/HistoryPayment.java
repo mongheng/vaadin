@@ -20,7 +20,7 @@ public class HistoryPayment {
 	private Integer unitNumber;
 	private Float amount;
 	private String carType;
-	private String PlantNumber;
+	private String plantNumber;
 	private LocalDate paymentDate;
 	private LocalDate receiveDate;
 	private User user;
@@ -91,11 +91,11 @@ public class HistoryPayment {
 
 	@Column(name = "PLANTNUMBER")
 	public String getPlantNumber() {
-		return PlantNumber;
+		return plantNumber;
 	}
 
 	public void setPlantNumber(String plantNumber) {
-		PlantNumber = plantNumber;
+		this.plantNumber = plantNumber;
 	}
 
 	@Column(name = "PAYMENT_DATE")

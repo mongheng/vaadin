@@ -3,6 +3,7 @@ package com.emh.view;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
@@ -13,18 +14,27 @@ import com.emh.model.Customer;
 import com.emh.model.ParkingCashFlow;
 import com.emh.model.Payment;
 import com.emh.model.User;
+import com.emh.model.mock.MockParkingCashFlow;
 import com.emh.repository.business.ClassBusiness;
+import com.emh.util.ReportUtil;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class CarParkingContractView extends VerticalLayout {
 
@@ -33,6 +43,17 @@ public class CarParkingContractView extends VerticalLayout {
 	private ClassBusiness classBusiness;
 	private User user;
 	private Customer customer;
+	
+	private HorizontalLayout hLayout;
+	
+	private TextField customerNameField;
+	private TextField floorField;
+	private TextField unitField;
+	
+	private Button btnExport;
+	
+	private FileDownloader fileDownloader;
+	
 	private List<Contract> contracts;
 	private Grid<ParkingCashFlow> grid;
 	ListDataProvider<ParkingCashFlow> dataProvider;
@@ -47,8 +68,33 @@ public class CarParkingContractView extends VerticalLayout {
 	}
 
 	private void init() {
+		hLayout = new HorizontalLayout();
 		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
+		
+		customerNameField = new TextField("Customer Name");
+		customerNameField.setValue(customer.getCustomerName());
+		customerNameField.setReadOnly(true);
+		customerNameField.addStyleName("textnoncenter");
+		
+		floorField = new TextField("Floor Number");
+		floorField.setValue(customer.getUnit().getFloor().getFloorNumber().toString());
+		floorField.setReadOnly(true);
+		floorField.addStyleName("textnoncenter");
+
+		unitField = new TextField("Unit Number");
+		unitField.setValue(customer.getUnit().getUnitNumber().toString());
+		unitField.setReadOnly(true);
+		unitField.addStyleName("textnoncenter");
+		
+		btnExport = new Button("Export");
+		btnExport.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		
+		hLayout.addComponents(customerNameField, floorField, unitField, btnExport);
+		hLayout.setComponentAlignment(btnExport, Alignment.BOTTOM_LEFT);
+		addComponent(hLayout);
+		setExpandRatio(hLayout, 0.25f);
+		
 		List<CarParking> carParkings = classBusiness.selectListEntity(CarParking.class, Customer.class, "customerID",
 				customer.getCustomerID().toString());
 		carParkings.forEach(carParking -> {
@@ -65,6 +111,8 @@ public class CarParkingContractView extends VerticalLayout {
 
 				grid.setDataProvider(dataProvider);
 				initColumnGrid(grid, cellCaption);
+				
+				ExportFile(parkingCashFlows, cellCaption);
 			}
 
 			grid.addItemClickListener(itemClick -> {
@@ -140,6 +188,7 @@ public class CarParkingContractView extends VerticalLayout {
 				row.getCell("4"), row.getCell("5"));
 		cell.setText(cellCaption);
 		addComponent(grid);
+		setExpandRatio(grid, 0.75f);
 	}
 	
 	private void payment(ParkingCashFlow parkingCashFlow, boolean checkValue) {
@@ -198,5 +247,28 @@ public class CarParkingContractView extends VerticalLayout {
 						}
 					}
 				});
+	}
+	
+	private void ExportFile(List<ParkingCashFlow> parkingCashFlows, String vehicle) {
+		String info = customer.getCustomerName() + "-" + vehicle;
+		String path = "c:/dailyReport/" + user.getUsername() + "/" + info;
+		
+		List<MockParkingCashFlow> mockParkingCashFlows = parkingCashFlows.stream().map(parkingcashflow -> {
+			MockParkingCashFlow mcf = new MockParkingCashFlow();
+			mcf.setAmount(parkingcashflow.getAmount());
+			mcf.setCashflowID(parkingcashflow.getCashflowID());
+			mcf.setCarparking(parkingcashflow.getCarparking());
+			mcf.setEndDate(parkingcashflow.getEndDate().toString());
+			mcf.setInstallmentNumber(parkingcashflow.getInstallmentNumber());
+			mcf.setStartDate(parkingcashflow.getStartDate().toString());
+			mcf.setStatu(parkingcashflow.isStatu());
+			return mcf;
+		}).collect(Collectors.toList());
+		
+		ReportUtil.createParkingCashFlowReportPDF(mockParkingCashFlows, user , info, path, ReportUtil.PDF); 
+		ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(path, ReportUtil.PDF);
+		StreamResource sr = new StreamResource(streamSource, "ParkingCashflow-" + info + ReportUtil.PDF);
+		fileDownloader = new FileDownloader(sr);
+		fileDownloader.extend(btnExport);
 	}
 }

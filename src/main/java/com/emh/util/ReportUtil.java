@@ -1,5 +1,6 @@
 package com.emh.util;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,6 +14,8 @@ import org.springframework.context.ApplicationContext;
 
 import com.emh.model.HistoryPayment;
 import com.emh.model.User;
+import com.emh.model.mock.MockCashFlow;
+import com.emh.model.mock.MockParkingCashFlow;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.StreamResource.StreamSource;
@@ -25,6 +28,7 @@ import net.sf.dynamicreports.jasper.constant.JasperProperty;
 import net.sf.dynamicreports.report.builder.DynamicReports;
 import net.sf.dynamicreports.report.builder.column.Columns;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.component.ComponentBuilder;
 import net.sf.dynamicreports.report.builder.component.Components;
 import net.sf.dynamicreports.report.builder.datatype.DataTypes;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
@@ -40,16 +44,27 @@ public class ReportUtil {
 
 	public static final String PDF = ".pdf";
 	public static final String XSL = ".xls";
+	private static final String REPORT_PATH = "C:\\dailyReport\\";
 
-	private synchronized static JRDataSource createDataSource(ApplicationContext applicationContext) {
-		ClassBusiness classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
-		List<HistoryPayment> historyPayments = classBusiness.selectAllEntity(HistoryPayment.class);
-		return new JRBeanCollectionDataSource(historyPayments);
+	private static ComponentBuilder<?, ?> HeaderStyle(StyleBuilder titleStyle, StyleBuilders styleBuilders,
+			String title1, String title2) {
+		InputStream is = titleImageReport();
+		return Components.horizontalList().add(Components.image(is).setFixedDimension(80, 80),
+				Components.text(title1).setStyle(titleStyle).setHorizontalTextAlignment(HorizontalTextAlignment.LEFT),
+				Components.text(title2).setStyle(titleStyle).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT))
+				.newRow().add(Components.filler()
+						.setStyle(styleBuilders.style().setTopBorder(styleBuilders.pen2Point())).setFixedHeight(10));
 	}
 
-	public static void createReportPDF(ApplicationContext applicationContext, User user, String fileType) {
+	private synchronized static JRDataSource createDataSource(List<?> items) {
 
-		InputStream is = titleImageReport();
+		return new JRBeanCollectionDataSource(items);
+	}
+
+	public static void createReportPDF(ApplicationContext applicationContext, User user, String path, String fileType) {
+
+		ClassBusiness classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		List<HistoryPayment> historyPayments = classBusiness.selectAllEntity(HistoryPayment.class);
 
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 
@@ -70,30 +85,23 @@ public class ReportUtil {
 				DataTypes.integerType());
 		TextColumnBuilder<Integer> floorNumber = Columns.column("Floor", "floorNumber", DataTypes.integerType());
 		TextColumnBuilder<Integer> unitNumber = Columns.column("Unit", "unitNumber", DataTypes.integerType());
+		TextColumnBuilder<String> carType = Columns.column("Vehicle", "carType", DataTypes.stringType());
+		TextColumnBuilder<String> plantNumber = Columns.column("PlantNumber", "plantNumber", DataTypes.stringType());
 
-		reportBuilder.columns(customerName, installmentNumber, floorNumber, unitNumber, amount)
+		reportBuilder.columns(customerName, installmentNumber, floorNumber, unitNumber, carType, plantNumber, amount)
 				.subtotalsAtSummary(sbt.sum(amount).setLabel("Total Amount")).setTextStyle(boldCenteredStyle)
 				.setColumnStyle(columnTitleStyle).highlightDetailEvenRows().highlightDetailOddRows()
-				.title(Components.horizontalList()
-						.add(Components.image(is).setFixedDimension(80, 80),
-								Components.text("Dynamic Report").setStyle(titleStyle)
-										.setHorizontalTextAlignment(HorizontalTextAlignment.LEFT),
-								Components.text("Getting Started").setStyle(titleStyle)
-										.setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT))
-						.newRow()
-						.add(Components.filler().setStyle(styleBuilders.style().setTopBorder(styleBuilders.pen2Point()))
-								.setFixedHeight(10)))
+				.title(HeaderStyle(titleStyle, styleBuilders, "Dynamic Report", "Getting Started"))
 				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle))
-				.setDataSource(createDataSource(applicationContext));
+				.setDataSource(createDataSource(historyPayments));
 
 		try {
-			File file = new File("C:\\dailyReport\\" + user.getUsername());
+			File file = new File(REPORT_PATH + user.getUsername());
 			if (!file.exists()) {
 				file.mkdirs();
 			}
 			if (fileType.equals(PDF)) {
-				reportBuilder.toPdf(
-						new FileOutputStream("c:/dailyReport/" + user.getUsername() + "/dailyReport" + fileType));
+				reportBuilder.toPdf(new FileOutputStream(path + fileType));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -116,17 +124,17 @@ public class ReportUtil {
 	public static class StreamResourceData implements StreamSource {
 
 		private static final long serialVersionUID = 1L;
-		private User user;
 		private String fileType;
+		private String path;
 
-		public StreamResourceData(User user, String fileType) {
-			this.user = user;
+		public StreamResourceData(String path, String fileType) {
+			this.path = path;
 			this.fileType = fileType;
 		}
 
 		@Override
 		public InputStream getStream() {
-			File file = new File("c:/dailyReport/" + user.getUsername() + "/dailyReport" + fileType);
+			File file = new File(path + fileType);
 			ByteArrayOutputStream baos = null;
 			InputStream ios = null;
 			try {
@@ -137,6 +145,8 @@ public class ReportUtil {
 				while ((read = ios.read(bs)) != -1) {
 					baos.write(bs, 0, read);
 				}
+				baos.flush();
+				baos.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -144,39 +154,126 @@ public class ReportUtil {
 		}
 	}
 
-	public static void createReportExcel(ApplicationContext applicationContext, User user, String fileType) {
+	public static void createReportExcel(ApplicationContext applicationContext, User user, String path,
+			String fileType) {
+
+		ClassBusiness classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		List<HistoryPayment> historyPayments = classBusiness.selectAllEntity(HistoryPayment.class);
 
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 		ExporterBuilders export = DynamicReports.export;
 		SubtotalBuilders subtotal = DynamicReports.sbt;
-		
-		File file = new File("C:\\dailyReport\\" + user.getUsername());
+
+		StyleBuilders styleBuilders = DynamicReports.stl;
+		StyleBuilder boldStyle = styleBuilders.style().bold();
+		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle)
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+
+		File file = new File(REPORT_PATH + user.getUsername());
 		if (!file.exists()) {
 			file.mkdirs();
 		}
-		
-		JasperXlsExporterBuilder jasperXlsExporterBuilder = export
-				.xlsExporter("c:/dailyReport/" + user.getUsername() + "/dailyReport" + fileType).setDetectCellType(true)
+
+		JasperXlsExporterBuilder jasperXlsExporterBuilder = export.xlsExporter(path + fileType).setDetectCellType(true)
 				.setIgnorePageMargins(true).setWhitePageBackground(false).setRemoveEmptySpaceBetweenColumns(true);
-		
-		TextColumnBuilder<String> customerName = Columns.column("Customer Name", "customerName",
-				DataTypes.stringType());
+
+		TextColumnBuilder<String> customerName = Columns.column("Customer Name", "customerName", DataTypes.stringType())
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType())
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		TextColumnBuilder<Integer> installmentNumber = Columns
+				.column("Installment Number", "installmentNumber", DataTypes.integerType())
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		TextColumnBuilder<Integer> floorNumber = Columns.column("Floor", "floorNumber", DataTypes.integerType())
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		TextColumnBuilder<Integer> unitNumber = Columns.column("Unit", "unitNumber", DataTypes.integerType())
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		TextColumnBuilder<String> carType = Columns.column("Vehicle", "carType", DataTypes.stringType())
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		TextColumnBuilder<String> plantNumber = Columns.column("PlantNumber", "plantNumber", DataTypes.stringType())
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+
+		try {
+			reportBuilder.addProperty(JasperProperty.EXPORT_XLS_FREEZE_ROW, "2").ignorePageWidth().ignorePagination()
+					.columns(customerName, installmentNumber, floorNumber, unitNumber, carType, plantNumber, amount)
+					.setColumnTitleStyle(boldCenteredStyle)
+					.subtotalsAtSummary(subtotal.sum(amount).setStyle(boldCenteredStyle))
+					.setDataSource(createDataSource(historyPayments)).toXls(jasperXlsExporterBuilder);
+		} catch (DRException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void createCashFlowReportPDF(List<MockCashFlow> cashFlows, User user, String info, String path,
+			String fileType) {
+		JasperReportBuilder reportBuilder = DynamicReports.report();
+
+		StyleBuilders styleBuilders = DynamicReports.stl;
+		StyleBuilder boldStyle = styleBuilders.style().bold();
+		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle)
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		StyleBuilder titleStyle = styleBuilders.style(boldCenteredStyle)
+				.setVerticalTextAlignment(VerticalTextAlignment.MIDDLE).setFontSize(15);
+		StyleBuilder columnTitleStyle = styleBuilders.style(boldCenteredStyle).setForegroundColor(Color.BLUE);
+
+		TextColumnBuilder<String> startDate = Columns.column("Start Date", "startDate", DataTypes.stringType());
 		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType());
 		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
 				DataTypes.integerType());
-		TextColumnBuilder<Integer> floorNumber = Columns.column("Floor", "floorNumber", DataTypes.integerType());
-		TextColumnBuilder<Integer> unitNumber = Columns.column("Unit", "unitNumber", DataTypes.integerType());
-		
+		TextColumnBuilder<String> endDate = Columns.column("End Date", "endDate", DataTypes.stringType());
+
+		reportBuilder.columns(installmentNumber, amount, startDate, endDate).setColumnTitleStyle(columnTitleStyle)
+				.setColumnStyle(boldCenteredStyle).highlightDetailEvenRows().highlightDetailOddRows()
+				.title(HeaderStyle(titleStyle, styleBuilders, "CashFlow", info))
+				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle))
+				.setDataSource(createDataSource(cashFlows));
+
 		try {
-			reportBuilder
-			  .addProperty(JasperProperty.EXPORT_XLS_FREEZE_ROW, "2")
-			  .ignorePageWidth()
-			  .ignorePagination()
-			  .columns(customerName, installmentNumber, floorNumber, unitNumber, amount)
-			  .subtotalsAtSummary(subtotal.sum(amount))
-			  .setDataSource(createDataSource(applicationContext))
-			  .toXls(jasperXlsExporterBuilder);
-		} catch (DRException e) {
+			File file = new File(REPORT_PATH + user.getUsername());
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			if (fileType.equals(PDF)) {
+				reportBuilder.toPdf(new FileOutputStream(path + fileType));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void createParkingCashFlowReportPDF(List<MockParkingCashFlow> parkingCashFlows, User user, String info, String path,
+			String fileType) {
+		JasperReportBuilder reportBuilder = DynamicReports.report();
+
+		StyleBuilders styleBuilders = DynamicReports.stl;
+		StyleBuilder boldStyle = styleBuilders.style().bold();
+		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle)
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		StyleBuilder titleStyle = styleBuilders.style(boldCenteredStyle)
+				.setVerticalTextAlignment(VerticalTextAlignment.MIDDLE).setFontSize(15);
+		StyleBuilder columnTitleStyle = styleBuilders.style(boldCenteredStyle).setForegroundColor(Color.BLUE);
+
+		TextColumnBuilder<String> startDate = Columns.column("Start Date", "startDate", DataTypes.stringType());
+		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType());
+		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
+				DataTypes.integerType());
+		TextColumnBuilder<String> endDate = Columns.column("End Date", "endDate", DataTypes.stringType());
+
+		reportBuilder.columns(installmentNumber, amount, startDate, endDate).setColumnTitleStyle(columnTitleStyle)
+				.setColumnStyle(boldCenteredStyle).highlightDetailEvenRows().highlightDetailOddRows()
+				.title(HeaderStyle(titleStyle, styleBuilders, "CashFlow", info))
+				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle))
+				.setDataSource(createDataSource(parkingCashFlows));
+
+		try {
+			File file = new File(REPORT_PATH + user.getUsername());
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			if (fileType.equals(PDF)) {
+				reportBuilder.toPdf(new FileOutputStream(path + fileType));
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

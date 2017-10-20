@@ -152,17 +152,8 @@ public class ResponsiveReceiverView extends CssLayout {
 			search(HQL);
 		});
 
-		btnExtra = new Button("Extration");
+		btnExtra = new Button("Export");
 		btnExtra.addStyleName(ValoTheme.BUTTON_FRIENDLY);
-		btnExtra.addClickListener(clickEvent -> {
-			/*ReportUtil.createReportPDF(applicationContext, userSession, ReportUtil.PDF); 
-			ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(userSession, ReportUtil.PDF);*/
-			ReportUtil.createReportExcel(applicationContext, userSession, ReportUtil.XSL); 
-			ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(userSession, ReportUtil.XSL);
-			StreamResource sr = new StreamResource(streamSource, "report-" + LocalDate.now() + ReportUtil.XSL);
-			fileDownloader = new FileDownloader(sr);
-			fileDownloader.extend(btnExtra);
-		});
 		
 		topFormHLayout.addComponents(startDate, endDate, cboEmployee);
 		topButtonHLayout.addComponents(btnSearch, btnExtra);
@@ -173,6 +164,8 @@ public class ResponsiveReceiverView extends CssLayout {
 		topLayout.setSizeFull();
 		topLayout.setSpacing(false);
 		topLayout.setMargin(false);
+		
+		ExportFile();
 	}
 
 	private void initCenterLayout() {
@@ -423,5 +416,20 @@ public class ResponsiveReceiverView extends CssLayout {
 
 		loadRoomGrid(paymentsRoom);
 		loadCarParkingGrid(paymentsCarParking);
+	}
+	
+	private void ExportFile() {
+		String path = "c:/dailyReport/" + userSession.getUsername() + "/dailyReport";
+		ReportUtil.createReportPDF(applicationContext, userSession, path, ReportUtil.PDF); 
+		ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(path, ReportUtil.PDF);
+		//ReportUtil.createReportExcel(applicationContext, userSession, path, ReportUtil.XSL); 
+		//ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(path, ReportUtil.XSL);
+		StreamResource sr = new StreamResource(streamSource, "report-" + LocalDate.now() + "-" + System.currentTimeMillis() + ReportUtil.PDF);
+		fileDownloader = new FileDownloader(sr);
+		fileDownloader.extend(btnExtra);
+		
+		//We can use this way to download file.
+		/*FileResource fr = new FileResource(new File(path + ReportUtil.PDF));
+		Page.getCurrent().open(fr, null, false);*/
 	}
 }
