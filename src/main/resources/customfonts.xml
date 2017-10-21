@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Project>
+<fontFamilies>
+
+	<fontFamily name="FreeUniversal">
+		<normal>com/emh/fonts/KhmerUI.ttf</normal>
+		<bold>com/emh/fonts/KhmerUIb.ttf</bold>
+		<pdfEncoding>Identity-H</pdfEncoding>
+		<pdfEmbedded>true</pdfEmbedded>
+	</fontFamily>
+
+</fontFamilies>

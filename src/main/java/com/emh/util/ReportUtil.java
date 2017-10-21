@@ -26,6 +26,7 @@ import net.sf.dynamicreports.jasper.builder.export.ExporterBuilders;
 import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
 import net.sf.dynamicreports.jasper.constant.JasperProperty;
 import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.ColumnBuilders;
 import net.sf.dynamicreports.report.builder.column.Columns;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.component.ComponentBuilder;
@@ -72,7 +73,7 @@ public class ReportUtil {
 
 		StyleBuilders styleBuilders = DynamicReports.stl;
 		StyleBuilder boldStyle = styleBuilders.style().bold();
-		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle)
+		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle).setFontName("FreeUniversal")
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
 		StyleBuilder titleStyle = styleBuilders.style(boldCenteredStyle)
 				.setVerticalTextAlignment(VerticalTextAlignment.MIDDLE).setFontSize(15);
@@ -208,21 +209,25 @@ public class ReportUtil {
 			String fileType) {
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 
+		ColumnBuilders columnBuilders = DynamicReports.col;
+
 		StyleBuilders styleBuilders = DynamicReports.stl;
 		StyleBuilder boldStyle = styleBuilders.style().bold();
-		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle)
+		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle).setFontName("FreeUniversal")
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
 		StyleBuilder titleStyle = styleBuilders.style(boldCenteredStyle)
 				.setVerticalTextAlignment(VerticalTextAlignment.MIDDLE).setFontSize(15);
 		StyleBuilder columnTitleStyle = styleBuilders.style(boldCenteredStyle).setForegroundColor(Color.BLUE);
 
+		TextColumnBuilder<Integer> rowNumberColumn = columnBuilders.reportRowNumberColumn("No.").setFixedColumns(2)
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
 		TextColumnBuilder<String> startDate = Columns.column("Start Date", "startDate", DataTypes.stringType());
 		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType());
 		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
 				DataTypes.integerType());
 		TextColumnBuilder<String> endDate = Columns.column("End Date", "endDate", DataTypes.stringType());
 
-		reportBuilder.columns(installmentNumber, amount, startDate, endDate).setColumnTitleStyle(columnTitleStyle)
+		reportBuilder.columns(rowNumberColumn, installmentNumber, amount, startDate, endDate).setColumnTitleStyle(columnTitleStyle)
 				.setColumnStyle(boldCenteredStyle).highlightDetailEvenRows().highlightDetailOddRows()
 				.title(HeaderStyle(titleStyle, styleBuilders, "CashFlow", info))
 				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle))
@@ -240,9 +245,9 @@ public class ReportUtil {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void createParkingCashFlowReportPDF(List<MockParkingCashFlow> parkingCashFlows, User user, String info, String path,
-			String fileType) {
+
+	public static void createParkingCashFlowReportPDF(List<MockParkingCashFlow> parkingCashFlows, User user,
+			String info, String path, String fileType) {
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 
 		StyleBuilders styleBuilders = DynamicReports.stl;
