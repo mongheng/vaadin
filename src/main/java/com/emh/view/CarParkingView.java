@@ -198,9 +198,9 @@ public class CarParkingView extends VerticalLayout {
 		addComponents(titleVLayout, topVLayout, bottomVLayout);
 		setCaption("Car Parking");
 		setSizeFull();
-		setExpandRatio(titleVLayout, 0.05f);
-		setExpandRatio(topVLayout, 1.15f);
-		setExpandRatio(bottomVLayout, 0.8f);
+		setExpandRatio(titleVLayout, 0.001f);
+		setExpandRatio(topVLayout, 1.269f);
+		setExpandRatio(bottomVLayout, 0.64f);
 		/*setExpandRatio(topVLayout, 1.2f);
 		setExpandRatio(bottomVLayout, 0.8f);*/
 		setSpacing(false);

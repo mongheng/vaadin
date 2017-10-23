@@ -102,7 +102,10 @@ public class ReportUtil {
 				file.mkdirs();
 			}
 			if (fileType.equals(PDF)) {
-				reportBuilder.toPdf(new FileOutputStream(path + fileType));
+				FileOutputStream fos = new FileOutputStream(path + fileType);
+				reportBuilder.toPdf(fos);
+				fos.flush();
+				fos.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -146,6 +149,7 @@ public class ReportUtil {
 				while ((read = ios.read(bs)) != -1) {
 					baos.write(bs, 0, read);
 				}
+				ios.close();
 				baos.flush();
 				baos.close();
 			} catch (Exception e) {
@@ -208,7 +212,7 @@ public class ReportUtil {
 	public static void createCashFlowReportPDF(List<MockCashFlow> cashFlows, User user, String info, String path,
 			String fileType) {
 		JasperReportBuilder reportBuilder = DynamicReports.report();
-
+		
 		ColumnBuilders columnBuilders = DynamicReports.col;
 
 		StyleBuilders styleBuilders = DynamicReports.stl;
@@ -239,7 +243,10 @@ public class ReportUtil {
 				file.mkdirs();
 			}
 			if (fileType.equals(PDF)) {
-				reportBuilder.toPdf(new FileOutputStream(path + fileType));
+				FileOutputStream fos = new FileOutputStream(path + fileType); 
+				reportBuilder.toPdf(fos);
+				fos.flush();
+				fos.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -276,7 +283,10 @@ public class ReportUtil {
 				file.mkdirs();
 			}
 			if (fileType.equals(PDF)) {
-				reportBuilder.toPdf(new FileOutputStream(path + fileType));
+				FileOutputStream fos = new FileOutputStream(path + fileType);
+				reportBuilder.toPdf(fos);
+				fos.flush();
+				fos.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

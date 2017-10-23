@@ -84,4 +84,6 @@
 	<bean id="classBusiness" class="com.emh.repository.businessimpl.ClassBusinessImpl">
 		<property name="classDao" ref="classDao" />
 	</bean> -->
+	
+	<import resource="classpath*:springquartz.xml" />
 </beans>
