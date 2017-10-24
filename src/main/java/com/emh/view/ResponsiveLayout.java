@@ -104,6 +104,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 		addMenuAndContentComponent("Extend Contract", ExtendContractView.class.getSimpleName(), VaadinIcons.ALARM);
 		addMenuAndContentComponent("Users", UserListView.class.getSimpleName(), VaadinIcons.GROUP);
 		addMenuAndContentComponent("Report", TabReport.class.getSimpleName(), VaadinIcons.BOOK);
+		addMenuAndContentComponent("Unit Avariable", ResponsiveAvariableUnit.class.getSimpleName(), VaadinIcons.DIAMOND_O);
 		formLayout.setSpacing(false);
 		formLayout.setMargin(false);
 		formLayout.setSizeFull();
@@ -240,6 +241,8 @@ public class ResponsiveLayout extends CssLayout implements View {
 			return new TabCustomer(applicationContext);
 		} else if (viewCaption.equalsIgnoreCase(TabReport.class.getSimpleName())) {
 			return new TabReport(applicationContext);
+		} else if (viewCaption.equalsIgnoreCase(ResponsiveAvariableUnit.class.getSimpleName())) {
+			return new ResponsiveAvariableUnit(applicationContext);
 		} else {
 			return null;
 		}

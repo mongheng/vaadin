@@ -1,5 +1,8 @@
 package com.emh;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 import com.emh.util.Utility;
 
 public class Run {
@@ -18,6 +21,12 @@ public class Run {
 		// AlertAgent.trigerAlert(UUID.randomUUID().toString(), "MongHeng Waring
 		// System.......", AlertLevel.FATAL);
 		// test();
+		
+		Date date = new Date();
+		date = java.sql.Date.valueOf(LocalDate.now());
+		
+		System.out.println("Date = " + new Date());
+		System.out.println("Convert = " + date.toString());
 	}
 
 	/*

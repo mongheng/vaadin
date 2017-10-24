@@ -57,15 +57,12 @@ public class ReportUtil {
 						.setStyle(styleBuilders.style().setTopBorder(styleBuilders.pen2Point())).setFixedHeight(10));
 	}
 
-	private synchronized static JRDataSource createDataSource(List<?> items) {
+	private static JRDataSource createDataSource(List<?> items) {
 
 		return new JRBeanCollectionDataSource(items);
 	}
 
-	public static void createReportPDF(ApplicationContext applicationContext, User user, String path, String fileType) {
-
-		ClassBusiness classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
-		List<HistoryPayment> historyPayments = classBusiness.selectAllEntity(HistoryPayment.class);
+	public synchronized static void createReportPDF(List<HistoryPayment> historyPayments, User user, String path, String fileType) {
 
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 
@@ -81,7 +78,7 @@ public class ReportUtil {
 
 		TextColumnBuilder<String> customerName = Columns.column("Customer Name", "customerName",
 				DataTypes.stringType());
-		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType());
+		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", new CurrencyType());
 		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
 				DataTypes.integerType());
 		TextColumnBuilder<Integer> floorNumber = Columns.column("Floor", "floorNumber", DataTypes.integerType());
@@ -159,7 +156,7 @@ public class ReportUtil {
 		}
 	}
 
-	public static void createReportExcel(ApplicationContext applicationContext, User user, String path,
+	public synchronized static void createReportExcel(ApplicationContext applicationContext, User user, String path,
 			String fileType) {
 
 		ClassBusiness classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
@@ -184,7 +181,7 @@ public class ReportUtil {
 
 		TextColumnBuilder<String> customerName = Columns.column("Customer Name", "customerName", DataTypes.stringType())
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
-		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType())
+		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", new CurrencyType())
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
 		TextColumnBuilder<Integer> installmentNumber = Columns
 				.column("Installment Number", "installmentNumber", DataTypes.integerType())
@@ -209,7 +206,7 @@ public class ReportUtil {
 		}
 	}
 
-	public static void createCashFlowReportPDF(List<MockCashFlow> cashFlows, User user, String info, String path,
+	public synchronized static void createCashFlowReportPDF(List<MockCashFlow> cashFlows, User user, String info, String path,
 			String fileType) {
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 		
@@ -226,7 +223,7 @@ public class ReportUtil {
 		TextColumnBuilder<Integer> rowNumberColumn = columnBuilders.reportRowNumberColumn("No.").setFixedColumns(2)
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
 		TextColumnBuilder<String> startDate = Columns.column("Start Date", "startDate", DataTypes.stringType());
-		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType());
+		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", new CurrencyType());
 		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
 				DataTypes.integerType());
 		TextColumnBuilder<String> endDate = Columns.column("End Date", "endDate", DataTypes.stringType());
@@ -253,7 +250,7 @@ public class ReportUtil {
 		}
 	}
 
-	public static void createParkingCashFlowReportPDF(List<MockParkingCashFlow> parkingCashFlows, User user,
+	public synchronized static void createParkingCashFlowReportPDF(List<MockParkingCashFlow> parkingCashFlows, User user,
 			String info, String path, String fileType) {
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 
@@ -266,7 +263,7 @@ public class ReportUtil {
 		StyleBuilder columnTitleStyle = styleBuilders.style(boldCenteredStyle).setForegroundColor(Color.BLUE);
 
 		TextColumnBuilder<String> startDate = Columns.column("Start Date", "startDate", DataTypes.stringType());
-		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", DataTypes.floatType());
+		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", new CurrencyType());
 		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
 				DataTypes.integerType());
 		TextColumnBuilder<String> endDate = Columns.column("End Date", "endDate", DataTypes.stringType());

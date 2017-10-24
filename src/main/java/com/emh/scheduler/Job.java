@@ -12,7 +12,6 @@ public class Job extends QuartzJobBean {
 
 	@Override
 	protected void executeInternal(JobExecutionContext arg0) throws JobExecutionException {
-		System.out.println("Starting Job auto .....");
 		File file = new File("C:\\dailyReport");
 		if (file.exists()) {
 			System.out.println("Starting delete file or folder.");

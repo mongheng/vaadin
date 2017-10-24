@@ -13,11 +13,8 @@ import com.emh.model.HistoryPayment;
 import com.emh.model.Payment;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
-import com.emh.util.ReportUtil;
 import com.emh.util.Utility;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -44,7 +41,6 @@ public class ResponsiveReceiverView extends CssLayout {
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private User user;
-	private User userSession;
 	private VerticalLayout mainLayout;
 	private VerticalLayout topLayout;
 	private VerticalLayout centerLayout;
@@ -66,8 +62,6 @@ public class ResponsiveReceiverView extends CssLayout {
 	private TextField totalCarParkingAmountField;
 	private TextField totalAmountField;
 	private Button btnRecevier;
-	private Button btnExtra;
-	private FileDownloader fileDownloader;
 
 	private ListDataProvider<Payment> dataProvider;
 	private Grid<Payment> roomGrid;
@@ -86,7 +80,6 @@ public class ResponsiveReceiverView extends CssLayout {
 	}
 
 	private void init() {
-		userSession = (User) UI.getCurrent().getSession().getAttribute(User.class);
 		mainLayout = new VerticalLayout();
 		topLayout = new VerticalLayout();
 		centerLayout = new VerticalLayout();
@@ -99,7 +92,7 @@ public class ResponsiveReceiverView extends CssLayout {
 
 		roomsPayment = new HashSet<>();
 		carsParkingPayment = new HashSet<>();
-		
+
 		// Top Layout.
 		initTopLayout();
 		// Center Layout.
@@ -149,14 +142,13 @@ public class ResponsiveReceiverView extends CssLayout {
 			} else if (startDate.getValue() == null && endDate.getValue() == null && user != null) {
 				HQL = "FROM Payment WHERE USER_ID = '" + user.getUserid() + "'";
 			}
-			search(HQL);
+			if (HQL != null) {
+				search(HQL);
+			}
 		});
 
-		btnExtra = new Button("Export");
-		btnExtra.addStyleName(ValoTheme.BUTTON_FRIENDLY);
-		
 		topFormHLayout.addComponents(startDate, endDate, cboEmployee);
-		topButtonHLayout.addComponents(btnSearch, btnExtra);
+		topButtonHLayout.addComponents(btnSearch);
 		formLayout.addComponents(topFormHLayout, topButtonHLayout);
 		formLayout.addStyleName("caption");
 
@@ -164,8 +156,6 @@ public class ResponsiveReceiverView extends CssLayout {
 		topLayout.setSizeFull();
 		topLayout.setSpacing(false);
 		topLayout.setMargin(false);
-		
-		ExportFile();
 	}
 
 	private void initCenterLayout() {
@@ -321,7 +311,7 @@ public class ResponsiveReceiverView extends CssLayout {
 								if (totalamount != "") {
 									Float checkValue = Float.valueOf(totalamount);
 									if (!checkValue.equals(0.0f)) {
-										
+
 										if (roomsPayment.size() > 0) {
 											roomsPayment.forEach(payment -> {
 												HistoryPayment hPayment = new HistoryPayment();
@@ -359,7 +349,7 @@ public class ResponsiveReceiverView extends CssLayout {
 												classBusiness.deleteEntity(payment);
 											});
 										}
-										
+
 										loadGrid();
 										cboEmployee.clear();
 										startDate.clear();
@@ -416,20 +406,5 @@ public class ResponsiveReceiverView extends CssLayout {
 
 		loadRoomGrid(paymentsRoom);
 		loadCarParkingGrid(paymentsCarParking);
-	}
-	
-	private void ExportFile() {
-		String path = "c:/dailyReport/" + userSession.getUsername() + "/dailyReport";
-		ReportUtil.createReportPDF(applicationContext, userSession, path, ReportUtil.PDF); 
-		ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(path, ReportUtil.PDF);
-		//ReportUtil.createReportExcel(applicationContext, userSession, path, ReportUtil.XSL); 
-		//ReportUtil.StreamResourceData streamSource = new ReportUtil.StreamResourceData(path, ReportUtil.XSL);
-		StreamResource sr = new StreamResource(streamSource, "report-" + LocalDate.now() + "-" + System.currentTimeMillis() + ReportUtil.PDF);
-		fileDownloader = new FileDownloader(sr);
-		fileDownloader.extend(btnExtra);
-		
-		//We can use this way to download file.
-		/*FileResource fr = new FileResource(new File(path + ReportUtil.PDF));
-		Page.getCurrent().open(fr, null, false);*/
 	}
 }

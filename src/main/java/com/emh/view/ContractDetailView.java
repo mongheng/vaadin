@@ -1,5 +1,6 @@
 package com.emh.view;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -148,7 +149,7 @@ public class ContractDetailView extends VerticalLayout {
 	
 	private void ExportFile(List<CashFlow> cashFlows) {
 		String info = customer.getCustomerName() + "- F:" + customer.getUnit().getFloor().getFloorNumber() + "- R/U:" + customer.getUnit().getUnitNumber();
-		String path = "c:/dailyReport/" + user.getUsername() + "/dailyReport";
+		String path = "c:/dailyReport/" + user.getUsername() + "/dailyReport-" + LocalDate.now();
 		
 		List<MockCashFlow> mockCashFlows = cashFlows.stream().map(cashflow -> {
 			MockCashFlow mcf = new MockCashFlow();
