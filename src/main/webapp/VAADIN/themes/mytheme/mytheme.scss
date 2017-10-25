@@ -119,4 +119,9 @@ $v-grid-cell-focused-border: none;
 	.caption {
 		color: blue;
 	}
+	
+	.scrollable > div {
+		overflow: auto !important;
+		white-space: nowrap;
+	}
 }

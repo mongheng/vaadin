@@ -20,9 +20,14 @@ public class ResponsiveAvariableUnit extends CssLayout {
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 
-	private Panel panel;
+	private HorizontalLayout innerHLayout;
+	private Panel mainPanel;
 	private VerticalLayout verticalLayout;
 	private HorizontalLayout hLayout;
+
+	private int index = 1;
+	private int size = 1;
+	private boolean statu;
 
 	public ResponsiveAvariableUnit(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -31,36 +36,69 @@ public class ResponsiveAvariableUnit extends CssLayout {
 	}
 
 	private void init() {
-		panel = new Panel();
+		innerHLayout = new HorizontalLayout();
+		mainPanel = new Panel();
 		verticalLayout = new VerticalLayout();
 
 		List<Floor> floors = classBusiness.selectAllEntity(Floor.class);
+
 		if (floors.size() > 0) {
 			floors.forEach(floor -> {
+				Panel innerPanel = new Panel("Floor Number : " + floor.getFloorNumber());
 				hLayout = new HorizontalLayout();
 				List<com.emh.model.Unit> units = classBusiness.selectListEntity(com.emh.model.Unit.class, Floor.class,
 						"floorID", floor.getFloorID());
-				units.forEach(unit -> {
-					String info = "Floor:" + floor.getFloorNumber() + "\n" + "Unit:" + unit.getUnitNumber();
-					Button btnUnit = new Button(info);
-					btnUnit.setId(unit.getUnitNumber().toString());
-					if (unit.isStatu()) {
-						btnUnit.addStyleName(ValoTheme.BUTTON_DANGER);
-					} else {
-						btnUnit.addStyleName(ValoTheme.BUTTON_FRIENDLY);
-					}
-					btnUnit.addClickListener(clickEvent -> {
-						System.out.println(clickEvent.getButton().getStyleName());
+				if (units.size() > 0) {
+					units.forEach(unit -> {
+						String info = "Floor:" + floor.getFloorNumber() + "\n" + "Unit:" + unit.getUnitNumber();
+						Button btnUnit = new Button(info);
+						btnUnit.setId(unit.getUnitNumber().toString());
+						if (unit.isStatu()) {
+							btnUnit.addStyleName(ValoTheme.BUTTON_DANGER);
+						} else {
+							btnUnit.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+						}
+						btnUnit.addClickListener(clickEvent -> {
+							System.out.println(clickEvent.getButton().getStyleName());
+						});
+						hLayout.addComponent(btnUnit);
 					});
-					hLayout.addComponent(btnUnit);
-				});
-				verticalLayout.addComponent(hLayout);
+					innerPanel.setContent(hLayout);
+					innerPanel.setWidth(565, Unit.PIXELS);
+					innerPanel.setHeight(88, Unit.PIXELS);
+					innerPanel.setStyleName("scrollable");
+					if (index == 1) {
+						innerHLayout.addComponent(innerPanel);
+						index++;
+						if(floors.size() == size) {
+							innerHLayout.addComponent(innerPanel);
+							verticalLayout.addComponent(innerHLayout);
+							statu = false;
+						}
+						statu = true;
+						size++;
+					} else if (index == 2) {
+						innerHLayout.addComponent(innerPanel);
+						verticalLayout.addComponent(innerHLayout);
+						innerHLayout = new HorizontalLayout();
+						index = 1;
+						if(floors.size() == size) {
+							innerHLayout.addComponent(innerPanel);
+							verticalLayout.addComponent(innerHLayout);
+						}
+						size++;
+					}
+				}
 			});
+			if (statu) {
+				verticalLayout.addComponent(innerHLayout);
+			}
 			verticalLayout.setSizeFull();
-			verticalLayout.setSpacing(false);
-			panel.setContent(verticalLayout);
-			
+			verticalLayout.setMargin(false);
+			mainPanel.setContent(verticalLayout);
+			mainPanel.setSizeFull();
+			mainPanel.setStyleName("scrollable");
 		}
-		addComponent(panel);
+		addComponent(mainPanel);
 	}
 }
