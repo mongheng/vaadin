@@ -104,7 +104,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 		addMenuAndContentComponent("Extend Contract", ExtendContractView.class.getSimpleName(), VaadinIcons.ALARM);
 		addMenuAndContentComponent("Users", UserListView.class.getSimpleName(), VaadinIcons.GROUP);
 		addMenuAndContentComponent("Report", TabReport.class.getSimpleName(), VaadinIcons.BOOK);
-		addMenuAndContentComponent("Unit Avariable", ResponsiveAvariableUnit.class.getSimpleName(), VaadinIcons.DIAMOND_O);
+		addMenuAndContentComponent("Floors/Units", ResponsiveAvariableUnit.class.getSimpleName(), VaadinIcons.DIAMOND_O);
 		formLayout.setSpacing(false);
 		formLayout.setMargin(false);
 		formLayout.setSizeFull();

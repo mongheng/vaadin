@@ -33,6 +33,7 @@ $v-grid-cell-focused-border: none;
 @import "components/responsive.scss";
 @import "components/menubar.scss";
 @import "components/button.scss";
+@import "components/panel.scss";
 
 @mixin mytheme {
   @include valo;
@@ -41,6 +42,7 @@ $v-grid-cell-focused-border: none;
   @include responsive;
   @include menubar;
   @include button;
+  @include panel;
 
   // Insert your own theme rules here
   
@@ -75,16 +77,6 @@ $v-grid-cell-focused-border: none;
   		font-size: 16px;
   		font-style: oblique;
   		color: blue;
-  	}
-  	
-  	.v-panel {
-  		color: blue;
-  		.v-panel-caption {
-  			color: green;
-			font-size: 20px;
-			font-family: monospace;
-			font-style: italic;
-  		}
   	}
   
   	.v-formlayout-captioncell {

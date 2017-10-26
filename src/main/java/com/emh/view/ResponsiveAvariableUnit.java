@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.emh.model.Floor;
 import com.emh.repository.business.ClassBusiness;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -50,7 +51,7 @@ public class ResponsiveAvariableUnit extends CssLayout {
 						"floorID", floor.getFloorID());
 				if (units.size() > 0) {
 					units.forEach(unit -> {
-						String info = "Floor:" + floor.getFloorNumber() + "\n" + "Unit:" + unit.getUnitNumber();
+						String info = "Unit:" + unit.getUnitNumber();
 						Button btnUnit = new Button(info);
 						btnUnit.setId(unit.getUnitNumber().toString());
 						if (unit.isStatu()) {
@@ -64,9 +65,9 @@ public class ResponsiveAvariableUnit extends CssLayout {
 						hLayout.addComponent(btnUnit);
 					});
 					innerPanel.setContent(hLayout);
-					innerPanel.setWidth(565, Unit.PIXELS);
+					innerPanel.setWidth(552, Unit.PIXELS);
 					innerPanel.setHeight(88, Unit.PIXELS);
-					innerPanel.setStyleName("scrollable");
+					innerPanel.addStyleNames("scrollable","buttoncaptionsize");
 					if (index == 1) {
 						innerHLayout.addComponent(innerPanel);
 						index++;
@@ -87,17 +88,21 @@ public class ResponsiveAvariableUnit extends CssLayout {
 							verticalLayout.addComponent(innerHLayout);
 						}
 						size++;
+						statu = false;
 					}
 				}
 			});
 			if (statu) {
 				verticalLayout.addComponent(innerHLayout);
 			}
-			verticalLayout.setSizeFull();
-			verticalLayout.setMargin(false);
+			//verticalLayout.setSizeFull();
+			verticalLayout.addStyleName("paneltitle");
 			mainPanel.setContent(verticalLayout);
-			mainPanel.setSizeFull();
+			mainPanel.setIcon(VaadinIcons.BUILDING_O);
+			mainPanel.setWidth(1145, Unit.PIXELS);
+			mainPanel.setHeight(660, Unit.PIXELS);
 			mainPanel.setStyleName("scrollable");
+			mainPanel.setCaption("Floor/Unit Information");
 		}
 		addComponent(mainPanel);
 	}

@@ -1,0 +1,34 @@
+@mixin panel {
+	
+	.v-panel {
+  		color: blue;
+  		.v-panel-caption {
+  			color: green;
+			font-size: 20px;
+			font-family: monospace;
+			font-style: italic;
+  		}
+  	}
+  	
+  	.paneltitle {
+	  	.v-panel {
+		  	.v-panel-caption {
+		  		font-size: 20px;
+				font-family: monospace;
+				font-style: italic;
+				text-align: center;
+				color: purple;
+			}	
+		}	
+	}
+	
+	.buttoncaptionsize {
+		.v-horizontal {
+			.v-button {
+				.v-button-caption {
+					font-size: 15px;
+				}
+			}
+		}	
+	}
+}
