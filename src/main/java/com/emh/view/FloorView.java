@@ -37,6 +37,8 @@ public class FloorView extends Window {
 
 	private TextField fNumberField;
 	private TextField totalNumberField;
+	private Button btnSave;
+	private Button btnCancel;
 	private Grid<Floor> grid;
 	private Binder<Floor> binder;
 
@@ -72,16 +74,20 @@ public class FloorView extends Window {
 				.withConverter(new StringToIntegerConverter("This field is not a Number. Please input Number."))
 				.bind(Floor::getTotalFloor, Floor::setTotalFloor);
 
-		Button btnSave = new Button();
+		btnSave = new Button();
 		btnSave.setCaption("Save");
 		btnSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnSave.addClickListener(new SaveClickAction());
 
-		Button btnCancel = new Button();
-		btnCancel.setCaption("Cancel");
+		btnCancel = new Button();
+		btnCancel.setCaption("Clear");
 		btnCancel.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		btnCancel.addClickListener(event -> {
-			this.close();
+			fNumberField.clear();
+			fNumberField.setEnabled(true);
+			totalNumberField.clear();
+			fNumberField.focus();
+			btnSave.setEnabled(true);
 		});
 
 		hLayout.addComponents(btnSave, btnCancel);
@@ -134,51 +140,62 @@ public class FloorView extends Window {
 
 		Column<Floor, String> columnDelete = grid.addColumn(floor -> "Delete", new ButtonRenderer<>(event -> {
 			Floor floor = event.getItem();
-			if (floor != null) {
-				classBusiness.deleteEntity(floor);
-			
-				Notification.show("The Floor is deleted Succussfully.", Type.HUMANIZED_MESSAGE);
-				floorDataProvider.getItems().remove(floor);
-				grid.setDataProvider(floorDataProvider);
+			List<com.emh.model.Unit> units = classBusiness.selectListEntity(com.emh.model.Unit.class, Floor.class,
+					"floorID", floor.getFloorID());
+			if (units.size() > 0) {
+				Notification.show("This floor can not deleted becuase it relates to other unit.", Type.ERROR_MESSAGE);
+			} else {
+				if (floor != null) {
+					classBusiness.deleteEntity(floor);
+
+					Notification.show("The Floor is deleted Succussfully.");
+					floorDataProvider.getItems().remove(floor);
+					grid.setDataProvider(floorDataProvider);
+				}
 			}
+			btnSave.setEnabled(true);
 		}));
 		columnDelete.setCaption("Delete Action");
 		columnDelete.setWidth(130);
 
 		Column<Floor, String> columnUpdate = grid.addColumn(floor -> "Update", new ButtonRenderer<>(event -> {
 			try {
-				binder.writeBean(updateFloor);
-				classBusiness.updateEntity(updateFloor);
+				if (updateFloor != null) {
+					classBusiness.updateEntity(updateFloor);
 
-				Notification.show("The data update successfully.", Type.HUMANIZED_MESSAGE);
+					Notification.show("The data update successfully.", Type.HUMANIZED_MESSAGE);
 
-				List<Floor> listFloor = classBusiness.selectAllEntity(Floor.class);
-				floorDataProvider.getItems().clear();
-				floorDataProvider = new ListDataProvider<>(listFloor);
-				grid.setDataProvider(floorDataProvider);
+					List<Floor> listFloor = classBusiness.selectAllEntity(Floor.class);
+					floorDataProvider.getItems().clear();
+					floorDataProvider = new ListDataProvider<>(listFloor);
+					grid.setDataProvider(floorDataProvider);
 
-				fNumberField.clear();
-				totalNumberField.clear();
-
+					fNumberField.clear();
+					totalNumberField.clear();
+					updateFloor = null;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
+			btnSave.setEnabled(true);
 		}));
 		columnUpdate.setCaption("Update Action");
 		columnUpdate.setWidth(130);
 
 		grid.setSizeFull();
 
-		grid.addSelectionListener(selectionEvent -> {
-			grid.getSelectedItems().forEach(floor -> {
-				if (floor != null) {
-					updateFloor = floor;
-					binder.readBean(updateFloor);
-				}
-			});
+		grid.addItemClickListener(itemClick -> {
+			updateFloor = itemClick.getItem();
+			List<com.emh.model.Unit> units = classBusiness.selectListEntity(com.emh.model.Unit.class, Floor.class,
+					"floorID", updateFloor.getFloorID());
+			if (units.size() > 0) {
+				fNumberField.setEnabled(false);
+			} else {
+				fNumberField.setEnabled(true);
+			}
+			binder.readBean(updateFloor);
+			btnSave.setEnabled(false);
 		});
-
 	}
 
 	private final class SaveClickAction implements ClickListener {
