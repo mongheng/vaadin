@@ -26,6 +26,7 @@ import net.sf.dynamicreports.jasper.builder.export.ExporterBuilders;
 import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
 import net.sf.dynamicreports.jasper.constant.JasperProperty;
 import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.BooleanColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.ColumnBuilders;
 import net.sf.dynamicreports.report.builder.column.Columns;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
@@ -35,6 +36,7 @@ import net.sf.dynamicreports.report.builder.datatype.DataTypes;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilders;
 import net.sf.dynamicreports.report.builder.subtotal.SubtotalBuilders;
+import net.sf.dynamicreports.report.constant.BooleanComponentType;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.constant.VerticalTextAlignment;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -227,8 +229,9 @@ public class ReportUtil {
 		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
 				DataTypes.integerType());
 		TextColumnBuilder<String> endDate = Columns.column("End Date", "endDate", DataTypes.stringType());
-
-		reportBuilder.columns(rowNumberColumn, installmentNumber, amount, startDate, endDate).setColumnTitleStyle(columnTitleStyle)
+		BooleanColumnBuilder paid = Columns.booleanColumn("Paid", "statu").setComponentType(BooleanComponentType.IMAGE_STYLE_3);
+		
+		reportBuilder.columns(rowNumberColumn, installmentNumber, amount, startDate, endDate, paid).setColumnTitleStyle(columnTitleStyle)
 				.setColumnStyle(boldCenteredStyle).highlightDetailEvenRows().highlightDetailOddRows()
 				.title(HeaderStyle(titleStyle, styleBuilders, "CashFlow", info))
 				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle))

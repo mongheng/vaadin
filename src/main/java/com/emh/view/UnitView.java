@@ -106,6 +106,7 @@ public class UnitView extends Window {
 
 		// cbFloor.setRequiredIndicatorVisible(true);
 		cbFloor.setItems(Utility.getFloor(applicationContext));
+		cbFloor.setPlaceholder("No Floor Selected");
 		cbFloor.setItemCaptionGenerator(floor -> floor.getFloorNumber().toString());
 		binder.bind(cbFloor, com.emh.model.Unit::getFloor, com.emh.model.Unit::setFloor);
 
@@ -146,6 +147,7 @@ public class UnitView extends Window {
 		center();
 		setWidth("560px");
 		setHeight("455px");
+		setModal(true);
 	}
 
 	private void initGrid() {

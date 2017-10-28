@@ -259,6 +259,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		cboFloor = new ComboBox<>();
 		cboFloor.setWidth("137px");
+		cboFloor.setPlaceholder("No Floor Selected");
 		// binderCustomer.forField(cboFloor).bind(customer ->
 		// customer.getUnit().getFloor(), (customer, formValue )->
 		// customer.getUnit().setFloor(formValue));
@@ -266,6 +267,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		cboUnit = new ComboBox<>();
 		cboUnit.setWidth("137px");
+		cboUnit.setPlaceholder("No Unit Selected");
 		binderCustomer.bind(cboUnit, Customer::getUnit, Customer::setUnit);
 		cboUnit.addValueChangeListener(listener -> {
 			valueChange = true;
