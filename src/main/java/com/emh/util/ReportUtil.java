@@ -8,16 +8,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
 import com.emh.model.HistoryPayment;
+import com.emh.model.Payment;
 import com.emh.model.User;
 import com.emh.model.mock.MockCashFlow;
 import com.emh.model.mock.MockParkingCashFlow;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.VaadinService;
 
@@ -64,7 +68,8 @@ public class ReportUtil {
 		return new JRBeanCollectionDataSource(items);
 	}
 
-	public synchronized static void createReportPDF(List<HistoryPayment> historyPayments, User user, String path, String fileType) {
+	public synchronized static void createReportPDF(List<HistoryPayment> historyPayments, User user, String path,
+			String fileType) {
 
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 
@@ -208,10 +213,10 @@ public class ReportUtil {
 		}
 	}
 
-	public synchronized static void createCashFlowReportPDF(List<MockCashFlow> cashFlows, User user, String info, String path,
-			String fileType) {
+	public synchronized static void createCashFlowReportPDF(List<MockCashFlow> cashFlows, User user, String info,
+			String path, String fileType) {
 		JasperReportBuilder reportBuilder = DynamicReports.report();
-		
+
 		ColumnBuilders columnBuilders = DynamicReports.col;
 
 		StyleBuilders styleBuilders = DynamicReports.stl;
@@ -229,11 +234,12 @@ public class ReportUtil {
 		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
 				DataTypes.integerType());
 		TextColumnBuilder<String> endDate = Columns.column("End Date", "endDate", DataTypes.stringType());
-		BooleanColumnBuilder paid = Columns.booleanColumn("Paid", "statu").setComponentType(BooleanComponentType.IMAGE_STYLE_3);
-		
-		reportBuilder.columns(rowNumberColumn, installmentNumber, amount, startDate, endDate, paid).setColumnTitleStyle(columnTitleStyle)
-				.setColumnStyle(boldCenteredStyle).highlightDetailEvenRows().highlightDetailOddRows()
-				.title(HeaderStyle(titleStyle, styleBuilders, "CashFlow", info))
+		BooleanColumnBuilder paid = Columns.booleanColumn("Paid", "statu")
+				.setComponentType(BooleanComponentType.IMAGE_STYLE_3);
+
+		reportBuilder.columns(rowNumberColumn, installmentNumber, amount, startDate, endDate, paid)
+				.setColumnTitleStyle(columnTitleStyle).setColumnStyle(boldCenteredStyle).highlightDetailEvenRows()
+				.highlightDetailOddRows().title(HeaderStyle(titleStyle, styleBuilders, "CashFlow", info))
 				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle))
 				.setDataSource(createDataSource(cashFlows));
 
@@ -243,7 +249,7 @@ public class ReportUtil {
 				file.mkdirs();
 			}
 			if (fileType.equals(PDF)) {
-				FileOutputStream fos = new FileOutputStream(path + fileType); 
+				FileOutputStream fos = new FileOutputStream(path + fileType);
 				reportBuilder.toPdf(fos);
 				fos.flush();
 				fos.close();
@@ -253,8 +259,8 @@ public class ReportUtil {
 		}
 	}
 
-	public synchronized static void createParkingCashFlowReportPDF(List<MockParkingCashFlow> parkingCashFlows, User user,
-			String info, String path, String fileType) {
+	public synchronized static void createParkingCashFlowReportPDF(List<MockParkingCashFlow> parkingCashFlows,
+			User user, String info, String path, String fileType) {
 		JasperReportBuilder reportBuilder = DynamicReports.report();
 
 		StyleBuilders styleBuilders = DynamicReports.stl;
@@ -291,5 +297,67 @@ public class ReportUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private synchronized static void exportInvoiceFile(Payment payment, User user, String info, String path,
+			String fileType) {
+
+		List<Payment> payments = Arrays.asList(payment);
+
+		JasperReportBuilder reportBuilder = DynamicReports.report();
+
+		StyleBuilders styleBuilders = DynamicReports.stl;
+		StyleBuilder boldStyle = styleBuilders.style().bold();
+		StyleBuilder boldCenteredStyle = styleBuilders.style(boldStyle)
+				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
+		StyleBuilder titleStyle = styleBuilders.style(boldCenteredStyle)
+				.setVerticalTextAlignment(VerticalTextAlignment.MIDDLE).setFontSize(15);
+		StyleBuilder columnTitleStyle = styleBuilders.style(boldCenteredStyle).setForegroundColor(Color.BLUE);
+
+		TextColumnBuilder<String> startDate = Columns.column("Start Date", "startDate", DataTypes.stringType());
+		TextColumnBuilder<Float> amount = Columns.column("Amount", "amount", new CurrencyType());
+		TextColumnBuilder<Integer> installmentNumber = Columns.column("Installment Number", "installmentNumber",
+				DataTypes.integerType());
+		TextColumnBuilder<String> endDate = Columns.column("End Date", "endDate", DataTypes.stringType());
+		TextColumnBuilder<String> vehicle = Columns.column("Vehicle", "carType", DataTypes.stringType());
+		TextColumnBuilder<String> plantNum = Columns.column("Plant Num", "plantNumber", DataTypes.stringType());
+
+		reportBuilder.columns(installmentNumber, startDate, endDate, vehicle, plantNum, amount)
+				.setColumnTitleStyle(columnTitleStyle).setColumnStyle(boldCenteredStyle).highlightDetailEvenRows()
+				.highlightDetailOddRows().title(HeaderStyle(titleStyle, styleBuilders, "Invoice", info))
+				.pageFooter(Components.pageXofY().setStyle(boldCenteredStyle),
+						Components.text("Issue Date:" + LocalDate.now().toString())
+								.setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT))
+				.setDataSource(createDataSource(payments));
+
+		try {
+			File file = new File(REPORT_PATH + user.getUsername());
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			if (fileType.equals(PDF)) {
+				FileOutputStream fos = new FileOutputStream(path + fileType);
+				reportBuilder.toPdf(fos);
+				fos.flush();
+				fos.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void createInvoiceReportPDF(Payment payment, User user) {
+		String path = "c:/dailyReport/" + user.getUsername() + "/InvoiceReport-" + payment.getCustomerName();
+		String info = payment.getCustomerName() + "- F:" + payment.getFloorNumber() + "- R/U:"
+				+ payment.getUnitNumber();
+		if (payment.getCarType() != null) {
+			path = path + "-" + payment.getCarType() + "-" + payment.getPlantNumber() + "-" + LocalDate.now();
+		} else {
+			path = path + "-" + payment.getInstallmentNumber() + "-" + LocalDate.now();
+		}
+		exportInvoiceFile(payment, user, info, path, PDF);
+		FileResource fr = new FileResource(new File(path + PDF));
+		Page.getCurrent().open(fr, null, false);
 	}
 }

@@ -27,6 +27,10 @@ public class Run {
 		
 		System.out.println("Date = " + new Date());
 		System.out.println("Convert = " + date.toString());
+		
+		LocalDate now = LocalDate.now();
+		LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
+		System.out.println("end date is : " + end.toString());
 	}
 
 	/*

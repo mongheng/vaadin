@@ -20,7 +20,9 @@ public class Payment {
 	private Integer unitNumber;
 	private Float amount;
 	private String carType;
-	private String PlantNumber;
+	private String plantNumber;
+	private String startDate;
+	private String endDate;
 	private LocalDate paymentDate;
 	private User user;
 
@@ -90,11 +92,29 @@ public class Payment {
 
 	@Column(name = "PLANTNUMBER")
 	public String getPlantNumber() {
-		return PlantNumber;
+		return plantNumber;
 	}
 
 	public void setPlantNumber(String plantNumber) {
-		PlantNumber = plantNumber;
+		this.plantNumber = plantNumber;
+	}
+
+	@Column(name = "STARTDATE")
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	@Column(name = "ENDDATE")
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 
 	@Column(name = "PAYMENT_DATE")

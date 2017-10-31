@@ -19,7 +19,6 @@ import com.emh.repository.business.ClassBusiness;
 import com.emh.util.ReportUtil;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.FileDownloader;
-import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -215,6 +214,8 @@ public class CarParkingContractView extends VerticalLayout {
 							payment.setUnitNumber(customer.getUnit().getUnitNumber());
 							payment.setCarType(parkingCashFlow.getCarparking().getCarType());
 							payment.setPlantNumber(parkingCashFlow.getCarparking().getPlantNumber());
+							payment.setStartDate(parkingCashFlow.getStartDate().toString());
+							payment.setEndDate(parkingCashFlow.getEndDate().toString());
 							payment.setPaymentDate(LocalDate.now());
 							payment.setUser(user);
 							classBusiness.createEntity(payment);
@@ -240,8 +241,8 @@ public class CarParkingContractView extends VerticalLayout {
 									+ parkingCashFlow.getInstallmentNumber() + ", CarType :"
 									+ parkingCashFlow.getCarparking().getCarType() + ", PlantNumber :"
 									+ parkingCashFlow.getCarparking().getPlantNumber() + message);
-							
-							Page.getCurrent().reload();
+							ReportUtil.createInvoiceReportPDF(payment, user);
+							//Page.getCurrent().reload();
 						} else {
 							dialog.close();
 						}

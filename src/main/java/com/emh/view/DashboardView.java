@@ -15,6 +15,7 @@ import com.emh.model.ParkingCashFlow;
 import com.emh.model.Payment;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
+import com.emh.util.ReportUtil;
 import com.vaadin.data.provider.GridSortOrder;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.Grid;
@@ -136,6 +137,8 @@ public class DashboardView extends VerticalLayout {
 										cashFlow.getContract().getCustomer().getUnit().getFloor().getFloorNumber());
 								payment.setUnitNumber(cashFlow.getContract().getCustomer().getUnit().getUnitNumber());
 								payment.setInstallmentNumber(cashFlow.getInstallmentNumber());
+								payment.setStartDate(cashFlow.getStartDate().toString());
+								payment.setEndDate(cashFlow.getEndDate().toString());
 								payment.setPaymentDate(LocalDate.now());
 								payment.setUser(user);
 								classBusiness.createEntity(payment);
@@ -158,6 +161,7 @@ public class DashboardView extends VerticalLayout {
 								Notification.show(
 										cashFlow.getContract().getCustomer().getCustomerName() + message,
 										Type.HUMANIZED_MESSAGE);
+								ReportUtil.createInvoiceReportPDF(payment, user);
 
 							} else {
 								dialog.close();
@@ -226,6 +230,8 @@ public class DashboardView extends VerticalLayout {
 										payment.setUnitNumber(customer.getUnit().getUnitNumber());
 										payment.setCarType(parkingCashFlow.getCarparking().getCarType());
 										payment.setPlantNumber(parkingCashFlow.getCarparking().getPlantNumber());
+										payment.setStartDate(parkingCashFlow.getStartDate().toString());
+										payment.setEndDate(parkingCashFlow.getEndDate().toString());
 										payment.setPaymentDate(LocalDate.now());
 										payment.setUser(user);
 										classBusiness.createEntity(payment);
@@ -250,6 +256,7 @@ public class DashboardView extends VerticalLayout {
 												+ parkingCashFlow.getInstallmentNumber() + ", CarType :"
 												+ parkingCashFlow.getCarparking().getCarType() + ", PlantNumber :"
 												+ parkingCashFlow.getCarparking().getPlantNumber() + message);
+										ReportUtil.createInvoiceReportPDF(payment, user);
 									} else {
 										dialog.close();
 									}

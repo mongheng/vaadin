@@ -10,6 +10,7 @@ import com.emh.model.Customer;
 import com.emh.model.Payment;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
+import com.emh.util.ReportUtil;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToFloatConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
@@ -114,6 +115,14 @@ public class PaymentForm extends Window {
 								try {
 									binder.writeBean(payment);
 									payment.setPaymentID(cashFlow.getCashflowID());
+									payment.setCustomerName(cashFlow.getContract().getCustomer().getCustomerName());
+									payment.setAmount(cashFlow.getAmount());
+									payment.setFloorNumber(
+											cashFlow.getContract().getCustomer().getUnit().getFloor().getFloorNumber());
+									payment.setUnitNumber(cashFlow.getContract().getCustomer().getUnit().getUnitNumber());
+									payment.setInstallmentNumber(cashFlow.getInstallmentNumber());
+									payment.setStartDate(cashFlow.getStartDate().toString());
+									payment.setEndDate(cashFlow.getEndDate().toString());
 									payment.setPaymentDate(LocalDate.now());
 									payment.setUser(user);
 									cashFlow.setStatu(true);
@@ -130,7 +139,7 @@ public class PaymentForm extends Window {
 									}
 									close();
 									Notification.show(cashFlow.getContract().getCustomer().getCustomerName() + message);
-							
+									ReportUtil.createInvoiceReportPDF(payment, user);;
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
