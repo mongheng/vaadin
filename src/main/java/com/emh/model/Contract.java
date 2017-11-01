@@ -19,6 +19,7 @@ public class Contract {
 	private String contractID;
 	private Integer term;
 	private float amount;
+	private Float deposit;
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private boolean active;
@@ -52,6 +53,15 @@ public class Contract {
 
 	public void setAmount(float amount) {
 		this.amount = amount;
+	}
+
+	@Column(name = "DEPOSIT")
+	public Float getDeposit() {
+		return deposit;
+	}
+
+	public void setDeposit(Float deposit) {
+		this.deposit = deposit;
 	}
 
 	@Column(name = "START_DATE")

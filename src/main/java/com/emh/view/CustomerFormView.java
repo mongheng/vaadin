@@ -68,12 +68,14 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 	private Label lblTerm;
 	private Label lblStartDate;
 	private Label lblEndDate;
+	private Label lblDeposit;
 
 	private TextField customerNameField;
 	private TextField jobField;
 	private TextField phoneField;
 	private TextField paymentField;
 	private TextField termField;
+	private TextField depositField;
 
 	private TextArea addressTextArea;
 
@@ -152,6 +154,8 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		addComponent(btnSave, "top:320.0px;left:455.0px;");
 		addComponent(btnClear, "top:320.0px;left:555.0px;");
 		addComponent(btnStart, "top:320.0px;left:635.0px;");
+		addComponent(lblDeposit, "top:328.0px;left:75.0px");
+		addComponent(depositField, "top:320.0px;left:178.0px");
 
 		addComponent(grid, "top:360.0px;left:16.0px;");
 		setSizeFull();
@@ -207,6 +211,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		lblTerm = new Label("Term :");
 		lblStartDate = new Label("Start Date :");
 		lblEndDate = new Label("End Date :");
+		lblDeposit = new Label("Deposit :");
 
 		customerNameField = new TextField();
 		binderCustomer.forField(customerNameField)
@@ -230,7 +235,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 		paymentField = new TextField();
 		binderContract.forField(paymentField)
-				.withConverter(new StringToFloatConverter("Please input the Float number."))
+				.withConverter(new StringToFloatConverter("Please input the Integer or Float number."))
 				.bind(Contract::getAmount, Contract::setAmount);
 		paymentField.addValueChangeListener(listener -> {
 			valueChange = true;
@@ -241,6 +246,11 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 				.withConverter(new StringToIntegerConverter("Please input the Integer number."))
 				.bind(Contract::getTerm, Contract::setTerm);
 		termField.addValueChangeListener(new TermFieldValueChangeListener());
+
+		depositField = new TextField();
+		binderContract.forField(depositField)
+				.withConverter(new StringToFloatConverter("Please input the Integer or Float number."))
+				.bind(Contract::getDeposit, Contract::setDeposit);
 
 		addressTextArea = new TextArea();
 		addressTextArea.setWidth("-1px");
@@ -382,18 +392,23 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 				if (tempCustomer == null) {
 					Customer customer = new Customer();
 					Contract contract = new Contract();
-					binderCustomer.writeBean(customer);
-					binderContract.writeBean(contract);
-					contract.setCustomer(customer);
-					customer.getUnit().setStatu(true);
-					customer.setImage(Utility.readImage(new File(Utility.CUSTOMER_PATH + Utility.CUSTOMER_SUBPATH)));
-					classBusiness.createEntity(customer);
-					classBusiness.createEntity(contract);
-					classBusiness.updateEntity(customer.getUnit());
-					customerDataProvider.getItems().add(customer);
-					grid.setDataProvider(customerDataProvider);
-					customerDataProvider = new ListDataProvider<>(new ArrayList<>());
-					Notification.show("The Customer save successfully.", Type.HUMANIZED_MESSAGE);
+					boolean statuCustomer = binderCustomer.writeBeanIfValid(customer);
+					boolean statuContract = binderContract.writeBeanIfValid(contract);
+					if (statuCustomer && statuContract) {
+						contract.setCustomer(customer);
+						customer.getUnit().setStatu(true);
+						customer.setImage(
+								Utility.readImage(new File(Utility.CUSTOMER_PATH + Utility.CUSTOMER_SUBPATH)));
+						classBusiness.createEntity(customer);
+						classBusiness.createEntity(contract);
+						classBusiness.updateEntity(customer.getUnit());
+						customerDataProvider.getItems().add(customer);
+						grid.setDataProvider(customerDataProvider);
+						customerDataProvider = new ListDataProvider<>(new ArrayList<>());
+						Notification.show("The Customer save successfully.", Type.HUMANIZED_MESSAGE);
+					} else {
+						Notification.show("The Customer save failure. Please check your data input again.", Type.WARNING_MESSAGE);
+					}
 				} else {
 					customer = tempCustomer;
 					Contract newContract = new Contract();
@@ -534,7 +549,8 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 					Notification.show("The Customer contracts start successfully.", Type.HUMANIZED_MESSAGE);
 					btnStart.setVisible(false);
 				} else {
-					Notification.show("Please save data before starting the contract because you modify something.", Type.WARNING_MESSAGE);
+					Notification.show("Please save data before starting the contract because you modify something.",
+							Type.WARNING_MESSAGE);
 				}
 			} else {
 				Notification.show("Please save Customer before starting the contract.", Type.WARNING_MESSAGE);
