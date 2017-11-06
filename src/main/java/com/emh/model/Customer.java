@@ -1,5 +1,6 @@
 package com.emh.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
@@ -15,7 +16,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "CUSTOMER")
-public class Customer {
+public class Customer implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String customerID;
 	private String customerName;

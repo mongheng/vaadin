@@ -1,5 +1,6 @@
 package com.emh.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
@@ -11,7 +12,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "HISTORY_PAYMENT")
-public class HistoryPayment {
+public class HistoryPayment implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private String historyID;
 	private Integer installmentNumber;

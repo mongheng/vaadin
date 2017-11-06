@@ -1,5 +1,6 @@
 package com.emh.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,7 +15,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "FLOOR")
-public class Floor {
+public class Floor implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private String floorID;
 	private Integer floorNumber;
