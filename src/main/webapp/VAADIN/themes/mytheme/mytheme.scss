@@ -116,4 +116,21 @@ $v-grid-cell-focused-border: none;
 		overflow: auto !important;
 		white-space: nowrap;
 	}
+	
+	.footercolumn {
+		text-align: center;
+		font-size: 20px;
+		font-family: cursive;
+		font: bold;
+		color: red;
+	}
+	
+	.buttoningrid {
+		.v-textfield {
+			text-align: center;
+			font-size: 20px;
+			font-family: cursive;
+			font: bold;
+		}
+	}
 }

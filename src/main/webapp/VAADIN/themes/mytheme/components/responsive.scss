@@ -29,4 +29,16 @@
 			}
 	  	}
 	}
+	
+	.myresponsive[width-range~="0-800px"] {
+		.v-label {
+			color: blue;
+		}
+	}
+	
+	.myresponsive[width-range~="801px-"] {
+		.v-label {
+			color: red;
+		}
+	}
 }

@@ -12,6 +12,7 @@ import com.emh.repository.business.ClassBusiness;
 import com.emh.util.ReportUtil;
 import com.emh.util.Utility;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.data.provider.Query;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Button;
@@ -20,9 +21,12 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.FooterCell;
+import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class ResponsiveReportView extends CssLayout {
@@ -53,6 +57,7 @@ public class ResponsiveReportView extends CssLayout {
 
 	private ListDataProvider<HistoryPayment> dataProvider;
 	private Grid<HistoryPayment> grid;
+	private FooterRow footerRow;
 
 	public ResponsiveReportView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -156,17 +161,19 @@ public class ResponsiveReportView extends CssLayout {
 
 		grid.addColumn(HistoryPayment::getCustomerName).setCaption("Customer Name");
 		grid.addColumn(HistoryPayment::getInstallmentNumber).setCaption("Installement Num");
-		grid.addColumn(HistoryPayment::getAmount).setCaption("Amount");
 		grid.addColumn(HistoryPayment::getFloorNumber).setCaption("Floor Num");
 		grid.addColumn(HistoryPayment::getUnitNumber).setCaption("Unit Num");
 		grid.addColumn(HistoryPayment::getCarType).setCaption("Vehicle");
 		grid.addColumn(HistoryPayment::getPlantNumber).setCaption("Plant Number");
+		grid.addColumn(HistoryPayment::getAmount).setCaption("Amount");
 
 		grid.setSizeFull();
 
 		centerLayout.addComponent(grid);
 		centerLayout.setSizeFull();
 		centerLayout.setSpacing(false);
+		footerRow = grid.prependFooterRow();
+		addFooterColumnAmount(false, footerRow);
 	}
 
 	private void search(String HQL) {
@@ -174,6 +181,7 @@ public class ResponsiveReportView extends CssLayout {
 		dataProvider = historyPayments.size() > 0 ? new ListDataProvider<>(historyPayments)
 				: new ListDataProvider<>(new ArrayList<>());
 		grid.setDataProvider(dataProvider);
+		addFooterColumnAmount(true, footerRow);
 	}
 
 	private void ExportFile() {
@@ -202,5 +210,20 @@ public class ResponsiveReportView extends CssLayout {
 		cboEmployee.clear();
 		dataProvider = new ListDataProvider<>(new ArrayList<>());
 		grid.setDataProvider(dataProvider);
+	}
+	
+	private void addFooterColumnAmount(boolean statu, FooterRow footerRow) {
+		if (statu) {
+			grid.removeFooterRow(footerRow);
+			footerRow = grid.prependFooterRow();
+		}
+		Double totalAmount = dataProvider.fetch(new Query<>()).mapToDouble(HistoryPayment::getAmount).sum();
+		for (Column<HistoryPayment, ?> column : grid.getColumns()) {
+			if (column.getCaption().equals("Amount")) {
+				FooterCell footerCell = footerRow.getCell(column);
+				footerCell.setStyleName("footercolumn");
+				footerCell.setText("$ " + totalAmount.toString());
+			}
+		}
 	}
 }

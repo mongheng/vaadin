@@ -44,7 +44,7 @@ public class MainUI extends UI {
 	
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
-		logger.info("Loadin Main Form");
+		logger.info("Loading Main Form");
 		
 		applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 		getPage().setTitle("Vaadin Project");

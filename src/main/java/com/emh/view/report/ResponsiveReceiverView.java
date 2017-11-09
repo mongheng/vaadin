@@ -9,7 +9,9 @@ import java.util.Set;
 import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
+import com.emh.model.CashFlow;
 import com.emh.model.HistoryPayment;
+import com.emh.model.ParkingCashFlow;
 import com.emh.model.Payment;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
@@ -32,6 +34,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.MultiSelectionModel;
+import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class ResponsiveReceiverView extends CssLayout {
@@ -68,6 +71,8 @@ public class ResponsiveReceiverView extends CssLayout {
 	private Grid<Payment> carParkingGrid;
 	private Set<Payment> roomsPayment;
 	private Set<Payment> carsParkingPayment;
+	List<Payment> paymentsRoom;
+	List<Payment> paymentsCarParking;
 
 	private Float totalAmount = 0f;
 	private Float totalAmountRoom = 0f;
@@ -174,8 +179,8 @@ public class ResponsiveReceiverView extends CssLayout {
 	}
 
 	private void loadGrid() {
-		List<Payment> paymentsRoom = new ArrayList<>();
-		List<Payment> paymentsCarParking = new ArrayList<>();
+		paymentsRoom = new ArrayList<>();
+		paymentsCarParking = new ArrayList<>();
 		String HQL = "FROM Payment WHERE PAYMENT_DATE = '" + LocalDate.now() + "'";
 		List<Payment> payments = classBusiness.selectListEntityByHQL(Payment.class, HQL);
 		payments.forEach(payment -> {
@@ -188,6 +193,9 @@ public class ResponsiveReceiverView extends CssLayout {
 
 		loadRoomGrid(paymentsRoom);
 		loadCarParkingGrid(paymentsCarParking);
+		
+		initColumnRoomGrid();
+		initColumnCarParkingGrid();
 	}
 
 	private void loadRoomGrid(List<Payment> paymentsRoom) {
@@ -198,13 +206,6 @@ public class ResponsiveReceiverView extends CssLayout {
 			}
 			roomGrid.setDataProvider(dataProvider);
 
-			roomGrid.addColumn(payment -> payment.getCustomerName()).setCaption("Customer Name");
-			roomGrid.addColumn(payment -> payment.getAmount()).setCaption("Amount");
-			roomGrid.addColumn(payment -> payment.getInstallmentNumber()).setCaption("Installment Number");
-			roomGrid.addColumn(payment -> payment.getFloorNumber()).setCaption("Floor Number");
-			roomGrid.addColumn(payment -> payment.getUnitNumber()).setCaption("Unit/Room Number");
-			roomGrid.addColumn(payment -> payment.getPaymentDate()).setCaption("Payment Date");
-			roomGrid.setSizeFull();
 			MultiSelectionModel<Payment> multiSelectionModel = (MultiSelectionModel<Payment>) roomGrid
 					.setSelectionMode(SelectionMode.MULTI);
 
@@ -240,15 +241,7 @@ public class ResponsiveReceiverView extends CssLayout {
 			}
 			carParkingGrid.setDataProvider(dataProvider);
 
-			carParkingGrid.addColumn(payment -> payment.getCustomerName()).setCaption("Customer Name");
-			carParkingGrid.addColumn(payment -> payment.getAmount()).setCaption("Amount");
-			carParkingGrid.addColumn(payment -> payment.getInstallmentNumber()).setCaption("Installment Number");
-			carParkingGrid.addColumn(payment -> payment.getCarType()).setCaption("CarType");
-			carParkingGrid.addColumn(payment -> payment.getPlantNumber()).setCaption("PlantNumber");
-			carParkingGrid.addColumn(payment -> payment.getFloorNumber()).setCaption("Floor Number");
-			carParkingGrid.addColumn(payment -> payment.getUnitNumber()).setCaption("Unit/Room Number");
-			carParkingGrid.addColumn(payment -> payment.getPaymentDate()).setCaption("Payment Date");
-			carParkingGrid.setSizeFull();
+			
 			carParkingGrid.setSelectionMode(SelectionMode.MULTI);
 
 			MultiSelectionModel<Payment> multiSelectionModel = (MultiSelectionModel<Payment>) carParkingGrid
@@ -284,15 +277,15 @@ public class ResponsiveReceiverView extends CssLayout {
 		plusSign = new Label("+");
 		plusSign.addStyleName("plusequal");
 
-		totalAmountField = new TextField("Grand Total :");
+		totalAmountField = new TextField("Grand Total ($):");
 		totalAmountField.setReadOnly(true);
 		totalAmountField.addStyleName("textalig");
 
-		totalCarParkingAmountField = new TextField("Vehicle Total :");
+		totalCarParkingAmountField = new TextField("Vehicle Total ($):");
 		totalCarParkingAmountField.setReadOnly(true);
 		totalCarParkingAmountField.addStyleName("textalig");
 
-		totalRoomAmountField = new TextField("Room Total :");
+		totalRoomAmountField = new TextField("Room Total ($):");
 		totalRoomAmountField.setReadOnly(true);
 		totalRoomAmountField.addStyleName("textalig");
 
@@ -383,6 +376,7 @@ public class ResponsiveReceiverView extends CssLayout {
 		bottomGridLayout.setColumnExpandRatio(1, 0.1f);
 		bottomGridLayout.setColumnExpandRatio(3, 0.1f);
 		bottomGridLayout.setColumnExpandRatio(4, 0.1f);
+		bottomGridLayout.addStyleName("buttoningrid");
 
 		bottomLayout.addComponent(bottomGridLayout);
 		bottomLayout.setSizeFull();
@@ -393,8 +387,8 @@ public class ResponsiveReceiverView extends CssLayout {
 	}
 
 	private void search(String HQL) {
-		List<Payment> paymentsRoom = new ArrayList<>();
-		List<Payment> paymentsCarParking = new ArrayList<>();
+		paymentsRoom = new ArrayList<>();
+		paymentsCarParking = new ArrayList<>();
 		List<Payment> payments = classBusiness.selectListEntityByHQL(Payment.class, HQL);
 		payments.forEach(payment -> {
 			if (payment.getCarType() != null && payment.getPlantNumber() != null) {
@@ -406,5 +400,75 @@ public class ResponsiveReceiverView extends CssLayout {
 
 		loadRoomGrid(paymentsRoom);
 		loadCarParkingGrid(paymentsCarParking);
+	}
+	
+	private void initColumnRoomGrid() {
+		roomGrid.addColumn(payment -> payment.getCustomerName()).setCaption("Customer Name");
+		roomGrid.addColumn(payment -> payment.getAmount()).setCaption("Amount");
+		roomGrid.addColumn(payment -> payment.getInstallmentNumber()).setCaption("Installment Number");
+		roomGrid.addColumn(payment -> payment.getFloorNumber()).setCaption("Floor Number");
+		roomGrid.addColumn(payment -> payment.getUnitNumber()).setCaption("Unit/Room Number");
+		roomGrid.addColumn(payment -> payment.getPaymentDate()).setCaption("Payment Date");
+		roomGrid.addColumn(delete -> "Delete", new ButtonRenderer<>(clickEvent -> {
+			Payment payment = clickEvent.getItem();
+			ConfirmDialog.show(UI.getCurrent(), "Confrimation",
+					"Are you sure you want to Delete " + payment.getCustomerName(), "Yes",
+					"No", new ConfirmDialog.Listener() {
+
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public void onClose(ConfirmDialog dialog) {
+							if (dialog.isConfirmed()) {
+								classBusiness.deleteEntity(payment);
+								CashFlow cashflow = classBusiness.selectEntity(CashFlow.class, payment.getPaymentID());
+								cashflow.setStatu(false);
+								classBusiness.updateEntity(cashflow);
+								paymentsRoom.remove(payment);
+								dataProvider = new ListDataProvider<>(paymentsRoom);
+								roomGrid.setDataProvider(dataProvider);
+								Notification.show("Delete succeeded ");
+							}
+						}
+				
+			});
+		}));
+		roomGrid.setSizeFull();
+	}
+	
+	private void initColumnCarParkingGrid() {
+		carParkingGrid.addColumn(payment -> payment.getCustomerName()).setCaption("Customer Name");
+		carParkingGrid.addColumn(payment -> payment.getAmount()).setCaption("Amount");
+		carParkingGrid.addColumn(payment -> payment.getInstallmentNumber()).setCaption("Installment Number");
+		carParkingGrid.addColumn(payment -> payment.getCarType()).setCaption("CarType");
+		carParkingGrid.addColumn(payment -> payment.getPlantNumber()).setCaption("PlantNumber");
+		carParkingGrid.addColumn(payment -> payment.getFloorNumber()).setCaption("Floor Number");
+		carParkingGrid.addColumn(payment -> payment.getUnitNumber()).setCaption("Unit/Room Number");
+		carParkingGrid.addColumn(payment -> payment.getPaymentDate()).setCaption("Payment Date");
+		carParkingGrid.addColumn(delete -> "Delete", new ButtonRenderer<>(clickEvent -> {
+			Payment payment = clickEvent.getItem();
+			ConfirmDialog.show(UI.getCurrent(), "Confrimation",
+					"Are you sure you want to Delete " + payment.getCustomerName(), "Yes",
+					"No", new ConfirmDialog.Listener() {
+
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public void onClose(ConfirmDialog dialog) {
+							if (dialog.isConfirmed()) {
+								classBusiness.deleteEntity(payment);
+								ParkingCashFlow cashflow = classBusiness.selectEntity(ParkingCashFlow.class, payment.getPaymentID());
+								cashflow.setStatu(false);
+								classBusiness.updateEntity(cashflow);
+								paymentsCarParking.remove(payment);
+								dataProvider = new ListDataProvider<>(paymentsCarParking);
+								carParkingGrid.setDataProvider(dataProvider);
+								Notification.show("Delete succeeded ");
+							}
+						}
+				
+			});
+		}));
+		carParkingGrid.setSizeFull();
 	}
 }
