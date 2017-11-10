@@ -58,6 +58,7 @@ public class ResponsiveReportView extends CssLayout {
 	private ListDataProvider<HistoryPayment> dataProvider;
 	private Grid<HistoryPayment> grid;
 	private FooterRow footerRow;
+	FooterCell footerCell;
 
 	public ResponsiveReportView(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -165,7 +166,7 @@ public class ResponsiveReportView extends CssLayout {
 		grid.addColumn(HistoryPayment::getUnitNumber).setCaption("Unit Num");
 		grid.addColumn(HistoryPayment::getCarType).setCaption("Vehicle");
 		grid.addColumn(HistoryPayment::getPlantNumber).setCaption("Plant Number");
-		grid.addColumn(HistoryPayment::getAmount).setCaption("Amount");
+		grid.addColumn(hp -> {return "$ " + hp.getAmount();}).setCaption("Amount");
 
 		grid.setSizeFull();
 
@@ -173,7 +174,7 @@ public class ResponsiveReportView extends CssLayout {
 		centerLayout.setSizeFull();
 		centerLayout.setSpacing(false);
 		footerRow = grid.prependFooterRow();
-		addFooterColumnAmount(false, footerRow);
+		addFooterColumnAmount(false);
 	}
 
 	private void search(String HQL) {
@@ -181,7 +182,7 @@ public class ResponsiveReportView extends CssLayout {
 		dataProvider = historyPayments.size() > 0 ? new ListDataProvider<>(historyPayments)
 				: new ListDataProvider<>(new ArrayList<>());
 		grid.setDataProvider(dataProvider);
-		addFooterColumnAmount(true, footerRow);
+		addFooterColumnAmount(true);
 	}
 
 	private void ExportFile() {
@@ -210,17 +211,14 @@ public class ResponsiveReportView extends CssLayout {
 		cboEmployee.clear();
 		dataProvider = new ListDataProvider<>(new ArrayList<>());
 		grid.setDataProvider(dataProvider);
+		footerCell.setText("$ 0.0");
 	}
 	
-	private void addFooterColumnAmount(boolean statu, FooterRow footerRow) {
-		if (statu) {
-			grid.removeFooterRow(footerRow);
-			footerRow = grid.prependFooterRow();
-		}
+	private void addFooterColumnAmount(boolean statu) {
 		Double totalAmount = dataProvider.fetch(new Query<>()).mapToDouble(HistoryPayment::getAmount).sum();
 		for (Column<HistoryPayment, ?> column : grid.getColumns()) {
 			if (column.getCaption().equals("Amount")) {
-				FooterCell footerCell = footerRow.getCell(column);
+				footerCell = footerRow.getCell(column);
 				footerCell.setStyleName("footercolumn");
 				footerCell.setText("$ " + totalAmount.toString());
 			}

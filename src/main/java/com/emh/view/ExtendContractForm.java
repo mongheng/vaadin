@@ -22,6 +22,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -32,6 +33,7 @@ public class ExtendContractForm extends Window {
 	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	
+	private VerticalLayout vLayout;
 	private FormLayout formLayout;
 	private HorizontalLayout hLayout;
 	private TextField termField;
@@ -55,6 +57,7 @@ public class ExtendContractForm extends Window {
 		contract = (Contract) classBusiness.selectEntityByHQL("From Contract WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "'");
 		carParkings = classBusiness.selectListEntityByHQL(CarParking.class, "From CarParking WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "' and ACTIVATE = true");
 		
+		vLayout = new VerticalLayout();
 		formLayout = new FormLayout();
 		hLayout = new HorizontalLayout();
 		binder = new Binder<>();
@@ -150,7 +153,8 @@ public class ExtendContractForm extends Window {
 		formLayout.setComponentAlignment(startDate, Alignment.TOP_CENTER);
 		formLayout.setComponentAlignment(endDate, Alignment.TOP_CENTER);
 		
-		setContent(formLayout);
+		vLayout.addComponent(formLayout);
+		setContent(vLayout);
 		setCaption("Extend Form");
 		center();
 		setWidth("400px");
