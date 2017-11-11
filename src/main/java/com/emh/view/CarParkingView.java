@@ -282,10 +282,12 @@ public class CarParkingView extends VerticalLayout {
 
 									@Override
 									public void onClose(ConfirmDialog dialog) {
-										classBusiness.deleteEntity(carParking);
-										dataProvider.getItems().remove(carParking);
-										grid.setDataProvider(dataProvider);
-										Notification.show("The vehicle had deleted successfully.");
+										if (dialog.isConfirmed()) {
+											classBusiness.deleteEntity(carParking);
+											dataProvider.getItems().remove(carParking);
+											grid.setDataProvider(dataProvider);
+											Notification.show("The vehicle had deleted successfully.");
+										}
 									}
 								});
 					} else if (!carParking.isActivated()) {
@@ -296,10 +298,12 @@ public class CarParkingView extends VerticalLayout {
 
 									@Override
 									public void onClose(ConfirmDialog dialog) {
-										classBusiness.deleteEntity(carParking);
-										dataProvider.getItems().remove(carParking);
-										grid.setDataProvider(dataProvider);
-										Notification.show("The vehicle had deleted successfully.");
+										if (dialog.isConfirmed()) {
+											classBusiness.deleteEntity(carParking);
+											dataProvider.getItems().remove(carParking);
+											grid.setDataProvider(dataProvider);
+											Notification.show("The vehicle had deleted successfully.");
+										}
 									}
 								});
 					} else {
@@ -310,28 +314,31 @@ public class CarParkingView extends VerticalLayout {
 
 									@Override
 									public void onClose(ConfirmDialog dialog) {
-										List<ParkingCashFlow> pcfs = classBusiness.selectListEntityByHQL(
-												ParkingCashFlow.class, "FROM ParkingCashFlow WHERE CARPARKING_ID = '"
-														+ carParking.getCarparkingID() + "'");
-										pcfs.forEach(pcf -> {
-											classBusiness.deleteEntity(pcf);
-										});
-										classBusiness.deleteEntity(carParking);
-										dataProvider.getItems().remove(carParking);
-										grid.setDataProvider(dataProvider);
+										if (dialog.isConfirmed()) {
+											List<ParkingCashFlow> pcfs = classBusiness.selectListEntityByHQL(
+													ParkingCashFlow.class,
+													"FROM ParkingCashFlow WHERE CARPARKING_ID = '"
+															+ carParking.getCarparkingID() + "'");
+											pcfs.forEach(pcf -> {
+												classBusiness.deleteEntity(pcf);
+											});
+											classBusiness.deleteEntity(carParking);
+											dataProvider.getItems().remove(carParking);
+											grid.setDataProvider(dataProvider);
 
-										List<CarParking> carparkings = (List<CarParking>) classBusiness
-												.selectListEntityByHQL(CarParking.class,
-														"FROM CarParking WHERE CUSTOMER_ID = '"
-																+ carParking.getCustomer().getCustomerID()
-																+ "' and ACTIVATE = true");
-										if (carparkings.size() == 0) {
-											Customer customer = (Customer) classBusiness.selectEntity(Customer.class,
-													carParking.getCustomer().getCustomerID());
-											customer.setParkStatu(false);
-											classBusiness.updateEntity(customer);
+											List<CarParking> carparkings = classBusiness
+													.selectListEntity(CarParking.class, Customer.class, "customerID",
+															carParking.getCustomer().getCustomerID())
+													.stream().filter(mapper -> mapper.isActivated())
+													.collect(Collectors.toList());
+											if (carparkings.size() == 0) {
+												Customer customer = (Customer) classBusiness.selectEntity(
+														Customer.class, carParking.getCustomer().getCustomerID());
+												customer.setParkStatu(false);
+												classBusiness.updateEntity(customer);
+											}
+											Notification.show("The vehicle had deleted successfully.");
 										}
-										Notification.show("The vehicle had deleted successfully.");
 									}
 								});
 					}
