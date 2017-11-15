@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.Role;
@@ -37,14 +36,14 @@ import com.vaadin.ui.themes.ValoTheme;
 public class UserListView extends VerticalLayout implements View {
 
 	private static final long serialVersionUID = 1L;
-	private ApplicationContext applicationContext;
+	private ClassBusiness classBusiness;
 	private Grid<User> grid;
 	private TextField tfUserName;
 	private ComboBox<Role> cbRole;
 	private ListDataProvider<User> userDataProvider;
 
-	public UserListView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public UserListView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		init();
 	}
 
@@ -85,7 +84,7 @@ public class UserListView extends VerticalLayout implements View {
 		columnEmail.setEditorComponent(new TextField(), User::setEmail);
 
 		cbRole = new ComboBox<>();
-		cbRole.setItems(Utility.getRoles(applicationContext));
+		cbRole.setItems(Utility.getRoles(classBusiness));
 		cbRole.setItemCaptionGenerator(Role::getRoleName);
 		Binder<User> userBinder = grid.getEditor().getBinder();
 		Binding<User, Role> userBinding = userBinder.bind(cbRole, User::getRole, User::setRole);
@@ -124,11 +123,9 @@ public class UserListView extends VerticalLayout implements View {
 
 		Column<User, String> columnUpdate = grid.addColumn(user -> "Update", new ButtonRenderer<>(clickEvent -> {
 			User user = clickEvent.getItem();
-			ClassBusiness classBusiness;
 			if (user != null) {
 				getUI();
 
-				classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 				ConfirmDialog.show(UI.getCurrent(), "Confirmation", "Are you sure you want to update.", "Yes", "No",
 						new ConfirmDialog.Listener() {
 
@@ -171,8 +168,6 @@ public class UserListView extends VerticalLayout implements View {
 
 	private List<User> getUsers() {
 		try {
-			ClassBusiness classBusiness = (ClassBusiness) applicationContext
-					.getBean(ClassBusiness.class.getSimpleName());
 			if (classBusiness != null) {
 				List<User> users = classBusiness.selectAllEntity(User.class);
 				if (users.size() > 0) {

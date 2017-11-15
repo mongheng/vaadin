@@ -53,24 +53,4 @@ public class MainController {
 		}
 		return currentUser;
 	}
-	
-	@RequestMapping(value="/logins/{username}/{password}", method=RequestMethod.PUT, headers={"Accept=application/json"})
-	public @ResponseBody boolean userLogins(@PathVariable("username") String username, @PathVariable("password") String password) {
-		boolean statu = false;
-		User currentUser = null;
-		try {
-			
-			User tempUser = new User();
-			tempUser.setUsername(username);;
-			tempUser.setPassword(password);
-			
-			currentUser = classBusiness.selectUserByUsernameAndPassword(tempUser);
-			
-			statu = currentUser == null ? false : true;
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-		}
-		return statu;
-	}
 }

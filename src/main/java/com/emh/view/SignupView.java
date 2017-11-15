@@ -3,8 +3,6 @@ package com.emh.view;
 import java.io.File;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.Role;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
@@ -38,7 +36,7 @@ public class SignupView extends Window {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
+	private ClassBusiness classBusiness;
 
 	private VerticalLayout vSignup;
 	private FormLayout formLayout;
@@ -57,8 +55,8 @@ public class SignupView extends Window {
 	private Upload upload;
 	private ProgressBar progressBar;
 
-	public SignupView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public SignupView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		Init();
 	}
 
@@ -105,7 +103,7 @@ public class SignupView extends Window {
 		cbRole.setCaption("Access Role :");
 		cbRole.setIcon(VaadinIcons.GROUP);
 		cbRole.setRequiredIndicatorVisible(true);
-		cbRole.setItems(Utility.getRoles(applicationContext));
+		cbRole.setItems(Utility.getRoles(classBusiness));
 		cbRole.setItemCaptionGenerator(Role::getRoleName);
 		binder.bind(cbRole, User::getRole, User::setRole);
 
@@ -184,8 +182,6 @@ public class SignupView extends Window {
 		@Override
 		public void blur(BlurEvent event) {
 
-			ClassBusiness classBusiness = (ClassBusiness) applicationContext
-					.getBean(ClassBusiness.class.getSimpleName());
 			notification = new Notification("Information", "The email has already Exist. Please choose another one.",
 					Type.WARNING_MESSAGE);
 			notification.setDelayMsec(500);
@@ -211,9 +207,6 @@ public class SignupView extends Window {
 
 		@Override
 		public void buttonClick(ClickEvent event) {
-
-			ClassBusiness classBusiness = (ClassBusiness) applicationContext
-					.getBean(ClassBusiness.class.getSimpleName());
 
 			User userbind = new User();
 			try {

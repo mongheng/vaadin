@@ -3,8 +3,6 @@ package com.emh.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.CarParking;
 import com.emh.model.Customer;
 import com.emh.repository.business.ClassBusiness;
@@ -17,7 +15,6 @@ public class ExtendContractView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 
 	private Grid<Customer> grid;
@@ -26,8 +23,8 @@ public class ExtendContractView extends VerticalLayout {
 	private Grid<CarParking> parkingGrid;
 	private ListDataProvider<CarParking> parkingDataProvider;
 
-	public ExtendContractView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public ExtendContractView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		init();
 	}
 
@@ -35,7 +32,6 @@ public class ExtendContractView extends VerticalLayout {
 		grid = new Grid<>();
 		customerDataProvider = new ListDataProvider<>(new ArrayList<>());
 
-		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		List<Customer> customers = (List<Customer>) classBusiness.selectAllEntity(Customer.class);
 
 		if (customers.size() > 0) {
@@ -63,7 +59,7 @@ public class ExtendContractView extends VerticalLayout {
 		setSizeFull();
 
 		grid.addItemClickListener(itemClick -> {
-			UI.getCurrent().addWindow(new ExtendContractForm(applicationContext, itemClick.getItem()));
+			UI.getCurrent().addWindow(new ExtendContractForm(classBusiness, itemClick.getItem()));
 		});
 	}
 
@@ -71,7 +67,6 @@ public class ExtendContractView extends VerticalLayout {
 		parkingGrid = new Grid<>();
 		parkingDataProvider = new ListDataProvider<>(new ArrayList<>());
 
-		classBusiness = applicationContext.getBean(ClassBusiness.class);
 		List<CarParking> carParkings = classBusiness.selectAllEntity(CarParking.class);
 
 		if (carParkings.size() > 0) {
@@ -100,7 +95,7 @@ public class ExtendContractView extends VerticalLayout {
 		parkingGrid.setSizeFull();
 		
 		parkingGrid.addItemClickListener(itemClick -> {
-			UI.getCurrent().addWindow(new ExtendParkingContractForm(applicationContext, itemClick.getItem()));
+			UI.getCurrent().addWindow(new ExtendParkingContractForm(classBusiness, itemClick.getItem()));
 		});
 	}
 }

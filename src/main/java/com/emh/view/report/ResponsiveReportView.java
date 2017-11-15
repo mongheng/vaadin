@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.HistoryPayment;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
@@ -33,7 +31,6 @@ public class ResponsiveReportView extends CssLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private User user;
 	private User userSession;
@@ -60,9 +57,8 @@ public class ResponsiveReportView extends CssLayout {
 	private FooterRow footerRow;
 	FooterCell footerCell;
 
-	public ResponsiveReportView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+	public ResponsiveReportView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		init();
 	}
 
@@ -105,7 +101,7 @@ public class ResponsiveReportView extends CssLayout {
 		endDate.setDateFormat("dd/MM/yyyy");
 
 		cboEmployee = new ComboBox<>("Empolyee");
-		cboEmployee.setItems(Utility.getEmployee(applicationContext));
+		cboEmployee.setItems(Utility.getEmployee(classBusiness));
 		cboEmployee.setItemCaptionGenerator(User::getUsername);
 		cboEmployee.addValueChangeListener(valueChange -> {
 			user = valueChange.getValue();

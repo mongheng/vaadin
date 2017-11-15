@@ -3,7 +3,6 @@ package com.emh.view;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CarParking;
@@ -30,7 +29,6 @@ public class ExtendContractForm extends Window {
 
 	private static final long serialVersionUID = 1L;
 	
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	
 	private VerticalLayout vLayout;
@@ -46,14 +44,13 @@ public class ExtendContractForm extends Window {
 	private CashFlow cashFlow;
 	private Binder<Contract> binder;
 
-	public ExtendContractForm(ApplicationContext applicationContext, Customer customer) {
-		this.applicationContext = applicationContext;
+	public ExtendContractForm(ClassBusiness classBusiness, Customer customer) {
+		this.classBusiness = classBusiness;
 		this.customer = customer;
 		init();
 	}
 	
 	private void init() {
-		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		contract = (Contract) classBusiness.selectEntityByHQL("From Contract WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "'");
 		carParkings = classBusiness.selectListEntityByHQL(CarParking.class, "From CarParking WHERE CUSTOMER_ID = '" + customer.getCustomerID() + "' and ACTIVATE = true");
 		

@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CarParking;
@@ -30,7 +29,6 @@ public class DashboardView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private User user;
 
@@ -39,14 +37,13 @@ public class DashboardView extends VerticalLayout {
 	private Grid<CashFlow> grid;
 	private Grid<ParkingCashFlow> parkingGrid;
 
-	public DashboardView(ApplicationContext applicationContext) {
+	public DashboardView(ClassBusiness classBusiness) {
 		super();
-		this.applicationContext = applicationContext;
+		this.classBusiness = classBusiness;
 		init();
 	}
 
 	private void init() {
-		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 
 		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
 		grid = new Grid<>();

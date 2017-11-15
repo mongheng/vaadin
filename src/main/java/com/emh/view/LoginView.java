@@ -1,7 +1,5 @@
 package com.emh.view;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.event.FieldEvents.BlurEvent;
@@ -30,9 +28,9 @@ import com.vaadin.ui.themes.ValoTheme;
 public class LoginView extends VerticalLayout implements View {
 
 	private static final long serialVersionUID = 1L;
-
-	private ApplicationContext applicationContext;
+	
 	private ClassBusiness classBusiness;
+	
 	private CssLayout cssLayout;
 	private HorizontalLayout hLayout;
 	private Panel loginPanel;
@@ -44,8 +42,8 @@ public class LoginView extends VerticalLayout implements View {
 
 	private boolean isStatu;
 	
-	public LoginView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public LoginView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 
 		loginPanel = new Panel("Login Form");
 		formlogin = new FormLayout();
@@ -54,7 +52,7 @@ public class LoginView extends VerticalLayout implements View {
 
 		Responsive.makeResponsive(cssLayout);
 		
-		classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		//classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		
 		name = new TextField();
 		name.setCaption("Username :");
@@ -106,7 +104,7 @@ public class LoginView extends VerticalLayout implements View {
 		btnSignup.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnSignup.addClickListener(e -> {
 			// getUI().getNavigator().navigateTo("signupview/params=10");
-			UI.getCurrent().addWindow(new SignupView(applicationContext));
+			UI.getCurrent().addWindow(new SignupView(classBusiness));
 			//UI.getCurrent().addWindow(new FloorView(applicationContext));
 			//UI.getCurrent().addWindow(new UnitView(applicationContext));
 			//getUI().getNavigator().navigateTo(ResponsiveLayout.class.getSimpleName());

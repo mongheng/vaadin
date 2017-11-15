@@ -2,7 +2,6 @@ package com.emh.view;
 
 import java.time.LocalDate;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CarParking;
@@ -26,7 +25,6 @@ public class ExtendParkingContractForm extends Window {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private CarParking carParking;
 	private Customer customer;
@@ -45,14 +43,13 @@ public class ExtendParkingContractForm extends Window {
 	private Button btnExtend;
 	private Button btnCancel;
 
-	public ExtendParkingContractForm(ApplicationContext applicationContext, CarParking carParking) {
-		this.applicationContext = applicationContext;
+	public ExtendParkingContractForm(ClassBusiness classBusiness, CarParking carParking) {
+		this.classBusiness = classBusiness;
 		this.carParking = carParking;
 		init();
 	}
 
 	private void init() {
-		classBusiness = applicationContext.getBean(ClassBusiness.class);
 		customer = carParking.getCustomer();
 
 		vlayout = new VerticalLayout();

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CarParking;
@@ -38,7 +37,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class CarParkingView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
-	private ApplicationContext applicationContext;
+	
 	private ClassBusiness classBusiness;
 	private Customer customer;
 	private CarParking carParking;
@@ -66,8 +65,8 @@ public class CarParkingView extends VerticalLayout {
 	private Button btnNew;
 	private Button btnActivated;
 
-	public CarParkingView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public CarParkingView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		init();
 	}
 
@@ -80,7 +79,6 @@ public class CarParkingView extends VerticalLayout {
 		grid = new Grid<>();
 
 		binder = new Binder<>();
-		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 
 		title = new Label("Car Parking Information.");
 		title.addStyleName("customerstyle");

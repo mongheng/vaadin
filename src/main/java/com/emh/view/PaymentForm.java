@@ -2,7 +2,6 @@ package com.emh.view;
 
 import java.time.LocalDate;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CashFlow;
@@ -29,7 +28,6 @@ public class PaymentForm extends Window {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private User user;
 	private CashFlow cashFlow;
@@ -43,9 +41,9 @@ public class PaymentForm extends Window {
 		
 	}
 	
-	public PaymentForm(ApplicationContext applicationContext, CashFlow cashFlow) {
+	public PaymentForm(ClassBusiness classBusiness, CashFlow cashFlow) {
 		super();
-		this.applicationContext = applicationContext;
+		this.classBusiness = classBusiness;
 		this.cashFlow = cashFlow;
 
 		init();
@@ -108,8 +106,6 @@ public class PaymentForm extends Window {
 						@Override
 						public void onClose(ConfirmDialog dialog) {
 							if (dialog.isConfirmed()) {
-								classBusiness = (ClassBusiness) applicationContext
-										.getBean(ClassBusiness.class.getSimpleName());
 								Payment payment = new Payment();
 								String message = " have been paid.";
 								try {

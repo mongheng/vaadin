@@ -1,7 +1,6 @@
 package com.emh.view.tab;
 
-import org.springframework.context.ApplicationContext;
-
+import com.emh.repository.business.ClassBusiness;
 import com.emh.view.ContractListView;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
@@ -11,15 +10,15 @@ public class TabContract extends TabSheet {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
+	private ClassBusiness classBusiness;
 
-	public TabContract(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public TabContract(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		initTab();
 	}
 
 	private void initTab() {
-		addTab(new ContractListView(applicationContext, this), 0).setId("0");
+		addTab(new ContractListView(classBusiness, this), 0).setId("0");
 		setSizeFull();
 		addStyleName(ValoTheme.TABSHEET_FRAMED);
 

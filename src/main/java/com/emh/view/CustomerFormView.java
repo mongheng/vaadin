@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.CashFlow;
 import com.emh.model.Contract;
 import com.emh.model.Customer;
@@ -42,8 +40,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class CustomerFormView extends AbsoluteLayout implements View {
 
 	private static final long serialVersionUID = 1L;
-
-	private ApplicationContext applicationContext;
+	
 	private ClassBusiness classBusiness;
 
 	private Customer customer;
@@ -99,13 +96,13 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 	private Binder<com.emh.model.Unit> binderUnit;
 	private Binder<Contract> binderContract;
 
-	public CustomerFormView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public CustomerFormView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		init();
 	}
 
-	public CustomerFormView(ApplicationContext applicationContext, Customer customer) {
-		this.applicationContext = applicationContext;
+	public CustomerFormView(ClassBusiness classBusiness, Customer customer) {
+		this.classBusiness = classBusiness;
 		this.customer = customer;
 		init();
 	}
@@ -117,7 +114,6 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 
 	private void init() {
 
-		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		initComponents();
 		initGrid();
 		addComponent(lblCustomerTitle, "top:14.0px;left:0.0px;");
@@ -314,7 +310,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		btnAddFloor.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnAddFloor.setIcon(VaadinIcons.PLUS);
 		btnAddFloor.addClickListener(clickEvent -> {
-			UI.getCurrent().addWindow(new FloorView(applicationContext));
+			UI.getCurrent().addWindow(new FloorView(classBusiness));
 		});
 
 		btnAddUnit = new Button();
@@ -322,7 +318,7 @@ public class CustomerFormView extends AbsoluteLayout implements View {
 		btnAddUnit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnAddUnit.setIcon(VaadinIcons.PLUS);
 		btnAddUnit.addClickListener(clickEvent -> {
-			UI.getCurrent().addWindow(new UnitView(applicationContext));
+			UI.getCurrent().addWindow(new UnitView(classBusiness));
 		});
 
 		btnSave = new Button("Save");

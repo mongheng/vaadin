@@ -2,10 +2,10 @@ package com.emh;
 
 import org.apache.log4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.emh.repository.business.ClassBusiness;
 import com.emh.view.LoginView;
 import com.emh.view.MainPageView;
 import com.emh.view.ResponsiveLayout;
@@ -36,7 +36,9 @@ public class MainUI extends UI {
 
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(MainUI.class.getName());
-	private ApplicationContext applicationContext;
+	
+	@Autowired
+	private ClassBusiness classBusiness;
 	
 	static {
 		SLF4JBridgeHandler.install();
@@ -46,15 +48,14 @@ public class MainUI extends UI {
     protected void init(VaadinRequest vaadinRequest) {
 		logger.info("Loading Main Form");
 		
-		applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 		getPage().setTitle("Vaadin Project");
 	
 		Navigator navigator = new Navigator(this, this);
 
-        navigator.addView(LoginView.class.getSimpleName(), new LoginView(applicationContext));
-        navigator.addView(MainPageView.class.getSimpleName(), new MainPageView(applicationContext));
-        navigator.addView(UserListView.class.getSimpleName(), new UserListView(applicationContext));
-        navigator.addView(ResponsiveLayout.class.getSimpleName(), new ResponsiveLayout(applicationContext));
+        navigator.addView(LoginView.class.getSimpleName(), new LoginView(classBusiness));
+        navigator.addView(MainPageView.class.getSimpleName(), new MainPageView(classBusiness));
+        navigator.addView(UserListView.class.getSimpleName(), new UserListView(classBusiness));
+        navigator.addView(ResponsiveLayout.class.getSimpleName(), new ResponsiveLayout(classBusiness));
         
         navigator.navigateTo(LoginView.class.getSimpleName());
     }

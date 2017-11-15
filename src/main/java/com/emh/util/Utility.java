@@ -11,7 +11,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.imgscalr.Scalr;
-import org.springframework.context.ApplicationContext;
 
 import com.emh.model.Floor;
 import com.emh.model.Role;
@@ -138,10 +137,8 @@ public class Utility {
 		file.delete();
 	}
 
-	public static List<Role> getRoles(ApplicationContext applicationContext) {
+	public static List<Role> getRoles(ClassBusiness classBusiness) {
 		try {
-			ClassBusiness classBusiness = (ClassBusiness) applicationContext
-					.getBean(ClassBusiness.class.getSimpleName());
 			if (classBusiness != null) {
 				List<Role> roles = (List<Role>) classBusiness.selectAllEntity(Role.class);
 				if (roles.size() > 0) {
@@ -154,10 +151,8 @@ public class Utility {
 		return new ArrayList<>();
 	}
 
-	public static List<Floor> getFloor(ApplicationContext applicationContext) {
+	public static List<Floor> getFloor(ClassBusiness classBusiness) {
 		try {
-			ClassBusiness classBusiness = (ClassBusiness) applicationContext
-					.getBean(ClassBusiness.class.getSimpleName());
 			if (classBusiness != null) {
 				List<Floor> floors = (List<Floor>) classBusiness.selectAllEntity(Floor.class);
 				if (floors.size() > 0) {
@@ -171,10 +166,8 @@ public class Utility {
 		return new ArrayList<>();
 	}
 
-	public static List<User> getEmployee(ApplicationContext applicationContext) {
+	public static List<User> getEmployee(ClassBusiness classBusiness) {
 		try {
-			ClassBusiness classBusiness = (ClassBusiness) applicationContext
-					.getBean(ClassBusiness.class.getSimpleName());
 			if (classBusiness != null) {
 				List<User> users = (List<User>) classBusiness.selectAllEntity(User.class);
 				if (users.size() > 0) {

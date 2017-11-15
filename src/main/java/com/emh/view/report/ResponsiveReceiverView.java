@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CashFlow;
@@ -41,7 +40,6 @@ public class ResponsiveReceiverView extends CssLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private User user;
 	private VerticalLayout mainLayout;
@@ -78,9 +76,8 @@ public class ResponsiveReceiverView extends CssLayout {
 	private Float totalAmountRoom = 0f;
 	private Float totalAmountCarParking = 0f;
 
-	public ResponsiveReceiverView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+	public ResponsiveReceiverView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		init();
 	}
 
@@ -128,7 +125,7 @@ public class ResponsiveReceiverView extends CssLayout {
 		endDate.setDateFormat("dd/MM/yyyy");
 
 		cboEmployee = new ComboBox<>("Empolyee");
-		cboEmployee.setItems(Utility.getEmployee(applicationContext));
+		cboEmployee.setItems(Utility.getEmployee(classBusiness));
 		cboEmployee.setItemCaptionGenerator(User::getUsername);
 		cboEmployee.addValueChangeListener(valueChange -> {
 			user = valueChange.getValue();

@@ -7,6 +7,8 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
 	
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
 	<context:annotation-config />
 	<context:spring-configured/>
 	<mvc:annotation-driven>
@@ -64,26 +66,17 @@
 				<value>com.emh.model.Payment</value>
 				<value>com.emh.model.CarParking</value>
 				<value>com.emh.model.ParkingCashFlow</value>
+				<value>com.emh.model.HistoryPayment</value>
 			</list>
 		</property>
-		<!-- <property name="mappingResources"> <list> <value>User.hbm.xml</value> 
-			</list> </property> -->
 	</bean>
 
 	<bean id="hibernateTransactionManager"
 		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
-
-	<!-- <bean id="mainUI" class="com.emh.MainUI"/> -->
-	<!-- <bean id="defineSpringUIProvider" class="com.emh.UIProvider.DefineSpringUIProvider"/> -->
 	
-	<!-- <bean id="classDao" class="com.emh.repository.daoimpl.ClassDaoImpl">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-	<bean id="classBusiness" class="com.emh.repository.businessimpl.ClassBusinessImpl">
-		<property name="classDao" ref="classDao" />
-	</bean> -->
-	
+	<import resource="classpath*:root-context.xml"/>
 	<import resource="classpath*:springquartz.xml" />
+
 </beans>

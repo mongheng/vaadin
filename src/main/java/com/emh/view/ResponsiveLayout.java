@@ -3,10 +3,10 @@ package com.emh.view;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.User;
+import com.emh.repository.business.ClassBusiness;
 import com.emh.view.tab.TabContract;
 import com.emh.view.tab.TabCustomer;
 import com.emh.view.tab.TabReport;
@@ -34,7 +34,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 
 	private static final long serialVersionUID = 1L;
 	
-	private ApplicationContext applicationContext;
+	private ClassBusiness classBusiness;
 	private User user;
 	private HorizontalSplitPanel hsLayout;
 	private VerticalLayout menuLayout;
@@ -53,8 +53,8 @@ public class ResponsiveLayout extends CssLayout implements View {
 		init();
 	}
 	
-	public ResponsiveLayout(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public ResponsiveLayout(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 	}
 	
 	private void init() {
@@ -125,7 +125,7 @@ public class ResponsiveLayout extends CssLayout implements View {
 		menuLayout.setComponentAlignment(menuProfileLayout, Alignment.TOP_CENTER);
 		menuLayout.setResponsive(true);
 		
-		contentLayout.addComponent(new DashboardView(applicationContext));
+		contentLayout.addComponent(new DashboardView(classBusiness));
 		contentLayout.setSizeFull();
 		contentLayout.setSpacing(false);
 		contentLayout.setMargin(false);
@@ -225,24 +225,24 @@ public class ResponsiveLayout extends CssLayout implements View {
 	
 	private Component getViewComponent(String viewCaption) {
 		if (viewCaption.equals(UserListView.class.getSimpleName())) {
-			return new UserListView(applicationContext);
+			return new UserListView(classBusiness);
 		} else if (viewCaption.equals(TabCustomer.class.getSimpleName())) {
-			TabCustomer tabCustomer = new TabCustomer(applicationContext);
+			TabCustomer tabCustomer = new TabCustomer(classBusiness);
 			return tabCustomer;
 		} else if (viewCaption.equalsIgnoreCase(DashboardView.class.getSimpleName())) {
-			return new DashboardView(applicationContext);
+			return new DashboardView(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase(TabContract.class.getSimpleName())) {
-			return new TabContract(applicationContext);
+			return new TabContract(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase(ExtendContractView.class.getSimpleName())) {
-			return new ExtendContractView(applicationContext);
+			return new ExtendContractView(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase(TabCustomer.class.getSimpleName())) {
-			return new TabCustomer(applicationContext);
+			return new TabCustomer(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase("Car Parking")) {
-			return new TabCustomer(applicationContext);
+			return new TabCustomer(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase(TabReport.class.getSimpleName())) {
-			return new TabReport(applicationContext);
+			return new TabReport(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase(ResponsiveAvariableUnit.class.getSimpleName())) {
-			return new ResponsiveAvariableUnit(applicationContext);
+			return new ResponsiveAvariableUnit(classBusiness);
 		} else {
 			return null;
 		}

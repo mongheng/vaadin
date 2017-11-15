@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.CarParking;
@@ -38,7 +37,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class CarParkingContractView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
-	private ApplicationContext applicationContext;
+	
 	private ClassBusiness classBusiness;
 	private User user;
 	private Customer customer;
@@ -59,8 +58,8 @@ public class CarParkingContractView extends VerticalLayout {
 	
 	String message = " has been paid.";
 
-	public CarParkingContractView(ApplicationContext applicationContext, Customer customer, List<Contract> contracts) {
-		this.applicationContext = applicationContext;
+	public CarParkingContractView(ClassBusiness classBusiness, Customer customer, List<Contract> contracts) {
+		this.classBusiness = classBusiness;
 		this.customer = customer;
 		this.contracts = contracts;
 		init();
@@ -68,7 +67,7 @@ public class CarParkingContractView extends VerticalLayout {
 
 	private void init() {
 		hLayout = new HorizontalLayout();
-		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		
 		user = (User) UI.getCurrent().getSession().getAttribute(User.class);
 		
 		customerNameField = new TextField("Customer Name");

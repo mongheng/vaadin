@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.CarParking;
 import com.emh.model.Contract;
 import com.emh.model.Customer;
@@ -22,7 +20,6 @@ public class ContractListView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 
 	private TabSheet tabSheet;
@@ -31,14 +28,13 @@ public class ContractListView extends VerticalLayout {
 	private ListDataProvider<Contract> contractDataProvider;
 	private ListDataProvider<Customer> parkDataProvider;
 
-	public ContractListView(ApplicationContext applicationContext, TabSheet tabSheet) {
-		this.applicationContext = applicationContext;
+	public ContractListView(ClassBusiness classBusiness, TabSheet tabSheet) {
+		this.classBusiness = classBusiness;
 		this.tabSheet = tabSheet;
 		init();
 	}
 
 	private void init() {
-		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		grid = new Grid<>();
 		parkingGrid = new Grid<>();
 		List<Contract> contracts = (List<Contract>) classBusiness.selectAllEntity(Contract.class);
@@ -83,7 +79,7 @@ public class ContractListView extends VerticalLayout {
 			Contract contract = listener.getItem();
 
 			if (contract != null) {
-				tabSheet.addTab(new ContractDetailView(applicationContext, contract), 1).setId("1");
+				tabSheet.addTab(new ContractDetailView(classBusiness, contract), 1).setId("1");
 				tabSheet.setSelectedTab(1);
 			}
 		});
@@ -91,7 +87,7 @@ public class ContractListView extends VerticalLayout {
 		parkingGrid.addItemClickListener(itemClick -> {
 			Customer customer = itemClick.getItem();
 			if (customer != null) {
-				tabSheet.addTab(new CarParkingContractView(applicationContext, customer, contracts), 1).setId("1");
+				tabSheet.addTab(new CarParkingContractView(classBusiness, customer, contracts), 1).setId("1");
 				tabSheet.setSelectedTab(1);
 			}
 		});

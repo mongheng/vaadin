@@ -3,7 +3,6 @@ package com.emh.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.Floor;
@@ -32,7 +31,6 @@ public class UnitView extends Window {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private com.emh.model.Unit unit;
 	private Binder<com.emh.model.Unit> binder;
@@ -53,9 +51,8 @@ public class UnitView extends Window {
 
 	private Grid<com.emh.model.Unit> grid;
 
-	public UnitView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+	public UnitView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		init();
 	}
 
@@ -105,7 +102,7 @@ public class UnitView extends Window {
 		floorLabel.setValue("Select Floor :");
 
 		// cbFloor.setRequiredIndicatorVisible(true);
-		cbFloor.setItems(Utility.getFloor(applicationContext));
+		cbFloor.setItems(Utility.getFloor(classBusiness));
 		cbFloor.setPlaceholder("No Floor Selected");
 		cbFloor.setItemCaptionGenerator(floor -> floor.getFloorNumber().toString());
 		binder.bind(cbFloor, com.emh.model.Unit::getFloor, com.emh.model.Unit::setFloor);
@@ -115,7 +112,7 @@ public class UnitView extends Window {
 		btnComboFloor.setWidth("35px");
 		btnComboFloor.setHeight("33px");
 		btnComboFloor.addClickListener(clickEvent -> {
-			UI.getCurrent().addWindow(new FloorView(applicationContext));
+			UI.getCurrent().addWindow(new FloorView(classBusiness));
 		});
 
 		btnSave.setCaption("Save");

@@ -1,9 +1,9 @@
 package com.emh.view;
 
-import org.springframework.context.ApplicationContext;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.emh.model.User;
+import com.emh.repository.business.ClassBusiness;
 import com.emh.view.tab.TabContract;
 import com.emh.view.tab.TabCustomer;
 import com.vaadin.icons.VaadinIcons;
@@ -26,7 +26,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class MainPageView extends AbsoluteLayout implements View {
 
 	private static final long serialVersionUID = 1L;
-	private ApplicationContext applicationContext;
+	private ClassBusiness classBusiness;
 	private User user;
 
 	private VerticalLayout headerLayout;
@@ -37,8 +37,8 @@ public class MainPageView extends AbsoluteLayout implements View {
 	private VerticalLayout contentLayout;
 	private MenuBar menuBar;
 
-	public MainPageView(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public MainPageView(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class MainPageView extends AbsoluteLayout implements View {
 		addMenuAndContentComponent("Customer", TabCustomer.class.getSimpleName());
 		
 		contentLayout.setSizeFull();
-		contentLayout.addComponent(new DashboardView(applicationContext));
+		contentLayout.addComponent(new DashboardView(classBusiness));
 		
 		bodyLayout.setFirstComponent(menuLayout);
 		bodyLayout.setSecondComponent(contentLayout);
@@ -128,20 +128,20 @@ public class MainPageView extends AbsoluteLayout implements View {
 
 	private Component getViewComponent(String viewCaption) {
 		if (viewCaption.equals(UserListView.class.getSimpleName())) {
-			return new UserListView(applicationContext);
+			return new UserListView(classBusiness);
 		} else if (viewCaption.equals(TabCustomer.class.getSimpleName())) {
-			TabCustomer tabCustomer = new TabCustomer(applicationContext);
+			TabCustomer tabCustomer = new TabCustomer(classBusiness);
 			return tabCustomer;
 		} else if (viewCaption.equalsIgnoreCase("Dashboard")) {
-			return new DashboardView(applicationContext);
+			return new DashboardView(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase("Contract")) {
-			return new TabContract(applicationContext);
+			return new TabContract(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase("Extends Contract")) {
-			return new ExtendContractView(applicationContext);
+			return new ExtendContractView(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase("Customer")) {
-			return new TabCustomer(applicationContext);
+			return new TabCustomer(classBusiness);
 		} else if (viewCaption.equalsIgnoreCase("Car Parking")) {
-			return new TabCustomer(applicationContext);
+			return new TabCustomer(classBusiness);
 		} else {
 			return null;
 		}

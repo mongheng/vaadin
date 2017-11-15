@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.CashFlow;
 import com.emh.model.Contract;
 import com.emh.model.Customer;
@@ -32,7 +30,6 @@ public class ContractDetailView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private Contract contract;
 	private Customer customer;
@@ -51,9 +48,9 @@ public class ContractDetailView extends VerticalLayout {
 	private ListDataProvider<CashFlow> cashflowDataProvider;
 	private Grid<CashFlow> grid;
 
-	public ContractDetailView(ApplicationContext applicationContext, Contract contract) {
+	public ContractDetailView(ClassBusiness classBusiness, Contract contract) {
 		super();
-		this.applicationContext = applicationContext;
+		this.classBusiness = classBusiness;
 		this.contract = contract;
 
 		init();
@@ -88,7 +85,6 @@ public class ContractDetailView extends VerticalLayout {
 		hLayout.setComponentAlignment(btnExport, Alignment.BOTTOM_LEFT);
 		
 		cashflowDataProvider = new ListDataProvider<>(new ArrayList<>());
-		classBusiness = (ClassBusiness) applicationContext.getBean(ClassBusiness.class.getSimpleName());
 		String HQL = "FROM CashFlow WHERE CONTRACT_ID = '" + contract.getContractID() + "'";
 		List<CashFlow> cashflows = classBusiness.selectListEntityByHQL(CashFlow.class, HQL);
 
@@ -114,14 +110,14 @@ public class ContractDetailView extends VerticalLayout {
 			int installment = cashFlow.getInstallmentNumber();
 			if (!cashFlow.getStatu()) {
 				if (installment == 1) {
-					UI.getCurrent().addWindow(new PaymentForm(applicationContext, cashFlow));
+					UI.getCurrent().addWindow(new PaymentForm(classBusiness, cashFlow));
 				} else {
 					installment = installment - 1;
 					String hql = "FROM CashFlow WHERE INSTALLMENT_NUMBER = " + installment + " and CONTRACT_ID = '"
 							+ contract.getContractID() + "'";
 					CashFlow cflow = (CashFlow) classBusiness.selectEntityByHQL(hql);
 					if (cflow.getStatu()) {
-						UI.getCurrent().addWindow(new PaymentForm(applicationContext, cashFlow));
+						UI.getCurrent().addWindow(new PaymentForm(classBusiness, cashFlow));
 					} else {
 						Notification.show("Please paid by order.", Type.WARNING_MESSAGE);
 					}

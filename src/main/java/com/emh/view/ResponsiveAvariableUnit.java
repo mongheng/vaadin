@@ -2,8 +2,6 @@ package com.emh.view;
 
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.Floor;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.icons.VaadinIcons;
@@ -18,7 +16,6 @@ public class ResponsiveAvariableUnit extends CssLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 
 	private HorizontalLayout innerHLayout;
@@ -30,9 +27,8 @@ public class ResponsiveAvariableUnit extends CssLayout {
 	private int size = 1;
 	private boolean statu;
 
-	public ResponsiveAvariableUnit(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-		classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+	public ResponsiveAvariableUnit(ClassBusiness classBusiness) {
+		this.classBusiness = classBusiness;
 		init();
 	}
 

@@ -3,8 +3,6 @@ package com.emh.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.Floor;
 import com.emh.repository.business.ClassBusiness;
 import com.vaadin.data.Binder;
@@ -29,7 +27,6 @@ public class FloorView extends Window {
 
 	private static final long serialVersionUID = 1L;
 
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private VerticalLayout vLayout;
 	private FormLayout formLayout;
@@ -45,10 +42,9 @@ public class FloorView extends Window {
 	private ListDataProvider<Floor> floorDataProvider;
 	private Floor updateFloor;
 
-	public FloorView(ApplicationContext applicationContext) {
+	public FloorView(ClassBusiness classBusiness) {
 		super();
-		this.applicationContext = applicationContext;
-		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+		this.classBusiness = classBusiness;
 		init();
 	}
 

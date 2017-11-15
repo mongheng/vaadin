@@ -7,9 +7,25 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
 
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
 	<context:annotation-config />
 	<context:spring-configured/>
-	<context:component-scan base-package="com.emh" />
+	<mvc:annotation-driven>
+		<mvc:argument-resolvers>
+			<bean class = "org.springframework.mobile.device.site.SitePreferenceWebArgumentResolver"/>
+			<bean class = "org.springframework.mobile.device.DeviceWebArgumentResolver"/>
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
+	<context:component-scan base-package="com.emh">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	<context:component-scan base-package="com.emh.controllermvc"/>
+
+	<mvc:interceptors>
+		<bean class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor"/>
+		<bean class="org.springframework.mobile.device.site.SitePreferenceHandlerInterceptor"/>
+	</mvc:interceptors>
 
 	<tx:annotation-driven transaction-manager="hibernateTransactionManager" />
 
@@ -53,8 +69,6 @@
 				<value>com.emh.model.HistoryPayment</value>
 			</list>
 		</property>
-		<!-- <property name="mappingResources"> <list> <value>User.hbm.xml</value> 
-			</list> </property> -->
 	</bean>
 
 	<bean id="hibernateTransactionManager"
@@ -62,5 +76,6 @@
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
 	
+	<import resource="classpath*:root-context.xml"/>
 	<import resource="classpath*:springquartz.xml" />
 </beans>

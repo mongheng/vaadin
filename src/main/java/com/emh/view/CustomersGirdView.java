@@ -3,8 +3,6 @@ package com.emh.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import com.emh.model.Customer;
 import com.emh.repository.business.ClassBusiness;
 import com.emh.view.tab.TabCustomer;
@@ -23,7 +21,6 @@ public class CustomersGirdView extends VerticalLayout implements View {
 
 	private static final long serialVersionUID = 1L;
 	
-	private ApplicationContext applicationContext;
 	private ClassBusiness classBusiness;
 	private TabCustomer tabCustomer;
 	private Customer source;
@@ -31,9 +28,8 @@ public class CustomersGirdView extends VerticalLayout implements View {
 	private Grid<Customer> grid;
 	private ListDataProvider<Customer> customerDataProvider;
 	
-	public CustomersGirdView(ApplicationContext applicationContext, TabCustomer tabCustomer) {
-		this.applicationContext = applicationContext;
-		this.classBusiness = (ClassBusiness) this.applicationContext.getBean(ClassBusiness.class.getSimpleName());
+	public CustomersGirdView(ClassBusiness classBusiness, TabCustomer tabCustomer) {
+		this.classBusiness = classBusiness;
 		this.tabCustomer = tabCustomer;
 		initGrid();
 	}
@@ -89,7 +85,7 @@ public class CustomersGirdView extends VerticalLayout implements View {
 				source = customer;
 			});
 			tabCustomer.removeTab(tabCustomer.getTab(1));
-			tabCustomer.addTab(new CustomerFormView(applicationContext, source), "Customer", null, 1);
+			tabCustomer.addTab(new CustomerFormView(classBusiness, source), "Customer", null, 1);
 			tabCustomer.setSelectedTab(1);
 		});
 	}
