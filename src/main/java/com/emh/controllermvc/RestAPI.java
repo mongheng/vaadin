@@ -3,10 +3,15 @@ package com.emh.controllermvc;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +34,7 @@ public class RestAPI {
 
 			User tempUser = new User();
 			tempUser.setUsername(username);
-			
+
 			tempUser.setPassword(password);
 
 			currentUser = classBusiness.selectUserByUsernameAndPassword(tempUser);
@@ -41,7 +46,8 @@ public class RestAPI {
 		return statu;
 	}
 
-	@GetMapping(value = "/items", headers = { "Accept=application/json" })
+	@GetMapping(value = "/items", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@CrossOrigin(origins="http://localhost:4200")
 	public <T> List<T> getItems() {
 		try {
 
@@ -53,5 +59,39 @@ public class RestAPI {
 			ex.printStackTrace();
 		}
 		return null;
+	}
+
+	@GetMapping(value = "/item", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@CrossOrigin(origins="http://localhost:4200")
+	public User getUser(@RequestParam("userid") String userid) {
+
+		User user = classBusiness.selectEntity(User.class, userid);
+		try {
+			if (user != null)
+				return user;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@PostMapping(value = "/save", headers = { "Accept=application/json" })
+	@CrossOrigin(origins="http://localhost:4200")
+	public boolean saveItem(@RequestBody User user) {
+		if (user != null) {
+			//classBusiness.createEntity(user);
+			System.out.println(user.getUsername());
+			return true;
+		}
+		return false;
+	}
+
+	@PostMapping(value = "/saves", headers = { "Accept=application/json" })
+	public boolean saveItems(@RequestBody List<User> users) {
+		if (users.size() > 0) {
+			return users.stream()/*.filter(user -> user.getRole().getRoleID().equals("c24266d6-28ee-4a3d-859a-2cb514c46115"))*/
+					.anyMatch(user -> user.getRole().getRoleID().equals("c24266d6-28ee-4a3d-859a-2cb514c46115") && user.getUsername().equals("mongheng"));
+		}
+		return false;
 	}
 }

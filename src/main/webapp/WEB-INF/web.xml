@@ -13,22 +13,22 @@
 	
 	<!-- <context-param> <param-name>contextClass</param-name> <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext 
 		</param-value> </context-param> -->
-	<servlet>
+	<!-- <servlet>
 		<description></description>
 		<display-name>VaadinServlet</display-name>
 		<servlet-name>VaadinServlet</servlet-name>
-		<!-- <servlet-class>com.vaadin.server.VaadinServlet</servlet-class> -->
-		<!-- <init-param> <param-name>UIProvider</param-name> <param-value>com.emh.UIProvider.DefineUIProvider</param-value> 
-			</init-param> -->
+		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+		<init-param> <param-name>UIProvider</param-name> <param-value>com.emh.UIProvider.DefineUIProvider</param-value> 
+			</init-param>
 		<servlet-class>com.vaadin.spring.server.SpringVaadinServlet</servlet-class>
 		<init-param> 
 			<param-name>defineSpringUIProvider</param-name> 
 			<param-value>com.emh.uiprovider.DefineSpringUIProvider</param-value> 
 		</init-param>
-		<!-- <init-param>
+		<init-param>
 			<param-name>SpringUIProvider</param-name>
 			<param-value>com.vaadin.spring.server.SpringUIProvider</param-value>
-		</init-param> -->
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 		<async-supported>true</async-supported>
 	</servlet>
@@ -44,7 +44,7 @@
 		<description>Vaadin production mode</description>
 		<param-name>productionMode</param-name>
 		<param-value>false</param-value>
-	</context-param>
+	</context-param> -->
 
 	<servlet>
 		<description>
