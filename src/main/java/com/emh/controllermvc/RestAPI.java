@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,8 +47,8 @@ public class RestAPI {
 		return statu;
 	}
 
-	@GetMapping(value = "/items", produces = {MediaType.APPLICATION_JSON_VALUE})
-	@CrossOrigin(origins="http://localhost:4200")
+	@GetMapping(value = "/items", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@CrossOrigin(origins = "http://localhost:4200")
 	public <T> List<T> getItems() {
 		try {
 
@@ -62,7 +63,7 @@ public class RestAPI {
 	}
 
 	@GetMapping(value = "/item", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins = "http://localhost:4200")
 	public User getUser(@RequestParam("userid") String userid) {
 
 		User user = classBusiness.selectEntity(User.class, userid);
@@ -75,11 +76,25 @@ public class RestAPI {
 		return null;
 	}
 
+	@GetMapping(value = "/item/{userid}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@CrossOrigin(origins = "http://localhost:4200")
+	public User getUserByPath(@PathVariable String userid) {
+
+		User user = classBusiness.selectEntity(User.class, userid);
+		try {
+			if (user != null)
+				return user;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@PostMapping(value = "/save", headers = { "Accept=application/json" })
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins = "http://localhost:4200")
 	public boolean saveItem(@RequestBody User user) {
 		if (user != null) {
-			//classBusiness.createEntity(user);
+			// classBusiness.createEntity(user);
 			System.out.println(user.getUsername());
 			return true;
 		}
@@ -89,8 +104,29 @@ public class RestAPI {
 	@PostMapping(value = "/saves", headers = { "Accept=application/json" })
 	public boolean saveItems(@RequestBody List<User> users) {
 		if (users.size() > 0) {
-			return users.stream()/*.filter(user -> user.getRole().getRoleID().equals("c24266d6-28ee-4a3d-859a-2cb514c46115"))*/
-					.anyMatch(user -> user.getRole().getRoleID().equals("c24266d6-28ee-4a3d-859a-2cb514c46115") && user.getUsername().equals("mongheng"));
+			return users.stream()/*
+									 * .filter(user ->
+									 * user.getRole().getRoleID().equals(
+									 * "c24266d6-28ee-4a3d-859a-2cb514c46115"))
+									 */
+					.anyMatch(user -> user.getRole().getRoleID().equals("c24266d6-28ee-4a3d-859a-2cb514c46115")
+							&& user.getUsername().equals("mongheng"));
+		}
+		return false;
+	}
+
+	@DeleteMapping(value = "delete/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@CrossOrigin(origins = "http://localhost:4200")
+	public boolean deleteUser(@PathVariable String id) {
+		try {
+			User user = classBusiness.selectEntity(User.class, id);
+			if (user != null) {
+				classBusiness.deleteEntity(user);
+				System.out.println(user.getUserid() + ", " + user.getUsername());
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
