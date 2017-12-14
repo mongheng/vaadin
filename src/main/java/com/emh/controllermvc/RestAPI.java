@@ -64,7 +64,7 @@ public class RestAPI {
 
 	@GetMapping(value = "/item", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@CrossOrigin(origins = "http://localhost:4200")
-	public User getUser(@RequestParam("userid") String userid) {
+	public User getUser(@RequestParam("id") String userid) {
 
 		User user = classBusiness.selectEntity(User.class, userid);
 		try {
