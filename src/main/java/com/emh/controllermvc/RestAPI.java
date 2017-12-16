@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.emh.model.User;
 import com.emh.repository.business.ClassBusiness;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class RestAPI {
 
@@ -47,8 +48,8 @@ public class RestAPI {
 		return statu;
 	}
 
-	@GetMapping(value = "/items", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@CrossOrigin(origins = "http://localhost:4200")
+	@GetMapping(value = "/items", produces = { MediaType.APPLICATION_JSON_VALUE }, headers = { "Accept=application/json" })
+	//@CrossOrigin(origins = "http://localhost:4200")
 	public <T> List<T> getItems() {
 		try {
 
@@ -62,8 +63,8 @@ public class RestAPI {
 		return null;
 	}
 
-	@GetMapping(value = "/item", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@CrossOrigin(origins = "http://localhost:4200")
+	@GetMapping(value = "/item", produces = { MediaType.APPLICATION_JSON_VALUE }, headers = { "Accept=application/json" })
+	//@CrossOrigin(origins = "http://localhost:4200")
 	public User getUser(@RequestParam("id") String userid) {
 
 		User user = classBusiness.selectEntity(User.class, userid);
@@ -76,8 +77,8 @@ public class RestAPI {
 		return null;
 	}
 
-	@GetMapping(value = "/item/{userid}", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@CrossOrigin(origins = "http://localhost:4200")
+	@GetMapping(value = "/item/{userid}", produces = { MediaType.APPLICATION_JSON_VALUE }, headers = { "Accept=application/json" })
+	//@CrossOrigin(origins = "http://localhost:4200")
 	public User getUserByPath(@PathVariable String userid) {
 
 		User user = classBusiness.selectEntity(User.class, userid);
@@ -91,7 +92,7 @@ public class RestAPI {
 	}
 
 	@PostMapping(value = "/save", headers = { "Accept=application/json" })
-	@CrossOrigin(origins = "http://localhost:4200")
+	//@CrossOrigin(origins = "https://localhost:4200")
 	public boolean saveItem(@RequestBody User user) {
 		if (user != null) {
 			// classBusiness.createEntity(user);
@@ -115,8 +116,8 @@ public class RestAPI {
 		return false;
 	}
 
-	@DeleteMapping(value = "delete/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@CrossOrigin(origins = "http://localhost:4200")
+	@DeleteMapping(value = "delete/{id}", produces = { MediaType.APPLICATION_JSON_VALUE }, headers = { "Accept=application/json" })
+	//@CrossOrigin(origins = "http://localhost:4200")
 	public boolean deleteUser(@PathVariable String id) {
 		try {
 			User user = classBusiness.selectEntity(User.class, id);

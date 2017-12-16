@@ -8,7 +8,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />
-	
+	<mvc:default-servlet-handler/>
 	<context:annotation-config />
 	<context:spring-configured/>
 	<mvc:annotation-driven>
@@ -34,15 +34,16 @@
 
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+		<!-- <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
 		<property name="url"
 			value="jdbc:mysql://localhost:3306/vaadin?useSSL=false" />
 		<property name="username" value="root" />
-		<property name="password" value="12345" />
-		<!-- <property name="url"
-			value="jdbc:mysql://localhost:3306/alertsystem?useSSL=false" />
-		<property name="username" value="root" />
 		<property name="password" value="12345" /> -->
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://sql12.freemysqlhosting.net:3306/sql12210994?useSSL=false" />
+		<property name="username" value="sql12210994" />
+		<property name="password" value="9i71HraU83" />
 		<!-- <property name="initialSize" value="15"/>
 		<property name="maxTotal" value="15"/>
 		<property name="maxIdle" value="15" />
