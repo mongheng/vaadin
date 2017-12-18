@@ -103,6 +103,7 @@ public class RestAPI {
 	}
 
 	@PostMapping(value = "/saves", headers = { "Accept=application/json" })
+	//@CrossOrigin(origins = "https://localhost:4200")
 	public boolean saveItems(@RequestBody List<User> users) {
 		if (users.size() > 0) {
 			return users.stream()/*
