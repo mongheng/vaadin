@@ -26,16 +26,21 @@ div {
 
 </style>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>JSP Page</title>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="/vaadinproject/resources/js/test.js"></script>
-<link href="/vaadinproject/resources/css/bootstrap.css" rel="stylesheet" />	
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>JSP Page</title>
+	<link rel = "stylesheet"
+	    href = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.js"></script>
+	<script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-aria.min.js"></script>
+	<script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-messages.min.js"></script>
+	<script src = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="/vaadinproject/resources/js/test.js"></script>
+	<link href="/vaadinproject/resources/css/bootstrap.css" rel="stylesheet" />	
 </head>
 <body ng-app="vaadinproject" ng-controller="ctrl">
 	<div>
@@ -54,15 +59,19 @@ div {
 			x.country }}</li>
 	</ul>
 	<h1 class="test">name-country.....</h1>
-	<div>
+	<md-content flex layout-padding>
+	<!-- <div> -->
 		<p>
 			Select User : <select ng-model="user">
 				<option ng-repeat="item in items | orderBy:'username'"
 					value="{{item}}">{{item.username}}</option>
 			</select>
 		</p>
-		<h1>{{user}}</h1>
-	</div>
+		
+		<p>{{user}}</p>
+	<!-- </div> -->
+	</md-content>
+	
 	<div>
 		<h1 ng-mousemove="mousemove($event)">mouse move</h1>
 		<p>Coordinates: {{x + ', ' + y}}</p>
@@ -77,17 +86,44 @@ div {
 	
 	<h1>Hide the DIV: <input type="checkbox" ng-model="myCheck"></h1>
 	<div ng-hide="myCheck"></div>
+	<md-content flex layout-padding>
+         <p>HTML5 is the next major revision of the HTML standard superseding HTML
+         4.01, XHTML 1.0, and XHTML 1.1. HTML5 is a standard for structuring and
+         presenting content on the World Wide Web.</p>
+         
+         <p>HTML5 is a cooperation between the World Wide Web Consortium (W3C) and the
+         Web Hypertext Application Technology Working Group (WHATWG).</p>
+         
+         <p>The new standard incorporates features like video playback and drag-and-drop
+         that have been previously dependent on third-party browser plug-ins such as Adobe
+         Flash, Microsoft Silverlight, and Google Gears.</p>
+      </md-content>
+      <md-card>
+      	<md-card-actions layout = "row" layout-align = "start center">
+            <md-button>Download</md-button>
+            <md-button>Start</md-button>
+            <md-card-icon-actions>
+               <md-button class = "md-icon-button" aria-label = "icon">
+                  <md-icon class = "material-icons">add</md-icon>
+               </md-button>
+            </md-card-icon-actions>
+         </md-card-actions>
+      </md-card>
 </body>
 
 <script type="text/javascript">
-	var app = angular.module("vaadinproject", ['ngAnimate']);
+	var app = angular.module("vaadinproject", ['ngAnimate','ngMaterial']);
+	
+	app.controller('cardController', function($scope){
+		
+	});
 	
 	app.controller("ctrl", function($scope, $location, $http, $window) {
 
 		$scope.name = "Mongheng";
 		var url = $location.absUrl();
 
-		$http.get(url + "items").then(function(response) {
+		$http.get(url + "users").then(function(response) {
 			$scope.items = response.data;
 		}, function(reason) {
 			$scope.postResultMessage = "Error Status: " + reason.statusText;
@@ -120,14 +156,14 @@ div {
 				'Accept' : 'application/json'
 			}
 		}
-		$http.post(url + "save", user, config).then(function(value) {
+		/* $http.post(url + "save", user, config).then(function(value) {
 			$scope.postDivAvailable = true;
 			$scope.postCust = value.data;
 		}, function(reason) {
 
 		}, function(value) {
 
-		});
+		}); */
 
 		var users = [ {
 			"userid" : "27abfc1c-a909-4df7-b83f-e8c80559c9b2",
